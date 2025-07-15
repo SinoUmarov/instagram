@@ -1,5 +1,5 @@
 "use client"
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
 import Profile from '@/assets/icon/layout/instagramDefaultProfile.jpg';
@@ -25,6 +25,8 @@ import {
   problemIcon,
   threads,
 } from '@/assets/icon/layout/svg';
+import { useProfileStore } from '@/store/pages/profile/profile/store-profile';
+import { API } from '@/utils/config';
 
 
 const NavLink = ({ href, icon, activeIcon, label, isActive }) => (
@@ -39,6 +41,8 @@ const NavLink = ({ href, icon, activeIcon, label, isActive }) => (
 
 
 export default function SideBar({ children }) {
+
+  const {getInfo,info} = useProfileStore()
   const pathname = usePathname();
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
@@ -51,6 +55,14 @@ export default function SideBar({ children }) {
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  useEffect(() => {
+    getInfo()
+    
+    
+  }, []);
+  console.log('dddd',info);
+  
 
   const isActive = (path) => pathname === path ? 'font-bold' : 'font-normal';
 
@@ -75,7 +87,10 @@ export default function SideBar({ children }) {
                 <p className="text-lg">{t('layout.create')}</p>
               </div>
 
-              <NavLink href="/profile" icon={<Image className={`${pathname === '/profile' ? 'border-2 border-black rounded-full' : ''} h-10 w-10`} src={Profile} alt="Profile" />} label={t('layout.profile')} isActive={isActive} />
+              <div className='flex items-center gap-2 ml-[7%]'>
+                <img src={`${API}/images/${info.image}`} className='w-10 h-10 rounded-[50%]'  alt="" />
+                <NavLink href="/profile" icon={<Image className={`${pathname === '/profile' ? 'border-2 border-black rounded-full' : ''} h-10 w-10`} src={Profile} alt="Profile" />} label={t('layout.profile')} isActive={isActive} />
+              </div>
             </div>
 
             <div className="flex items-center gap-4 w-[90%] m-auto rounded-md h-[52px] px-4 hover:bg-gray-100">
