@@ -1,5 +1,9 @@
-export default function Registration(){
-	return <>
-		<h1>Page registration</h1>
-	</>
+import RegisttrationComp from '@/components/pages/auth/registration/registration'
+
+export default function Registration() {
+	return (
+		<>
+			<RegisttrationComp />
+		</>
+	)
 }
