@@ -88,7 +88,7 @@ export default function SideBar({ children }) {
               </div>
 
               <div className='flex items-center gap-2 ml-[7%]'>
-                <img src={`${API}/images/${info.image}`} className='w-10 h-10 rounded-[50%]'  alt="" />
+                <img src={`${API}/images/${info?.image}`} className='w-10 h-10 rounded-[50%]'  alt="" />
                 <NavLink href="/profile" icon={<Image className={`${pathname === '/profile' ? 'border-2 border-black rounded-full' : ''} h-10 w-10`} src={Profile} alt="Profile" />} label={t('layout.profile')} isActive={isActive} />
               </div>
             </div>
