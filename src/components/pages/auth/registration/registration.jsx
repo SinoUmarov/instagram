@@ -31,20 +31,21 @@ export default function RegisttrationComp() {
 			password: e.target.password.value,
 			confirmPassword: e.target.confirmPassword.value,
 		}
-		console.log(user);
-		
-		let result = await registrate(user)
+		console.log(user)
+		try {
 
-		if (result.success) {
-			router.push('/login')
-		} else {
-			console.log('something is go wrong')
+			await registrate(user,router)
+
+			// router.push('/login')
+		}
+		catch (error) {
+			console.error(error)
 		}
 	}
 
 	return (
 		<>
-			<section className='p-5 md:max-w-[1400px] md:m-auto flex justify-around md:items-center'>
+			<section className='p-5 md:max-w-[1400px] md:m-auto flex justify-around md:items-center gap-10'>
 				<aside className='hidden md:block'>
 					<Image src={phones} alt='phones' />
 					<div className='mt-[15px] flex flex-col items-center gap-5'>
