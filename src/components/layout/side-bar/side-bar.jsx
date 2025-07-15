@@ -67,7 +67,7 @@ export default function SideBar({ children }) {
               <NavLink href="/chats" icon={message} activeIcon={messageActive} label={t('layout.message')} isActive={isActive} />
               <NavLink href="/notification" icon={like} activeIcon={likeActive} label={t('layout.notification')} isActive={isActive} />
 
-              <div className="flex items-center gap-4 w-[90%] m-auto rounded-md h-[52px] px-4 hover:bg-gray-100">
+              <div className="flex items-center gap-4 w-[90%] m-auto rounded-md h-[52px] px-4 hover:bg-gray-100 cursor-pointer">
                 {action}
                 <p className="text-lg">{t('layout.create')}</p>
               </div>
@@ -92,7 +92,7 @@ export default function SideBar({ children }) {
                 anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
                 transformOrigin={{ vertical: 'top', horizontal: 'center' }}
               >
-                {/* Your menu items */}
+               
               </Menu>
             </div>
           </div>
