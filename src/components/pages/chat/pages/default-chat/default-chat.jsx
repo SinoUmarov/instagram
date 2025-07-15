@@ -1,17 +1,20 @@
 'use client'
-import { api, userId } from '@/api/pages/chat/utils/axios-reguest'
+// import { api, userId } from '@/api/pages/chat/utils/axios-reguest'
 import useChat from '@/store/pages/chat/pages/default-chat/default-chat'
 import { Search, SquarePen } from 'lucide-react'
 import { useEffect } from 'react'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import 'swiper/css'
 import Link from 'next/link'
+import { api, userId } from '@/api/pages/chat/utils/axios-reguest'
 
 export default function DefaultChatComponent() {
 	const { userProfile, getUserProfile, allUsers, getAllUsers, userByName, getUserByName } = useChat()
+console.log(userProfile);
+console.log(userId.sid);
 
 	useEffect(() => {
-		getUserProfile()
+		getUserProfile(userId.sid)
 		getAllUsers()
 	}, [])
 
@@ -44,7 +47,6 @@ export default function DefaultChatComponent() {
 						</SwiperSlide>
 
 						{allUsers
-							.filter(user => user.id !== userId.sid)
 							.map(user => (
 								<SwiperSlide key={user.id}>
 									<div className='flex flex-col items-center gap-[5px]'>
@@ -65,7 +67,6 @@ export default function DefaultChatComponent() {
 				</section>
 				<section className='overflow-y-scroll scrollbar-hide flex flex-col gap-[20px] pr-[4px]'>
 					{allUsers
-						.filter(user => user.id !== userId.sid)
 						.map(el => (
 							<Link href={`/chats/${el.chatId}`} key={el.id}>
 								<div
