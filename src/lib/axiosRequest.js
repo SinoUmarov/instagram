@@ -2,6 +2,7 @@
 
 import { API } from "@/utils/config";
 import axios from "axios";
+import { API } from './api'
 
 const axiosRequest = axios.create({
   baseURL: API
