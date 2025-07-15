@@ -1,5 +1,7 @@
-export default function Login(){
+import LoginComp from '@/components/pages/auth/login/loginComp'
+
+export default function Login() {
 	return <>
-		<h1>Page login</h1>
+		<LoginComp />
 	</>
 }
