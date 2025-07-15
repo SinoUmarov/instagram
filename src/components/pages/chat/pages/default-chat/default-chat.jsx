@@ -71,7 +71,7 @@ export default function DefaultChatComponent() {
 								<div
 									key={el.id}
 									className='flex items-center gap-[10px] cursor-pointer hover:bg-gray-100 p-[6px] rounded-lg transition'
-									onClick={() => getUserByName(el.receiveUserName)}
+									onClick={() => localStorage.setItem('userName', el.receiveUserName)}
 								>
 									<img
 										src={`${api}images/${el.receiveUserImage}`}
