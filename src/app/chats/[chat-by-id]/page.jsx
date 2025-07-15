@@ -1,6 +1,6 @@
 'use client'
 import { useState, useEffect, useRef } from 'react'
-import { useParams } from 'next/navigation'
+import { useParams, useRouter } from 'next/navigation'
 import { api } from '@/api/pages/chat/utils/axios-reguest'
 import DefaultChatComponent from '@/components/pages/chat/pages/default-chat/default-chat'
 import useChat from '@/store/pages/chat/pages/default-chat/default-chat'
@@ -13,31 +13,50 @@ import {
 	Sticker,
 	Video,
 	Image,
+	Trash,
 } from 'lucide-react'
 import EmojiPicker from 'emoji-picker-react'
 
 export default function ChatById() {
+	const router = useRouter()
 	const [showEmojiPicker, setShowEmojiPicker] = useState(false)
 	const [message, setMessage] = useState('')
 	const params = useParams()
-	const { chatById, getChatById, userByName, getUserByName, sendMessege } =
-		useChat()
+	const {
+		chatById,
+		getChatById,
+		userByName,
+		getUserByName,
+		sendMessege,
+		delChatById,
+		delMessageById
+	} = useChat()
 
 	const [file, setFile] = useState(null)
 	const fileInputRef = useRef(null)
-	function openFileDialog() {
-  fileInputRef.current.click()
-}
+	const messagesEndRef = useRef(null)
 
+	function handleDelChat() {
+		delChatById(params['chat-by-id'])
+		router.push('/chats')
+	}
+
+	useEffect(() => {
+		if (messagesEndRef.current) {
+			messagesEndRef.current.scrollIntoView({ behavior: 'smooth' })
+		}
+	}, [chatById])
+	function openFileDialog() {
+		fileInputRef.current.click()
+	}
 
 	function handleFileChange(e) {
-  const selectedFile = e.target.files[0]
-  console.log('Selected file:', selectedFile)
-  if (selectedFile) {
-    setFile(selectedFile)
-  }
-}
-
+		const selectedFile = e.target.files[0]
+		console.log('Selected file:', selectedFile)
+		if (selectedFile) {
+			setFile(selectedFile)
+		}
+	}
 
 	async function handleSendMessage(e) {
 		e.preventDefault()
@@ -47,8 +66,8 @@ export default function ChatById() {
 		formData.append('ChatId', params['chat-by-id'])
 		if (message.trim()) formData.append('MessageText', message)
 		if (file) formData.append('File', file)
-			console.log(formData);
-			
+		console.log(formData)
+
 		try {
 			await sendMessege(formData)
 			setMessage('')
@@ -68,7 +87,7 @@ export default function ChatById() {
 		if (storedUserName) {
 			getUserByName(storedUserName)
 		}
-	}, [params])
+	}, [params, delChatById])
 
 	const user = chatById?.[0]
 
@@ -197,59 +216,66 @@ export default function ChatById() {
 					<aside className='flex items-center gap-[20px]'>
 						<Phone className='w-[25px] h-[25px]' />
 						<Video className='w-[30px] h-[30px]' />
-						<Info className='w-[25px] h-[25px]' />
+						<div className='cursor-pointer' onClick={() => handleDelChat()}>
+							<Trash className='w-[25px] h-[25px]' />
+						</div>
 					</aside>
 				</nav>
-				<section className='h-[75vh] overflow-y-auto p-4 flex flex-col gap-3'>
-  {chatById?.map((msg, idx) => {
-    const isMe = msg.userId === userByName?.id
-    return (
-      <div
-        key={msg.messageId}
-        className={`flex ${isMe ? 'justify-end' : 'justify-start'} items-end gap-2`}
-      >
-        {!isMe && (
-          <img
-            src={api + 'images/' + msg.userImage}
-            alt='avatar'
-            className='w-[32px] h-[32px] rounded-full object-cover'
-          />
-        )}
+				<section className='h-[75vh] overflow-y-auto px-6 py-4 flex flex-col gap-4 bg-gray-50'>
+	{[...chatById]?.reverse()?.map((msg, idx) => {
+		const isMe = msg.userId === userByName?.id
+		return (
+			<div
+				key={msg.messageId}
+				className={`flex ${isMe ? 'justify-end' : 'justify-start'} items-end gap-3`}
+			>
+				{!isMe && (
+					<img
+						src={api + 'images/' + msg.userImage}
+						alt='avatar'
+						className='w-8 h-8 rounded-full object-cover border border-gray-300'
+					/>
+				)}
 
-        <div className='flex flex-col items-end gap-1 max-w-[70%]'>
-          <div
-            className={`px-4 py-2 rounded-[18px] text-sm whitespace-pre-line break-words ${
-              isMe
-                ? 'bg-gradient-to-tr from-blue-500 to-blue-600 text-white rounded-br-none'
-                : 'bg-gray-200 text-black rounded-bl-none'
-            }`}
-          >
-            <p>{msg.messageText}</p>
-          </div>
+				<div className='flex flex-col items-end gap-1 max-w-[70%]'>
+					<div className='flex items-end gap-1'>
+						<div
+							className={`px-4 py-2 rounded-2xl text-sm shadow-sm ${
+								isMe
+									? 'bg-blue-500 text-white rounded-br-none'
+									: 'bg-white text-gray-900 border border-gray-200 rounded-bl-none'
+							}`}
+						>
+							<p className='whitespace-pre-line break-words'>{msg.messageText}</p>
+						</div>
+						{isMe && <Trash className='w-4 h-4 text-gray-300 hover:text-red-500 cursor-pointer' onClick={() => delMessageById(msg.messageId, params['chat-by-id'])}/>}
+					</div>
 
-          {msg.file && (
-            <img
-              src={api + 'images/' + msg.file}
-              alt='attachment'
-              className='w-[220px] h-auto rounded-2xl shadow-md object-cover'
-            />
-          )}
+					{msg.file && (
+						<img
+							src={api + 'images/' + msg.file}
+							alt='attachment'
+							className='w-[220px] h-auto rounded-2xl shadow-md object-cover border border-gray-200'
+						/>
+					)}
 
-          <span
-            className={`text-[10px] mt-1 ${
-              isMe ? 'text-gray-200 pr-1' : 'text-gray-500 pl-1'
-            }`}
-          >
-            {new Date(msg.sendMassageDate).toLocaleTimeString([], {
-              hour: '2-digit',
-              minute: '2-digit',
-            })}
-          </span>
-        </div>
-      </div>
-    )
-  })}
+					<span
+						className={`text-[10px] mt-1 ${
+							isMe ? 'text-gray-400 pr-1' : 'text-gray-500 pl-1'
+						}`}
+					>
+						{new Date(msg.sendMassageDate).toLocaleTimeString([], {
+							hour: '2-digit',
+							minute: '2-digit',
+						})}
+					</span>
+				</div>
+			</div>
+		)
+	})}
+	<div ref={messagesEndRef} />
 </section>
+
 
 				<footer className='p-4'>
 					<section className='relative gap-2 border-3 border-gray-100 py-1 px-4 rounded-[25px] flex items-center bg-white shadow-md justify-between'>
@@ -291,7 +317,7 @@ export default function ChatById() {
 
 							<aside className='flex gap-3 w-[15%]'>
 								<Mic />
-								<Image className='cursor-pointer'  onClick={openFileDialog} />
+								<Image className='cursor-pointer' onClick={openFileDialog} />
 								<Sticker />
 								<Heart />
 							</aside>

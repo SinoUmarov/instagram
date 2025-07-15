@@ -2,20 +2,41 @@
 // import { api, userId } from '@/api/pages/chat/utils/axios-reguest'
 import useChat from '@/store/pages/chat/pages/default-chat/default-chat'
 import { Search, SquarePen } from 'lucide-react'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import 'swiper/css'
 import Link from 'next/link'
 import { api, userId } from '@/api/pages/chat/utils/axios-reguest'
 
 export default function DefaultChatComponent() {
-	const { userProfile, getUserProfile, allUsers, getAllUsers, userByName, getUserByName } = useChat()
-console.log(userProfile);
-console.log(userId.sid);
+	const {
+		userProfile,
+		getUserProfile,
+		allUsers,
+		getAllUsers,
+		chatById,
+		getUserByNameForSearch,
+		userByNameForSearch,
+		createChat,
+		getLastMessages,
+		lastMessages
+	} = useChat()
+	const [search, setSearch] = useState('')
+
+	function handleCreateChat(id) {
+		createChat(id)
+		setSearch('')
+	}
+
+	function handleSearch(e) {
+		setSearch(e.value)
+		getUserByNameForSearch(e.value)
+	}
 
 	useEffect(() => {
 		getUserProfile(userId.sid)
 		getAllUsers()
+		getLastMessages(18)
 	}, [])
 
 	return (
@@ -31,6 +52,8 @@ console.log(userId.sid);
 						type='text'
 						placeholder='Поиск'
 						className='outline-none w-full bg-transparent text-[14px] placeholder-gray-500'
+						value={search}
+						onChange={e => handleSearch(e.target)}
 					/>
 				</section>
 				<section className='w-full'>
@@ -45,20 +68,20 @@ console.log(userId.sid);
 								<p className='text-[11px] text-gray-600'>Ваша заметка</p>
 							</div>
 						</SwiperSlide>
-
-						{allUsers
-							.map(user => (
-								<SwiperSlide key={user.id}>
-									<div className='flex flex-col items-center gap-[5px]'>
-										<img
-											src={`${api}images/${user?.receiveUserImage}`}
-											alt={user.userName}
-											className='w-[75px] h-[75px] object-cover rounded-full border border-gray-300 bg-gray-200'
-										/>
-										<p className='text-[11px] text-gray-600'>{user.receiveUserName}</p>
-									</div>
-								</SwiperSlide>
-							))}
+						{allUsers.map(user => (
+							<SwiperSlide key={user.id}>
+								<div className='flex flex-col items-center gap-[5px]'>
+									<img
+										src={`${api}images/${user?.receiveUserImage}`}
+										alt={user.userName}
+										className='w-[75px] h-[75px] object-cover rounded-full border border-gray-300 bg-gray-200'
+									/>
+									<p className='text-[11px] text-gray-600'>
+										{user.receiveUserName}
+									</p>
+								</div>
+							</SwiperSlide>
+						))}
 					</Swiper>
 				</section>
 				<section className='flex items-center justify-between'>
@@ -66,13 +89,34 @@ console.log(userId.sid);
 					<p className='text-gray-500 text-[14px]'>Запросы</p>
 				</section>
 				<section className='overflow-y-scroll scrollbar-hide flex flex-col gap-[20px] pr-[4px]'>
-					{allUsers
-						.map(el => (
-							<Link href={`/chats/${el.chatId}`} key={el.id}>
+					{search ? (
+						<div>
+							{userByNameForSearch.map(el => (
 								<div
 									key={el.id}
 									className='flex items-center gap-[10px] cursor-pointer hover:bg-gray-100 p-[6px] rounded-lg transition'
-									onClick={() => localStorage.setItem('userName', el.receiveUserName)}
+									onClick={() => handleCreateChat(el.id)}
+								>
+									<img
+										src={`${api}images/${el.avatar}`}
+										alt={el.userName}
+										className='w-[60px] h-[60px] rounded-full object-cover border border-gray-300 bg-gray-200'
+									/>
+									<div className='flex flex-col'>
+										<b className='text-[15px]'>{el.userName}</b>
+										<p className='text-[13px] text-gray-500'>Новое сообщение</p>
+									</div>
+								</div>
+							))}
+						</div>
+					) : (
+						allUsers.map(el => (
+							<Link href={`/chats/${el.chatId}`} key={el.id}>
+								<div
+									className='flex items-center gap-[10px] cursor-pointer hover:bg-gray-100 p-[6px] rounded-lg transition'
+									onClick={() =>
+										localStorage.setItem('userName', el.receiveUserName)
+									}
 								>
 									<img
 										src={`${api}images/${el.receiveUserImage}`}
@@ -81,11 +125,15 @@ console.log(userId.sid);
 									/>
 									<div className='flex flex-col'>
 										<b className='text-[15px]'>{el.receiveUserName}</b>
-										<p className='text-[13px] text-gray-500'>Новое сообщение</p>
+										<p className='text-[13px] text-gray-500'>
+											{lastMessages?.[el.chatId]?.messageText ||
+												'Новое сообщение'}
+										</p>
 									</div>
 								</div>
 							</Link>
-						))}
+						))
+					)}
 				</section>
 			</aside>
 		</>
