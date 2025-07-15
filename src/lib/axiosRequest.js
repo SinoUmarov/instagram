@@ -1,9 +1,11 @@
 "use client";
 
+import { API } from "@/utils/config";
 import axios from "axios";
+import { API } from './api'
 
 const axiosRequest = axios.create({
-  baseURL: "http://37.27.29.18:8003",
+  baseURL: API
 });
 
 // 🔐 Илова кардани токен ба ҳар запрос
