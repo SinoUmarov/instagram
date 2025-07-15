@@ -3,3 +3,6 @@ export default function DefaultChat(){
 		<h1>Page default chat</h1>
 	</>
 }
+
+
+
