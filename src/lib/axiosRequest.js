@@ -3,7 +3,7 @@
 import axios from "axios";
 
 const axiosRequest = axios.create({
-  baseURL: "https://instagram-api.softclub.tj/",
+  baseURL: "http://37.27.29.18:8003",
 });
 
 // 🔐 Илова кардани токен ба ҳар запрос
