@@ -1,21 +1,21 @@
 'use client'
-import { useState, useEffect, useRef } from 'react'
-import { useParams, useRouter } from 'next/navigation'
-import { api } from '@/api/pages/chat/utils/axios-reguest'
+import { api, userId } from '@/api/pages/chat/utils/axios-reguest'
 import DefaultChatComponent from '@/components/pages/chat/pages/default-chat/default-chat'
+import useVoiceRecorder from '@/hook/use-vois-recorder'
 import useChat from '@/store/pages/chat/pages/default-chat/default-chat'
+import EmojiPicker from 'emoji-picker-react'
 import {
 	Heart,
-	Info,
+	Image,
 	Mic,
 	Phone,
 	Smile,
 	Sticker,
-	Video,
-	Image,
 	Trash,
+	Video,
 } from 'lucide-react'
-import EmojiPicker from 'emoji-picker-react'
+import { useParams, useRouter } from 'next/navigation'
+import { useEffect, useRef, useState } from 'react'
 
 export default function ChatById() {
 	const router = useRouter()
@@ -29,12 +29,31 @@ export default function ChatById() {
 		getUserByName,
 		sendMessege,
 		delChatById,
-		delMessageById
+		delMessageById,
 	} = useChat()
 
 	const [file, setFile] = useState(null)
 	const fileInputRef = useRef(null)
 	const messagesEndRef = useRef(null)
+	const { isRecording, startRecording, stopRecording } = useVoiceRecorder()
+
+	const handleMicClick = () => {
+		if (!isRecording) {
+			startRecording()
+		} else {
+			stopRecording(async audioBlob => {
+				const formData = new FormData()
+				formData.append('ChatId', params['chat-by-id'])
+				formData.append('File', audioBlob, 'voice-message.webm')
+
+				try {
+					await sendMessege(formData)
+				} catch (err) {
+					console.error('Ошибка при отправке голосового сообщения:', err)
+				}
+			})
+		}
+	}
 
 	function handleDelChat() {
 		delChatById(params['chat-by-id'])
@@ -113,7 +132,9 @@ export default function ChatById() {
 						<aside className='flex items-center gap-[20px]'>
 							<Phone className='w-[25px] h-[25px]' />
 							<Video className='w-[30px] h-[30px]' />
-							<Info className='w-[25px] h-[25px]' />
+							<div className='cursor-pointer' onClick={() => handleDelChat()}>
+								<Trash className='w-[25px] h-[25px]' />
+							</div>
 						</aside>
 					</nav>
 					<section className='h-[75vh] overflow-y-auto p-4 flex flex-col gap-3'>
@@ -222,61 +243,77 @@ export default function ChatById() {
 					</aside>
 				</nav>
 				<section className='h-[75vh] overflow-y-auto px-6 py-4 flex flex-col gap-4 bg-gray-50'>
-	{[...chatById]?.reverse()?.map((msg, idx) => {
-		const isMe = msg.userId === userByName?.id
-		return (
-			<div
-				key={msg.messageId}
-				className={`flex ${isMe ? 'justify-end' : 'justify-start'} items-end gap-3`}
-			>
-				{!isMe && (
-					<img
-						src={api + 'images/' + msg.userImage}
-						alt='avatar'
-						className='w-8 h-8 rounded-full object-cover border border-gray-300'
-					/>
-				)}
+			{[...chatById]?.reverse()?.map(msg => {
+				const isMe = msg.userId === userId.sid
 
-				<div className='flex flex-col items-end gap-1 max-w-[70%]'>
-					<div className='flex items-end gap-1'>
-						<div
-							className={`px-4 py-2 rounded-2xl text-sm shadow-sm ${
-								isMe
-									? 'bg-blue-500 text-white rounded-br-none'
-									: 'bg-white text-gray-900 border border-gray-200 rounded-bl-none'
-							}`}
-						>
-							<p className='whitespace-pre-line break-words'>{msg.messageText}</p>
-						</div>
-						{isMe && <Trash className='w-4 h-4 text-gray-300 hover:text-red-500 cursor-pointer' onClick={() => delMessageById(msg.messageId, params['chat-by-id'])}/>}
-					</div>
-
-					{msg.file && (
-						<img
-							src={api + 'images/' + msg.file}
-							alt='attachment'
-							className='w-[220px] h-auto rounded-2xl shadow-md object-cover border border-gray-200'
-						/>
-					)}
-
-					<span
-						className={`text-[10px] mt-1 ${
-							isMe ? 'text-gray-400 pr-1' : 'text-gray-500 pl-1'
-						}`}
+				return (
+					<div
+						key={msg.messageId}
+						className={`flex ${isMe ? 'justify-end' : 'justify-start'} items-end gap-3`}
 					>
-						{new Date(msg.sendMassageDate).toLocaleTimeString([], {
-							hour: '2-digit',
-							minute: '2-digit',
-						})}
-					</span>
-				</div>
-			</div>
-		)
-	})}
-	<div ref={messagesEndRef} />
-</section>
+						{!isMe && (
+							<img
+								src={api + 'images/' + msg.userImage}
+								alt='avatar'
+								className='w-8 h-8 rounded-full object-cover border border-gray-300'
+							/>
+						)}
 
+						<div className='flex flex-col items-end gap-1 max-w-[70%]'>
+							<div className='flex items-end gap-1'>
+								{msg.messageText && (
+									<div
+										className={`px-4 py-2 rounded-2xl text-sm shadow-sm ${
+											isMe
+												? 'bg-blue-500 text-white rounded-br-none'
+												: 'bg-white text-gray-900 border border-gray-200 rounded-bl-none'
+										}`}
+									>
+										<p className='whitespace-pre-line break-words'>{msg.messageText}</p>
+									</div>
+								)}
 
+								{msg.file?.endsWith('.webm') && (
+									<div className='rounded-3xl text-sm shadow-sm flex items-center gap-3 w-[220px]'>
+										<audio controls className='w-full'>
+											<source src={api + 'images/' + msg.file} type='audio/webm' />
+											Ваш браузер не поддерживает аудио
+										</audio>
+									</div>
+								)}
+
+								{isMe && (
+									<Trash
+										className='w-4 h-4 text-gray-300 hover:text-red-500 cursor-pointer'
+										onClick={() => delMessageById(msg.messageId, params['chat-by-id'])}
+									/>
+								)}
+							</div>
+
+							{msg.file && !msg.file.endsWith('.webm') && (
+								<img
+									src={api + 'images/' + msg.file}
+									alt='attachment'
+									className='w-[220px] h-auto rounded-2xl shadow-md object-cover border border-gray-200'
+								/>
+							)}
+
+							<span
+								className={`text-[10px] mt-1 ${
+									isMe ? 'text-gray-400 pr-1' : 'text-gray-500 pl-1'
+								}`}
+							>
+								{new Date(msg.sendMassageDate).toLocaleTimeString([], {
+									hour: '2-digit',
+									minute: '2-digit',
+								})}
+							</span>
+						</div>
+					</div>
+				)
+			})}
+			<div ref={messagesEndRef} />
+		</section>
 				<footer className='p-4'>
 					<section className='relative gap-2 border-3 border-gray-100 py-1 px-4 rounded-[25px] flex items-center bg-white shadow-md justify-between'>
 						<form
@@ -316,7 +353,13 @@ export default function ChatById() {
 							</aside>
 
 							<aside className='flex gap-3 w-[15%]'>
-								<Mic />
+								<Mic
+									className={`cursor-pointer ${
+										isRecording ? 'text-red-500 animate-pulse' : ''
+									}`}
+									onClick={handleMicClick}
+								/>
+
 								<Image className='cursor-pointer' onClick={openFileDialog} />
 								<Sticker />
 								<Heart />

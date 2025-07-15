@@ -10,6 +10,7 @@ export const useChat = create((set, get) => ({
 	userByName: [],
 	userByNameForSearch: [],
 	lastMessages: {},
+	myFollowers: [],
 	getUserProfile: async id => {
 		try {
 			const { data } = await axios.get(
@@ -157,6 +158,18 @@ export const useChat = create((set, get) => ({
 			console.error('Ошибка при получении последних сообщений:', error)
 		}
 	},
+	getMyFollowers: async id => {
+		try {
+			const {data} = await axios.get('http://37.27.29.18:8003/FollowingRelationShip/get-subscribers?UserId=' + id, {
+				headers: {
+					"Authorization": `Bearer ${localStorage.getItem('access_token')}`
+				}
+			})
+			set({myFollowers: data.data})
+		} catch (error) {
+			console.error(error);
+		}
+	}
 }))
 
 export default useChat
