@@ -10,9 +10,7 @@ export const useUser = create((set) => ({
 
   getUsers: async () => {
     try {
-      const { data } = await axiosRequest.get(`/User/get-users`, {
-        headers: {Authorization: `Bearer ${token}`}
-      });
+      const { data } = await axiosRequest.get(`/User/get-users`);
       set({ users: data.data });
     } catch (error) {
       console.error(error);
@@ -21,9 +19,7 @@ export const useUser = create((set) => ({
 
   getStories: async () => {
     try {
-      const {data} = await axiosRequest.get(`/Story/get-stories`, {
-        headers: {Authorization: `Bearer ${token}`}
-      })
+      const {data} = await axiosRequest.get(`/Story/get-stories`)
       set({stories: data})
     } catch (error) {
       console.error(error);
@@ -32,9 +28,7 @@ export const useUser = create((set) => ({
 
   getPosts: async () => {
     try {
-      const {data} =  await axiosRequest.get(`/Post/get-posts`, {
-        headers: {Authorization: `Bearer ${token}`}
-      }) 
+      const {data} =  await axiosRequest.get(`/Post/get-posts`) 
       set({posts: data?.data})
       console.log('post: ', data?.data)
     } catch (error) {
