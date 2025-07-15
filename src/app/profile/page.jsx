@@ -1,7 +1,11 @@
+import Profiles from "@/components/pages/profile/profile/profile";
+
 export default function Profile() {
 	return (
 		<>
-			<h1>Page profile</h1>
+			<div>
+				<Profiles/>
+			</div>
 		</>
 	)
 }

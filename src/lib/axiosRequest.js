@@ -1,9 +1,10 @@
 "use client";
 
+import { API } from "@/utils/config";
 import axios from "axios";
 
 const axiosRequest = axios.create({
-  baseURL: "https://instagram-api.softclub.tj/",
+  baseURL: API
 });
 
 // 🔐 Илова кардани токен ба ҳар запрос
