@@ -1,64 +1,87 @@
-import axiosReguest, { userId }  from '@/api/pages/chat/utils/axios-reguest'
-import token  from '@/api/pages/chat/utils/axios-reguest'
-import axios from 'axios'
-import { create } from 'zustand'
+	// import { userId } from '@/api/pages/chat/utils/axios-reguest'
+	// import token from '@/api/pages/chat/utils/axios-reguest'
+	import axios from 'axios'
+	import { create } from 'zustand'
 
-export const useChat = create((set, get) => ({
-	userProfile: [],
-	allUsers: [],
-	chatById: [],
-	userByName: [],
-	getUserProfile: async () => {
-		try {
-			const { data } = await axios.get(
-				`http://37.27.29.18:8003/UserProfile/get-user-profile-by-id?id=${userId.sid}`,
-				{
+	export const useChat = create((set, get) => ({
+		userProfile: [],
+		allUsers: [],
+		chatById: [],
+		userByName: [],
+		getUserProfile: async (id) => {
+			try {
+				const { data } = await axios.get(
+					`http://37.27.29.18:8003/UserProfile/get-user-profile-by-id?id=${id}`,
+					{
+						headers: {
+							Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+						},
+					}
+				)
+				
+				set({ userProfile: data.data })
+			} catch (error) {
+				console.error(error)
+			}
+		},
+		getAllUsers: async () => {
+			try {
+				const { data } = await axios.get(
+					'http://37.27.29.18:8003/Chat/get-chats',
+					{
+						headers: {
+							Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+						},
+					}
+				)
+				set({ allUsers: data.data })
+			} catch (error) {
+				console.error(error)
+			}
+		},
+		getChatById: async user => {
+			try {
+				const { data } = await axios.get(
+					'http://37.27.29.18:8003/Chat/get-chat-by-id?chatId=' + user,
+					{
+						headers: {
+							Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+						},
+					}
+				)
+				set({ chatById: data.data })
+			} catch (error) {
+				console.error(error)
+			}
+		},
+		getUserByName: async userName => {
+			try {
+				const { data } = await axios.get(
+					'http://37.27.29.18:8003/User/get-users?UserName=' + userName,
+					{
+						headers: {
+							Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+						},
+					}
+				)
+				set({ userByName: data.data[0] })
+			} catch (error) {
+				console.error(error)
+			}
+		},
+		sendMessege: async formData => {
+			try {
+				await axios.put('http://37.27.29.18:8003/Chat/send-message', formData, {
 					headers: {
-						Authorization: `Bearer ${localStorage.getItem('token')}`,
+						Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+						'Content-Type': 'multipart/form-data',
 					},
-				}
-			)
-			set({ userProfile: data.data })
-		} catch (error) {
-			console.error(error)
-		}
-	},
-	getAllUsers: async () => {
-		try {
-			const { data } = await axios.get('http://37.27.29.18:8003/Chat/get-chats', {
-				headers: {
-					'Authorization': `Bearer ${localStorage.getItem('token')}`,
-				}
-			})
-			set({allUsers: data.data})
-		} catch (error) {
-			console.error(error);
-		}
-	},
-	getChatById: async (user) => {
-		try {
-			const { data } = await axios.get('http://37.27.29.18:8003/Chat/get-chat-by-id?chatId=' + user, {
-				headers: {
-					'Authorization': `Bearer ${localStorage.getItem('token')}`,
-				}
-			})
-			set({chatById: data.data})
-		} catch (error) {
-			console.error(error);
-		}
-	},
-	getUserByName: async (userName) => {
-		try {
-			const { data } = await axios.get('http://37.27.29.18:8003/User/get-users?UserName=' + userName, {
-				headers: {
-					"Authorization": `Bearer ${localStorage.getItem('token')}`
-				}
-			})
-			set({userByName: data.data[0]})
-		} catch (error) {
-			console.error(error);
-		}
-	}
-}))
+				})
+				get().getChatById(formData.get('ChatId'))
+			} catch (error) {
+				console.error(error)
+			}
+		},
+	}))
 
-export default useChat
+	export default useChat
