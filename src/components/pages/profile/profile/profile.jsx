@@ -14,7 +14,6 @@ const Profiles = () => {
   return (
     <div className="w-full bg-white px-4">
       <div className="w-full max-w-[900px] mx-auto flex flex-col sm:flex-row items-start sm:items-center gap-6 sm:gap-12 py-4">
-        {/* Аватар */}
         <div className="w-29 h-28 sm:w-42 sm:h-34  rounded-[50%] overflow-hidden border border-gray-300">
           {user?.image ? (
             <img

@@ -1,4 +1,5 @@
 import { API } from '@/lib/api'
+import axiosRequest from '@/lib/axiosRequest'
 import axios from 'axios'
 import { create } from 'zustand'
 const token =
@@ -7,8 +8,8 @@ export const useReelsPage = create((set, get) => ({
 	data: [],
 	getReels: async () => {
 		try {
-			let { data } = await axios.get(
-				`${API}/Post/get-reels?PageSize=1000`,{
+			let { data } = await axiosRequest.get(
+				`/Post/get-reels?PageSize=1000`,{
 					headers:{
 						Authorization:`Bearer ${token}`
 					}
