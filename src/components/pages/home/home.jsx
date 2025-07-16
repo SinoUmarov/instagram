@@ -52,16 +52,19 @@ export default function Home() {
 
     const diffDays = differenceInDays(now, published);
     return `${diffDays}d`;
+    
   }
 
   return (
     <>
       <main className="w-full sm:w-[620px] sm:mx-[50px] px-2">
+
         <div className="relative py-4">
           {/* Стрелкаи чап */}
+
           <div
             ref={prevRef}
-            className="swiper_button_prev hidden sm:flex absolute left-[10px] top-[50px] -translate-y-1/2 z-10 p-2 bg-white rounded-full shadow-md cursor-pointer hover:bg-gray-100 transition"
+            className="swiper_button_prev hidden sm:flex absolute left-[11px] top-[50px] -translate-y-1/2 z-10 p-2 bg-white rounded-full shadow-md cursor-pointer hover:bg-gray-100 transition"
           >
             <ChevronLeft size={20} />
           </div>
@@ -152,7 +155,7 @@ export default function Home() {
                             {post.userName}
                           </p>
                           <p className="text-[14px] font-medium text-[#475569] truncate">
-                            Profil
+                            Profil 
                           </p>
                         </div>
                       </div>

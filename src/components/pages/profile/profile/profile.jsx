@@ -2,22 +2,23 @@
 import { useProfileStore } from "@/store/pages/profile/profile/store-profile";
 import React, { useEffect } from "react";
 import Stories from "../story/story";
+import { jwtDecode } from "jwt-decode";
 
 const Profiles = () => {
-  const { user, getUserProfile, getInfo, info } = useProfileStore();
+  const { getInfo, info } = useProfileStore();
+  let decode = jwtDecode(localStorage.getItem('access_token'))
 
   useEffect(() => {
-    getUserProfile();
-    getInfo();
+    getInfo(decode.sid);
   }, []);
 
   return (
     <div className="w-full bg-white px-4">
-      <div className="w-full max-w-[900px] mx-auto flex flex-col sm:flex-row items-start sm:items-center gap-6 sm:gap-12 py-4">
-        <div className="w-29 h-28 sm:w-42 sm:h-34  rounded-[50%] overflow-hidden border border-gray-300">
-          {user?.image ? (
+      <div className="w-full max-w-[900px] mx-auto flex  sm:flex-row items-start sm:items-center gap-6 sm:gap-12 py-4">
+        <div className="w-45 h-30 sm:w-42 sm:h-34  rounded-[50%] overflow-hidden border border-gray-300">
+          {info?.image ? (
             <img
-              src={`http://37.27.29.18:8003/images/${user.image}`}
+              src={`http://37.27.29.18:8003/images/${info.image}`}
               alt="User avatar"
               className="w-full h-full object-cover"
             />
@@ -30,7 +31,7 @@ const Profiles = () => {
 
         <div className="flex flex-col gap-2 sm:gap-3 w-full">
           <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
-            <h2 className="text-xl font-semibold">{user?.userName || "Username"}</h2>
+            <h2 className="text-xl font-semibold">{info?.userName || "Username"}</h2>
             <div className="flex gap-2">
               <button className="bg-gray-100 px-4 py-1 rounded-md text-sm">
                 Edit profile
