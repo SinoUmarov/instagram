@@ -1,18 +1,42 @@
 'use client'
+// import { api, userId } from '@/api/pages/chat/utils/axios-reguest'
 import { api, userId } from '@/api/pages/chat/utils/axios-reguest'
 import useChat from '@/store/pages/chat/pages/default-chat/default-chat'
 import { Search, SquarePen } from 'lucide-react'
-import { useEffect } from 'react'
-import { Swiper, SwiperSlide } from 'swiper/react'
-import 'swiper/css'
 import Link from 'next/link'
+import { useEffect, useState } from 'react'
+import 'swiper/css'
+import { Swiper, SwiperSlide } from 'swiper/react'
 
 export default function DefaultChatComponent() {
-	const { userProfile, getUserProfile, allUsers, getAllUsers, userByName, getUserByName } = useChat()
+	const {
+		userProfile,
+		getUserProfile,
+		allUsers,
+		getAllUsers,
+		chatById,
+		getUserByNameForSearch,
+		userByNameForSearch,
+		createChat,
+		getLastMessages,
+		lastMessages,
+	} = useChat()
+	const [search, setSearch] = useState('')
+
+	function handleCreateChat(id) {
+		createChat(id)
+		setSearch('')
+	}
+
+	function handleSearch(e) {
+		setSearch(e.value)
+		getUserByNameForSearch(e.value)
+	}
 
 	useEffect(() => {
-		getUserProfile()
+		getUserProfile(userId.sid)
 		getAllUsers()
+		getLastMessages(18)
 	}, [])
 
 	return (
@@ -28,6 +52,8 @@ export default function DefaultChatComponent() {
 						type='text'
 						placeholder='Поиск'
 						className='outline-none w-full bg-transparent text-[14px] placeholder-gray-500'
+						value={search}
+						onChange={e => handleSearch(e.target)}
 					/>
 				</section>
 				<section className='w-full'>
@@ -42,21 +68,28 @@ export default function DefaultChatComponent() {
 								<p className='text-[11px] text-gray-600'>Ваша заметка</p>
 							</div>
 						</SwiperSlide>
+						{allUsers.map(user => {
+							const isMeSender = user.sendUserId === userId.sid
+							const companionName = isMeSender
+								? user.receiveUserName
+								: user.sendUserName
+							const companionImage = isMeSender
+								? user.receiveUserImage
+								: user.sendUserImage
 
-						{allUsers
-							.filter(user => user.id !== userId.sid)
-							.map(user => (
-								<SwiperSlide key={user.id}>
+							return (
+								<SwiperSlide key={user.chatId}>
 									<div className='flex flex-col items-center gap-[5px]'>
 										<img
-											src={`${api}images/${user?.receiveUserImage}`}
-											alt={user.userName}
+											src={`${api}images/${companionImage}`}
+											alt={companionName}
 											className='w-[75px] h-[75px] object-cover rounded-full border border-gray-300 bg-gray-200'
 										/>
-										<p className='text-[11px] text-gray-600'>{user.receiveUserName}</p>
+										<p className='text-[11px] text-gray-600'>{companionName}</p>
 									</div>
 								</SwiperSlide>
-							))}
+							)
+						})}
 					</Swiper>
 				</section>
 				<section className='flex items-center justify-between'>
@@ -64,27 +97,61 @@ export default function DefaultChatComponent() {
 					<p className='text-gray-500 text-[14px]'>Запросы</p>
 				</section>
 				<section className='overflow-y-scroll scrollbar-hide flex flex-col gap-[20px] pr-[4px]'>
-					{allUsers
-						.filter(user => user.id !== userId.sid)
-						.map(el => (
-							<Link href={`/chats/${el.chatId}`} key={el.id}>
+					{search ? (
+						<div>
+							{userByNameForSearch.map(el => (
 								<div
 									key={el.id}
 									className='flex items-center gap-[10px] cursor-pointer hover:bg-gray-100 p-[6px] rounded-lg transition'
-									onClick={() => getUserByName(el.receiveUserName)}
+									onClick={() => handleCreateChat(el.id)}
 								>
 									<img
-										src={`${api}images/${el.receiveUserImage}`}
-										alt={el.receiveUserName}
+										src={`${api}images/${el.avatar}`}
+										alt={el.userName}
 										className='w-[60px] h-[60px] rounded-full object-cover border border-gray-300 bg-gray-200'
 									/>
 									<div className='flex flex-col'>
-										<b className='text-[15px]'>{el.receiveUserName}</b>
+										<b className='text-[15px]'>{el.userName}</b>
 										<p className='text-[13px] text-gray-500'>Новое сообщение</p>
 									</div>
 								</div>
-							</Link>
-						))}
+							))}
+						</div>
+					) : (
+						allUsers.map(el => {
+							const isMeSender = el.sendUserId === userId.sid
+							const companionName = isMeSender
+								? el.receiveUserName
+								: el.sendUserName
+							const companionImage = isMeSender
+								? el.receiveUserImage
+								: el.sendUserImage
+
+							return (
+								<Link href={`/chats/${el.chatId}`} key={el.chatId}>
+									<div
+										className='flex items-center gap-[10px] cursor-pointer hover:bg-gray-100 p-[6px] rounded-lg transition'
+										onClick={() =>
+											localStorage.setItem('userName', companionName)
+										}
+									>
+										<img
+											src={`${api}images/${companionImage}`}
+											alt={companionName}
+											className='w-[60px] h-[60px] rounded-full object-cover border border-gray-300 bg-gray-200'
+										/>
+										<div className='flex flex-col'>
+											<b className='text-[15px]'>{companionName}</b>
+											<p className='text-[13px] text-gray-500'>
+												{lastMessages?.[el.chatId]?.messageText ||
+													'Новое сообщение'}
+											</p>
+										</div>
+									</div>
+								</Link>
+							)
+						})
+					)}
 				</section>
 			</aside>
 		</>
