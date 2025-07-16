@@ -22,6 +22,8 @@ export default function Home() {
   const nextRef = useRef(null);
   const { users, getUsers, stories, getStories, posts, getPosts } = useUser();
 
+  console.log('posts: ', posts)
+
   useEffect(() => {
     getUsers();
     getStories();
@@ -41,6 +43,7 @@ export default function Home() {
     }
   }, []);
 
+  // function baroi vaqti post kardanro nishon medihad
   function formatShortTime(date) {
     const now = Date.now();
     const published = new Date(date);
@@ -123,7 +126,10 @@ export default function Home() {
         <div className="flex flex-col gap-5 py-5  ">
           {posts.map((post) => {
             return (
-              <section key={post.postId} className="border-b border-[#f0f0f0] pb-2 ">
+              <section
+                key={post.postId}
+                className="border-b border-[#f0f0f0] pb-2 "
+              >
                 <div className="flex flex-col gap-3">
                   <div className="flex justify-between items-center">
                     <div className="flex gap-2 items-start">
@@ -191,6 +197,7 @@ export default function Home() {
                     commentCount={post.commentCount}
                     comments={post.comments}
                     datePublished={post.datePublished}
+                    postId={post.postId}
                   />
                 </div>
               </section>
