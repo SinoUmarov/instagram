@@ -16,14 +16,14 @@ import {
   differenceInMinutes,
 } from "date-fns";
 
+
 export default function Home() {
   const swiperRef = useRef(null);
   const prevRef = useRef(null);
   const nextRef = useRef(null);
-  const { users, getUsers, stories, getStories, posts, getPosts } = useUser();
+  const {stories, getStories, posts, getPosts } = useUser();
 
   useEffect(() => {
-    getUsers();
     getStories();
     getPosts();
   }, []);

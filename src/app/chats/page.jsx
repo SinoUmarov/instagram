@@ -22,10 +22,10 @@ export default function DefaultChat() {
 
 	return (
 		<section className='w-[100%] h-[100vh] flex'>
-			<aside className='w-[30%]'>
+			<aside className='lg:w-[30%] w-[97%]'>
 				<DefaultChatComponent></DefaultChatComponent>
 			</aside>
-			<aside className='w-[70%] flex flex-col items-center justify-center gap-[10px]'>
+			<aside className='w-[70%] hidden lg:flex flex-col items-center justify-center gap-[10px]'>
 				<div className='border-4 border-[black] rounded-[50%] p-[15px]'>
 					<MessageCircleHeart className='w-[55px] h-[55px]' />
 				</div>
