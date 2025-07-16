@@ -8,6 +8,7 @@ import { useState } from "react";
 import { IconButton } from "@mui/material";
 import { formatDistanceToNow } from "date-fns";
 import { usePostActions } from "@/store/pages/home/post-actions/post-actions";
+import Comments from "../comments/comments";
 
 export default function PostActions({
   liked,

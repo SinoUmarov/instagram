@@ -38,10 +38,7 @@ import { jwtDecode } from 'jwt-decode'
 
 const token =
 	typeof window !== 'undefined' ? localStorage.getItem('access_token') : null
-
-
 const tokenForJwt = localStorage.getItem('access_token')
-
 export const userId = jwtDecode(tokenForJwt)
 
 export const axiosRequest = axios.create({
