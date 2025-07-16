@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useTranslation } from 'react-i18next'
 import Profile from '@/assets/icon/layout/instagramDefaultProfile.jpg'
-import { Menu, MenuItem } from '@mui/material'
+import { Button, Menu, MenuItem } from '@mui/material'
 import { usePathname, useRouter } from 'next/navigation'
 import Image from 'next/image'
 
@@ -30,6 +30,7 @@ import {
 // } from '@/assets/icon/layout/svg';
 import { useProfileStore } from '@/store/pages/profile/profile/store-profile'
 import { API } from '@/utils/config'
+import { useSearchStore } from '@/store/search/searchStore'
 
 
 const NavLink = ({ href, icon, activeIcon, label, isActive }) => (
@@ -45,6 +46,9 @@ const NavLink = ({ href, icon, activeIcon, label, isActive }) => (
 
 export default function SideBar({ children }) {
 
+  const { openSide, toggleOpen } = useSearchStore()
+
+
   const { getInfo, info } = useProfileStore()
   const pathname = usePathname()
   const [anchorEl, setAnchorEl] = useState(null)
@@ -58,7 +62,6 @@ export default function SideBar({ children }) {
   const handleClose = () => {
     setAnchorEl(null)
   }
-  // const isActive = (path) => pathname === path ? 'font-bold' : 'font-normal'
 
   // ! Checking for login
 
@@ -66,17 +69,8 @@ export default function SideBar({ children }) {
 
   const router = useRouter()
 
-
-
-
-
-
-
   const isActive = (path) => pathname === path ? 'font-bold' : 'font-normal'
   const isAuthPage = pathname === '/login' || pathname === '/registration'
-
-
-
 
   useEffect(() => {
 
@@ -103,7 +97,32 @@ export default function SideBar({ children }) {
             <div className="flex flex-col justify-between h-full">
               <div className="flex flex-col gap-2 mt-4">
                 <NavLink href="/" icon={homeIcon} activeIcon={homeIconActive} label={t('layout.home')} isActive={isActive} />
-                <NavLink href="/search" icon={searchIcon} activeIcon={searchIconActive} label={t('layout.search')} isActive={isActive} />
+
+                <Button
+                  onClick={() => toggleOpen(true)}
+                  startIcon={searchIconActive}
+                  fullWidth
+                  disableElevation
+                  variant="text"
+                  sx={{
+                    justifyContent: 'flex-start',
+                    padding: '12px 16px',
+                    borderRadius: '8px',
+                    height: '52px',
+                    fontSize: '18.5px',
+                    color: '#111',
+                    textTransform: 'none',
+                    '&:hover': {
+                      backgroundColor: '#f3f4f6',
+                    },
+                    width: '90%',
+                    margin: '0 auto',
+                    gap: '10px',
+
+                  }}
+                >
+                  {t('layout.search')}
+                </Button>
                 <NavLink href="/explore" icon={compas} activeIcon={compasActive} label={t('layout.explore')} isActive={isActive} />
                 <NavLink href="/reels" icon={video} activeIcon={videoActive} label={t('layout.reels')} isActive={isActive} />
                 <NavLink href="/chats" icon={message} activeIcon={messageActive} label={t('layout.message')} isActive={isActive} />

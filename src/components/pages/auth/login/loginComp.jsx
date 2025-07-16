@@ -189,7 +189,7 @@ export default function LoginComp() {
 					<div className='flex justify-center mb-6'>
 						<Image src={logo} alt='Instagram' className='w-36' />
 					</div>
-
+		
 					<form className='space-y-4' onSubmit={handleLogin}>
 						<input
 							required
@@ -244,7 +244,7 @@ export default function LoginComp() {
 					</div>
 
 					<div className='text-center mt-6 border-t pt-4 text-sm text-gray-600'>
-						Don't have an account?{' '}
+						Don't have an account?
 						<Link href='/registration' className='text-blue-600 font-medium hover:underline'>
 							Sign up
 						</Link>
