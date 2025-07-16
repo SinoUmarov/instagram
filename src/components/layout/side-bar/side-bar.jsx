@@ -63,6 +63,8 @@ export default function SideBar({ children }) {
 
   const isActive = (path) => (pathname === path ? "font-bold" : "font-normal");
 
+   let isAuthPage=null
+   
   return (
 
     <div>
