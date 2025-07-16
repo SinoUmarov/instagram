@@ -8,16 +8,20 @@ import { ChevronLeft, ChevronRight, Ellipsis } from "lucide-react";
 import "swiper/css";
 import "swiper/css/navigation";
 import { useUser } from "@/store/pages/home/home";
-import instagramDefaultProfile from '#/icon/layout/instagramDefaultProfile.jpg'
-
-
+import instagramDefaultProfile from "#/icon/layout/instagramDefaultProfile.jpg";
+import PostActions from "./post-actions/post-actions";
+import {
+  differenceInHours,
+  differenceInDays,
+  differenceInMinutes,
+} from "date-fns";
 
 export default function Home() {
   const swiperRef = useRef(null);
   const prevRef = useRef(null);
   const nextRef = useRef(null);
   const { users, getUsers, stories, getStories, posts, getPosts } = useUser();
-  console.log("posts: ", posts);
+
   useEffect(() => {
     getUsers();
     getStories();
@@ -37,11 +41,23 @@ export default function Home() {
     }
   }, []);
 
-  console.log('sories: ', stories)
+  function formatShortTime(date) {
+    const now = Date.now();
+    const published = new Date(date);
+    const diffMins = differenceInMinutes(now, published);
+    if (diffMins < 60) return `${diffMins}m`;
+
+    const diffHours = differenceInHours(now, published);
+    if (diffHours < 24) return `${diffHours}h`;
+
+    const diffDays = differenceInDays(now, published);
+    return `${diffDays}d`;
+  }
+
   return (
     <>
       <main className="w-[620px] mx-[50px]">
-        <div className="relative  px-4 py-4 border-b border-[#f0f0f0] ">
+        <div className="relative  px-4 py-4 ">
           {/* Стрелкаи чап */}
           <div
             ref={prevRef}
@@ -67,14 +83,24 @@ export default function Home() {
                 key={story.userId}
                 className="!w-[72px] flex flex-col items-center text-center"
               >
-                <div className={`rounded-full ${story.stories > 0 ? 'bg-gradient-to-br  from-pink-500 to-yellow-400' : 'bg-transparent'}   p-[2px] cursor-pointer`}>
+                <div
+                  className={`rounded-full ${
+                    story.stories > 0
+                      ? "bg-gradient-to-br  from-pink-500 to-yellow-400"
+                      : "bg-transparent"
+                  }   p-[2px] cursor-pointer`}
+                >
                   <div className="bg-white rounded-full p-[3px]">
                     <Image
-                      src={story.userImage ? `http://37.27.29.18:8003/images/${story.userImage}` : instagramDefaultProfile }
-                      alt='story'
+                      src={
+                        story.userImage
+                          ? `http://37.27.29.18:8003/images/${story.userImage}`
+                          : instagramDefaultProfile
+                      }
+                      alt="story"
                       className="imgStory rounded-full w-full object-cover"
                       width={56}
-                      height={56} 
+                      height={56}
                     />
                   </div>
                 </div>
@@ -94,59 +120,82 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="flex flex-col gap-5 py-5">
-          {posts.map((post) => (
-            <div key={post.postId} className="flex flex-col gap-3">
-              <div className="flex justify-between items-center">
-                <div className="flex items-center gap-2">
-                  <div className="rounded-full bg-gradient-to-br from-pink-500 to-yellow-400 p-[2px] cursor-pointer">
-                    <div className="bg-white rounded-full p-[3px]">
-                      <Image
-                      // `http://37.27.29.18:8003/images/${post.userImage}`
-                        src={post.userImage ? `http://37.27.29.18:8003/images/${post.userImage}` : instagramDefaultProfile}
-                        alt="story"
-                        className="rounded-full object-cover h-[32px]"
-                        width={32}
-                        height={32}
-                      />
+        <div className="flex flex-col gap-5 py-5  ">
+          {posts.map((post) => {
+            return (
+              <section key={post.postId} className="border-b border-[#f0f0f0] pb-2 ">
+                <div className="flex flex-col gap-3">
+                  <div className="flex justify-between items-center">
+                    <div className="flex gap-2 items-start">
+                      <div className="flex items-center gap-2">
+                        <div className="rounded-full bg-gradient-to-br from-pink-500 to-yellow-400 p-[2px] cursor-pointer">
+                          <div className="bg-white rounded-full p-[3px]">
+                            <Image
+                              src={
+                                post.userImage
+                                  ? `http://37.27.29.18:8003/images/${post.userImage}`
+                                  : instagramDefaultProfile
+                              }
+                              alt="story"
+                              className="rounded-full object-cover h-[32px]"
+                              width={32}
+                              height={32}
+                            />
+                          </div>
+                        </div>
+
+                        <div className=" flex flex-col ">
+                          <p className="text-[14px] font-semibold text-[#1E293B] truncate ">
+                            {post.userName}
+                          </p>
+                          <p className="text-[14px] font-medium text-[#475569]  truncate ">
+                            Profil
+                          </p>
+                        </div>
+                      </div>
+
+                      <p className="tracking-wider text-[14px] text-[#737373] font-medium">
+                        {[formatShortTime(post.datePublished)]}
+                      </p>
                     </div>
+
+                    <Ellipsis />
                   </div>
-                  <div className=" flex flex-col ">
-                    <p className="text-[14px] font-semibold text-[#1E293B] truncate ">
-                      {post.userName}
-                    </p>
-                    <p className="text-[14px] font-medium text-[#475569]  truncate ">
-                      Profil
-                    </p>
+
+                  <div className="w-[620px]">
+                    {post.images?.[0]?.endsWith(".mp4") ? (
+                      <video controls className="imgOfHome rounded-[10px] mt-2">
+                        <source
+                          src={`http://37.27.29.18:8003/images/${post.images[0]}`}
+                          type="video/mp4"
+                        />
+                      </video>
+                    ) : (
+                      <Image
+                        src={`http://37.27.29.18:8003/images/${post.images[0]}`}
+                        alt="story"
+                        className="imgOfHome object-cover rounded-[10px] "
+                        width={620}
+                        height={614}
+                      />
+                    )}
                   </div>
                 </div>
-
-                <Ellipsis />
-              </div>
-
-              <div className="w-[620px]">
-                {post.images?.[0]?.endsWith(".mp4") ? (
-                  <video
-                    controls
-                    className="imgOfHome rounded-[10px] mt-2"
-                  >
-                    <source
-                      src={`http://37.27.29.18:8003/images/${post.images[0]}`}
-                      type="video/mp4"
-                    />
-                  </video>
-                ) : (
-                  <Image
-                    src={`http://37.27.29.18:8003/images/${post.images[0]}`}
-                    alt="story"
-                    className="imgOfHome object-cover rounded-[10px] "
-                    width={620}
-                    height={614}
+                <div>
+                  <PostActions
+                    liked={post.postLike}
+                    saved={post.postFavorite}
+                    likeCount={post.postLikeCount}
+                    userName={post.userName}
+                    content={post.content}
+                    commentCount={post.commentCount}
+                    comments={post.comments}
+                    datePublished={post.datePublished}
                   />
-                )}
-              </div>
-            </div>
-          ))}
+                </div>
+              </section>
+            );
+          })}
         </div>
       </main>
     </>
