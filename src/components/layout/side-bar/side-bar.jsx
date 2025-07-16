@@ -39,7 +39,7 @@ const NavLink = ({ href, icon, activeIcon, label, isActive }) => (
     {isActive(href) ? activeIcon : icon}
     <p className="text-lg">{label}</p>
   </Link>
-);
+)
 
 export default function SideBar({ children }) {
   const { getInfo, info } = useProfileStore();
@@ -49,8 +49,8 @@ export default function SideBar({ children }) {
   const { t } = useTranslation();
 
   const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
+    setAnchorEl(event.currentTarget)
+  }
 
   const handleClose = () => {
     setAnchorEl(null);
@@ -64,50 +64,52 @@ export default function SideBar({ children }) {
   const isActive = (path) => (pathname === path ? "font-bold" : "font-normal");
 
   return (
+
     <div>
-      <section className="w-[320px] h-[100%] fixed  border-r-2 border-gray-300">
-        <div className="sideBar h-full pb-[100px]">
-          <div className="m-auto pt-[20px] ml-[20px] flex pb-[10px] mt-[20px]">
-            {homeIcon}
-          </div>
-          <div className="flex flex-col justify-between h-full">
-            <div className="flex flex-col gap-2 mt-4">
-              <NavLink
+      {!isAuthPage && (
+        <section className="w-[320px] h-[100%] fixed  border-r-2 border-gray-300">
+          <div className="sideBar h-full pb-[100px]">
+            <div className="m-auto pt-[20px] ml-[20px] flex pb-[10px] mt-[20px]">
+              {homeIcon}
+            </div>
+            <div className="flex flex-col justify-between h-full">
+              <div className="flex flex-col gap-2 mt-4">
+                <NavLink
                 href="/"
                 icon={homeIcon}
                 activeIcon={homeIconActive}
                 label={t("layout.home")}
                 isActive={isActive}
               />
-              <NavLink
+                <NavLink
                 href="/search"
                 icon={searchIcon}
                 activeIcon={searchIconActive}
                 label={t("layout.search")}
                 isActive={isActive}
               />
-              <NavLink
+                <NavLink
                 href="/explore"
                 icon={compas}
                 activeIcon={compasActive}
                 label={t("layout.explore")}
                 isActive={isActive}
               />
-              <NavLink
+                <NavLink
                 href="/reels"
                 icon={video}
                 activeIcon={videoActive}
                 label={t("layout.reels")}
                 isActive={isActive}
               />
-              <NavLink
+                <NavLink
                 href="/chats"
                 icon={message}
                 activeIcon={messageActive}
                 label={t("layout.message")}
                 isActive={isActive}
               />
-              <NavLink
+                <NavLink
                 href="/notification"
                 icon={like}
                 activeIcon={likeActive}
@@ -169,8 +171,10 @@ export default function SideBar({ children }) {
           </div>
         </div>
       </section>
-
+      )}
       <div className="ml-[320px]">{children}</div>
     </div>
-  );
+
+
+                )
 }

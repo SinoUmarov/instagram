@@ -22,6 +22,7 @@ import { useEffect } from "react";
 export default function BottomNavigation({ children }) {
   const pathname = usePathname();
 
+
   // Define reusable classes
   const iconClass =
     "flex items-center gap-4 rounded-[8px] h-[52px] px-0 m-[0] justify-center";
@@ -49,8 +50,14 @@ export default function BottomNavigation({ children }) {
     }
   }, []);
 
+
+
+
   return (
-    <div>
+
+
+    <>
+
       {children}
       <section className="fixed w-[100%] z-[10] bottom-0">
         <div className="flex gap-[0.5rem] mt-4 align-bottom bg-white justify-evenly">
@@ -111,6 +118,8 @@ export default function BottomNavigation({ children }) {
           </Link>
         </div>
       </section>
-    </div>
-  );
+  
+    </>
+
+  )
 }
