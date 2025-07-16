@@ -1,44 +1,53 @@
-// store/usePostStore.js
+'use client';
 import { create } from 'zustand';
+import axios from 'axios';
+
+const API_URL = 'http://37.27.29.18:8003/post/add-post';
 
 const usePostStore = create((set, get) => ({
   image: null,
   caption: '',
   loading: false,
-  error: null,
+  error: '',
   success: false,
 
   setImage: (file) => set({ image: file }),
   setCaption: (text) => set({ caption: text }),
+
   reset: () =>
-    set({ image: null, caption: '', loading: false, error: null, success: false }),
+    set({
+      image: null,
+      caption: '',
+      loading: false,
+      error: '',
+      success: false,
+    }),
 
   uploadPost: async () => {
-    const { image, caption, reset } = get();
+    const { image, caption } = get();
 
-    if (!image || !caption) {
-      set({ error: 'Фото и описание обязательны.' });
+    if (!image) {
+      set({ error: 'Please,update photo.' });
       return;
     }
 
-    const formData = new FormData();
-    formData.append('image', image);
-    formData.append('caption', caption);
+    set({ loading: true, error: '', success: false });
 
     try {
-      set({ loading: true, error: null, success: false });
+      const formData = new FormData();
+      formData.append('name', caption || 'Без подписи');
+      formData.append('avatar', image); 
 
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/posts`, {
-        method: 'POST',
-        body: formData,
+      await axios.post(API_URL, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
       });
 
-      if (!res.ok) throw new Error('Ошибка при публикации');
-
       set({ success: true });
-      reset(); // сбрасываем только поля image/caption
     } catch (err) {
-      set({ error: err.message });
+      console.error(err);
+      set({ error: 'error is loading......' });
     } finally {
       set({ loading: false });
     }
