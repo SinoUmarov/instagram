@@ -1,11 +1,11 @@
 "use client"
-import { useState } from 'react';
-import Link from 'next/link';
-import { useTranslation } from 'react-i18next';
-import Profile from '@/assets/icon/layout/instagramDefaultProfile.jpg';
-import { Menu, MenuItem } from '@mui/material';
-import { usePathname } from 'next/navigation';
-import Image from 'next/image';
+import { useEffect, useState } from 'react'
+import Link from 'next/link'
+import { useTranslation } from 'react-i18next'
+import Profile from '@/assets/icon/layout/instagramDefaultProfile.jpg'
+import { Menu, MenuItem } from '@mui/material'
+import { usePathname, useRouter } from 'next/navigation'
+import Image from 'next/image'
 import {
   homeIcon,
   homeIconActive,
@@ -24,7 +24,7 @@ import {
   savedIcon,
   problemIcon,
   threads,
-} from '@/assets/icon/layout/svg';
+} from '@/assets/icon/layout/svg'
 
 
 const NavLink = ({ href, icon, activeIcon, label, isActive }) => (
@@ -35,27 +35,52 @@ const NavLink = ({ href, icon, activeIcon, label, isActive }) => (
     {isActive(href) ? activeIcon : icon}
     <p className="text-lg">{label}</p>
   </Link>
-);
+)
 
 
 export default function SideBar({ children }) {
-  const pathname = usePathname();
-  const [anchorEl, setAnchorEl] = useState(null);
-  const open = Boolean(anchorEl);
-  const { t } = useTranslation();
+  const pathname = usePathname()
+  const router = useRouter()
+  const [anchorEl, setAnchorEl] = useState(null)
+  const open = Boolean(anchorEl)
+  const { t } = useTranslation()
 
   const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
+    setAnchorEl(event.currentTarget)
+  }
 
   const handleClose = () => {
-    setAnchorEl(null);
-  };
+    setAnchorEl(null)
+  }
+  const isActive = (path) => pathname === path ? 'font-bold' : 'font-normal'
 
-  const isActive = (path) => pathname === path ? 'font-bold' : 'font-normal';
+  // ! Checking for login
+
+  const [token, setToken] = useState(null)
+
+  // setToken = localStorage.getItem('access_token')
+
+  useEffect(() => {
+
+    const accessToken = localStorage.getItem('access_token')
+    setToken(accessToken)
+    if (!accessToken && pathname !== '/login' && pathname !== '/registration') {
+      router.push('/login')
+    }
+
+  }, [pathname, router])
+
+
+
+  if (pathname === '/login' || pathname === '/registration') {
+    return <>{children}</>
+  }
+
 
   return (
+
     <div>
+
       <section className="w-[320px] h-[100%] fixed  border-r-2 border-gray-300">
         <div className="sideBar h-full pb-[100px]">
           <div className="m-auto pt-[20px] ml-[20px] flex pb-[10px] mt-[20px]">
@@ -95,7 +120,7 @@ export default function SideBar({ children }) {
                 anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
                 transformOrigin={{ vertical: 'top', horizontal: 'center' }}
               >
-               
+
               </Menu>
             </div>
           </div>
@@ -106,5 +131,5 @@ export default function SideBar({ children }) {
         {children}
       </div>
     </div>
-  );
+  )
 }
