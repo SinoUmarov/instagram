@@ -22,8 +22,6 @@ export default function Home() {
   const nextRef = useRef(null);
   const { users, getUsers, stories, getStories, posts, getPosts } = useUser();
 
-  console.log('posts: ', posts)
-
   useEffect(() => {
     getUsers();
     getStories();
@@ -43,7 +41,6 @@ export default function Home() {
     }
   }, []);
 
-  // function baroi vaqti post kardanro nishon medihad
   function formatShortTime(date) {
     const now = Date.now();
     const published = new Date(date);
@@ -59,12 +56,12 @@ export default function Home() {
 
   return (
     <>
-      <main className="w-[620px] mx-[50px]">
-        <div className="relative  px-4 py-4 ">
+      <main className="w-full sm:w-[620px] sm:mx-[50px] px-2">
+        <div className="relative py-4">
           {/* Стрелкаи чап */}
           <div
             ref={prevRef}
-            className="swiper_button_prev absolute left-[30px] top-[50px] -translate-y-1/2 z-10 p-2 bg-white rounded-full shadow-md cursor-pointer hover:bg-gray-100 transition"
+            className="swiper_button_prev hidden sm:flex absolute left-[10px] top-[50px] -translate-y-1/2 z-10 p-2 bg-white rounded-full shadow-md cursor-pointer hover:bg-gray-100 transition"
           >
             <ChevronLeft size={20} />
           </div>
@@ -84,14 +81,14 @@ export default function Home() {
             {stories.map((story) => (
               <SwiperSlide
                 key={story.userId}
-                className="!w-[72px] flex flex-col items-center text-center"
+                className="!w-[64px] sm:!w-[72px] flex flex-col items-center text-center"
               >
                 <div
                   className={`rounded-full ${
                     story.stories > 0
                       ? "bg-gradient-to-br  from-pink-500 to-yellow-400"
                       : "bg-transparent"
-                  }   p-[2px] cursor-pointer`}
+                  } p-[2px] cursor-pointer`}
                 >
                   <div className="bg-white rounded-full p-[3px]">
                     <Image
@@ -117,18 +114,18 @@ export default function Home() {
           {/* Стрелкаи рост */}
           <div
             ref={nextRef}
-            className="swiper_button_next absolute right-[40px] top-[50px] -translate-y-1/2 z-10 p-2 bg-white rounded-full shadow-md cursor-pointer hover:bg-gray-100 transition"
+            className="swiper_button_next hidden sm:flex absolute right-[10px] top-[50px] -translate-y-1/2 z-10 p-2 bg-white rounded-full shadow-md cursor-pointer hover:bg-gray-100 transition"
           >
             <ChevronRight size={24} />
           </div>
         </div>
 
-        <div className="flex flex-col gap-5 py-5  ">
+        <div className="flex flex-col gap-5 py-5">
           {posts.map((post) => {
             return (
               <section
                 key={post.postId}
-                className="border-b border-[#f0f0f0] pb-2 "
+                className="border-b border-[#f0f0f0] pb-2"
               >
                 <div className="flex flex-col gap-3">
                   <div className="flex justify-between items-center">
@@ -150,27 +147,30 @@ export default function Home() {
                           </div>
                         </div>
 
-                        <div className=" flex flex-col ">
-                          <p className="text-[14px] font-semibold text-[#1E293B] truncate ">
+                        <div className="flex flex-col">
+                          <p className="text-[14px] font-semibold text-[#1E293B] truncate">
                             {post.userName}
                           </p>
-                          <p className="text-[14px] font-medium text-[#475569]  truncate ">
+                          <p className="text-[14px] font-medium text-[#475569] truncate">
                             Profil
                           </p>
                         </div>
                       </div>
 
                       <p className="tracking-wider text-[14px] text-[#737373] font-medium">
-                        {[formatShortTime(post.datePublished)]}
+                        {formatShortTime(post.datePublished)}
                       </p>
                     </div>
 
                     <Ellipsis />
                   </div>
 
-                  <div className="w-[620px]">
+                  <div className="w-full sm:w-[620px]">
                     {post.images?.[0]?.endsWith(".mp4") ? (
-                      <video controls className="imgOfHome rounded-[10px] mt-2">
+                      <video
+                        controls
+                        className="imgOfHome rounded-[10px] mt-2 w-full"
+                      >
                         <source
                           src={`http://37.27.29.18:8003/images/${post.images[0]}`}
                           type="video/mp4"
@@ -180,7 +180,7 @@ export default function Home() {
                       <Image
                         src={`http://37.27.29.18:8003/images/${post.images[0]}`}
                         alt="story"
-                        className="imgOfHome object-cover rounded-[10px] "
+                        className="imgOfHome object-cover rounded-[10px] w-full"
                         width={620}
                         height={614}
                       />

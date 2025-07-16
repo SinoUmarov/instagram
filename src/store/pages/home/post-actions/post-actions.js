@@ -1,5 +1,4 @@
-// import { axiosRequest } from "@/api/pages/chat/utils/axios-reguest";
-import axiosRequest from '@/lib/axiosRequest'
+import axiosRequest from "@/lib/axiosRequest";
 import { create } from "zustand";
 
 export const usePostActions = create(() => ({
