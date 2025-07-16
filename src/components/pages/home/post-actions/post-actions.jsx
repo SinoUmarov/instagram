@@ -7,6 +7,8 @@ import BookmarkIcon from "@mui/icons-material/Bookmark";
 import { useState } from "react";
 import { IconButton } from "@mui/material";
 import { formatDistanceToNow } from "date-fns";
+import { usePostActions } from "@/store/pages/home/post-actions/post-actions";
+import Comments from "../comments/comments";
 
 export default function PostActions({
   liked,
@@ -17,20 +19,25 @@ export default function PostActions({
   commentCount,
   comment,
   datePublished,
+  postId,
 }) {
   const [isLiked, setIsLiked] = useState(liked);
   const [isSaved, setIsSaved] = useState(saved);
   const [likes, setLikes] = useState(likeCount);
+  const { likePost, addPostFavorite } = usePostActions();
 
   const toggleSave = () => {
     setIsSaved(!isSaved);
+    addPostFavorite(postId)
   };
 
   const toggleLike = () => {
     setIsLiked(!isLiked);
     setLikes((prev) => (isLiked ? prev - 1 : prev + 1));
+    likePost(postId);
   };
 
+  // function baroi vaqti post kardanro nishon medihad
   const rawTime = formatDistanceToNow(new Date(datePublished), {
     addSuffix: true,
   });
@@ -41,7 +48,7 @@ export default function PostActions({
       {/* Иконаҳо */}
       <div className="flex justify-between items-center">
         <div className="flex gap-1">
-          <IconButton color="error" onClick={toggleLike}>
+          <IconButton color="error" onClick={() => toggleLike(postId)}>
             {isLiked ? (
               <FavoriteIcon />
             ) : (
@@ -55,7 +62,7 @@ export default function PostActions({
         <IconButton
           className="cursor-pointer"
           style={{ color: "black" }}
-          onClick={toggleSave}
+          onClick={() => toggleSave(postId)}
         >
           {isSaved ? <BookmarkIcon /> : <TurnedInNotIcon />}
         </IconButton>

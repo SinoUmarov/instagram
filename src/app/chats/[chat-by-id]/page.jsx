@@ -36,6 +36,7 @@ export default function ChatById() {
 	const fileInputRef = useRef(null)
 	const messagesEndRef = useRef(null)
 	const { isRecording, startRecording, stopRecording } = useVoiceRecorder()
+	
 
 	const handleMicClick = () => {
 		if (!isRecording) {
@@ -71,7 +72,6 @@ export default function ChatById() {
 
 	function handleFileChange(e) {
 		const selectedFile = e.target.files[0]
-		console.log('Selected file:', selectedFile)
 		if (selectedFile) {
 			setFile(selectedFile)
 		}
@@ -221,7 +221,7 @@ export default function ChatById() {
 			<aside className='w-[30%] hidden lg:block'>
 				<DefaultChatComponent />
 			</aside>
-			<section className='w-[70%] relative'>
+			<section className='lg:w-[70%] w-[100%] relative'>
 				<nav className='p-4 bg-white border-b border-gray-200 flex justify-between items-center'>
 					<aside className='flex items-center gap-3'>
 						<img
@@ -242,78 +242,87 @@ export default function ChatById() {
 						</div>
 					</aside>
 				</nav>
-				<section className='h-[75vh] overflow-y-auto px-6 py-4 flex flex-col gap-4 bg-gray-50'>
-			{[...chatById]?.reverse()?.map(msg => {
-				const isMe = msg.userId === userId.sid
+				<section className='md:h-[75vh] h-[70vh] overflow-y-auto px-6 py-4 flex flex-col gap-4 bg-gray-50'>
+					{[...chatById]?.reverse()?.map(msg => {
+						const isMe = msg.userId === userId.sid
 
-				return (
-					<div
-						key={msg.messageId}
-						className={`flex ${isMe ? 'justify-end' : 'justify-start'} items-end gap-3`}
-					>
-						{!isMe && (
-							<img
-								src={api + 'images/' + msg.userImage}
-								alt='avatar'
-								className='w-8 h-8 rounded-full object-cover border border-gray-300'
-							/>
-						)}
-
-						<div className='flex flex-col items-end gap-1 max-w-[70%]'>
-							<div className='flex items-end gap-1'>
-								{msg.messageText && (
-									<div
-										className={`px-4 py-2 rounded-2xl text-sm shadow-sm ${
-											isMe
-												? 'bg-blue-500 text-white rounded-br-none'
-												: 'bg-white text-gray-900 border border-gray-200 rounded-bl-none'
-										}`}
-									>
-										<p className='whitespace-pre-line break-words'>{msg.messageText}</p>
-									</div>
-								)}
-
-								{msg.file?.endsWith('.webm') && (
-									<div className='rounded-3xl text-sm shadow-sm flex items-center gap-3 w-[220px]'>
-										<audio controls className='w-full'>
-											<source src={api + 'images/' + msg.file} type='audio/webm' />
-											Ваш браузер не поддерживает аудио
-										</audio>
-									</div>
-								)}
-
-								{isMe && (
-									<Trash
-										className='w-4 h-4 text-gray-300 hover:text-red-500 cursor-pointer'
-										onClick={() => delMessageById(msg.messageId, params['chat-by-id'])}
+						return (
+							<div
+								key={msg.messageId}
+								className={`flex ${
+									isMe ? 'justify-end' : 'justify-start'
+								} items-end gap-3`}
+							>
+								{!isMe && (
+									<img
+										src={api + 'images/' + msg.userImage}
+										alt='avatar'
+										className='w-8 h-8 rounded-full object-cover border border-gray-300'
 									/>
 								)}
+
+								<div className='flex flex-col items-end gap-1 max-w-[70%]'>
+									<div className='flex items-end gap-1'>
+										{msg.messageText && (
+											<div
+												className={`px-4 py-2 rounded-2xl text-sm shadow-sm ${
+													isMe
+														? 'bg-blue-500 text-white rounded-br-none'
+														: 'bg-white text-gray-900 border border-gray-200 rounded-bl-none'
+												}`}
+											>
+												<p className='whitespace-pre-line break-words'>
+													{msg.messageText}
+												</p>
+											</div>
+										)}
+
+										{msg.file?.endsWith('.webm') && (
+											<div className='rounded-3xl text-sm shadow-sm flex items-center gap-3 w-[220px]'>
+												<audio controls className='w-full'>
+													<source
+														src={api + 'images/' + msg.file}
+														type='audio/webm'
+													/>
+													Ваш браузер не поддерживает аудио
+												</audio>
+											</div>
+										)}
+
+										{isMe && (
+											<Trash
+												className='w-4 h-4 text-gray-300 hover:text-red-500 cursor-pointer'
+												onClick={() =>
+													delMessageById(msg.messageId, params['chat-by-id'])
+												}
+											/>
+										)}
+									</div>
+
+									{msg.file && !msg.file.endsWith('.webm') && (
+										<img
+											src={api + 'images/' + msg.file}
+											alt='attachment'
+											className='w-[220px] h-auto rounded-2xl shadow-md object-cover border border-gray-200'
+										/>
+									)}
+
+									<span
+										className={`text-[10px] mt-1 ${
+											isMe ? 'text-gray-400 pr-1' : 'text-gray-500 pl-1'
+										}`}
+									>
+										{new Date(msg.sendMassageDate).toLocaleTimeString([], {
+											hour: '2-digit',
+											minute: '2-digit',
+										})}
+									</span>
+								</div>
 							</div>
-
-							{msg.file && !msg.file.endsWith('.webm') && (
-								<img
-									src={api + 'images/' + msg.file}
-									alt='attachment'
-									className='w-[220px] h-auto rounded-2xl shadow-md object-cover border border-gray-200'
-								/>
-							)}
-
-							<span
-								className={`text-[10px] mt-1 ${
-									isMe ? 'text-gray-400 pr-1' : 'text-gray-500 pl-1'
-								}`}
-							>
-								{new Date(msg.sendMassageDate).toLocaleTimeString([], {
-									hour: '2-digit',
-									minute: '2-digit',
-								})}
-							</span>
-						</div>
-					</div>
-				)
-			})}
-			<div ref={messagesEndRef} />
-		</section>
+						)
+					})}
+					<div ref={messagesEndRef} />
+				</section>
 				<footer className='p-4'>
 					<section className='relative gap-2 border-3 border-gray-100 py-1 px-4 rounded-[25px] flex items-center bg-white shadow-md justify-between'>
 						<form
@@ -327,6 +336,7 @@ export default function ChatById() {
 								style={{ display: 'none' }}
 								onChange={handleFileChange}
 							/>
+
 							<aside className='flex items-center w-[85%] gap-1 relative'>
 								<Smile
 									className='cursor-pointer'
@@ -361,8 +371,22 @@ export default function ChatById() {
 								/>
 
 								<Image className='cursor-pointer' onClick={openFileDialog} />
-								<Sticker />
-								<Heart />
+									<Sticker />
+								<div
+									className='cursor-pointer'
+									onClick={async () => {
+										const formData = new FormData()
+										formData.append('ChatId', params['chat-by-id'])
+										formData.append('MessageText', '❤️')
+										try {
+											await sendMessege(formData)
+										} catch (err) {
+											console.error('Ошибка при отправке сердечка:', err)
+										}
+									}}
+								>
+									<Heart />
+								</div>
 							</aside>
 						</form>
 					</section>
