@@ -1,21 +1,24 @@
 "use client"
 import Profile from '@/assets/icon/layout/instagramDefaultProfile.jpg'
 import {
-	add,
-	compas,
-	compasActive,
-	homeIcon,
-	homeIconActive,
-	message,
-	messageActive,
-	video,
-	videoActive,
+  add,
+  compas,
+  compasActive,
+  homeIcon,
+  homeIconActive,
+  message,
+  messageActive,
+  video,
+  videoActive,
 } from '@/assets/icon/layout/svg'
 import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
-export default function BottomNavigation({children}) {
+
+// const token = localStorage.getItem('access_token')
+
+export default function BottomNavigation({ children }) {
   const pathname = usePathname()
 
   // Define reusable classes
@@ -24,15 +27,20 @@ export default function BottomNavigation({children}) {
 
   // Map of pathnames to icons
   const icons = {
-    '/': { active:homeIcon , inactive:  homeIconActive},
-    '/explore': { active: compas, inactive:  compasActive},
-    '/reels': { active: video, inactive:  videoActive},
-    '/chats': { active: message, inactive:  messageActive},
+    '/': { active: homeIcon, inactive: homeIconActive },
+    '/explore': { active: compas, inactive: compasActive },
+    '/reels': { active: video, inactive: videoActive },
+    '/chats': { active: message, inactive: messageActive },
     '/profile': { active: Profile, inactive: Profile }, // No icon state, just border logic
   }
 
+
+
   return (
-    <div>
+
+
+    <>
+
       {children}
       <section className="fixed w-[100%] z-[10] bottom-0">
         <div className="flex gap-[0.5rem] mt-4 align-bottom bg-white justify-evenly">
@@ -81,6 +89,7 @@ export default function BottomNavigation({children}) {
           </Link>
         </div>
       </section>
-    </div>
+    </>
+
   )
 }
