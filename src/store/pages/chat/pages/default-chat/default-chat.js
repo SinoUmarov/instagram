@@ -54,7 +54,7 @@ export const useChat = create((set, get) => ({
 					"Authorization": `Bearer ${localStorage.getItem('token')}`
 				}
 			})
-			set({userByName: data})
+			set({userByName: data.data[0]})
 		} catch (error) {
 			console.error(error);
 		}
