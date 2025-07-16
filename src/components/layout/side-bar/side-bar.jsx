@@ -1,11 +1,13 @@
 "use client"
-import { useEffect, useState } from 'react';
-import Link from 'next/link';
-import { useTranslation } from 'react-i18next';
-import Profile from '@/assets/icon/layout/instagramDefaultProfile.jpg';
-import { Menu, MenuItem } from '@mui/material';
-import { usePathname } from 'next/navigation';
-import Image from 'next/image';
+
+import { useEffect, useState } from 'react'
+import Link from 'next/link'
+import { useTranslation } from 'react-i18next'
+import Profile from '@/assets/icon/layout/instagramDefaultProfile.jpg'
+import { Menu, MenuItem } from '@mui/material'
+import { usePathname, useRouter } from 'next/navigation'
+import Image from 'next/image'
+
 import {
   homeIcon,
   homeIconActive,
@@ -24,9 +26,10 @@ import {
   savedIcon,
   problemIcon,
   threads,
-} from '@/assets/icon/layout/svg';
-import { useProfileStore } from '@/store/pages/profile/profile/store-profile';
-import { API } from '@/utils/config';
+} from '@/assets/icon/layout/svg'
+// } from '@/assets/icon/layout/svg';
+import { useProfileStore } from '@/store/pages/profile/profile/store-profile'
+import { API } from '@/utils/config'
 
 
 const NavLink = ({ href, icon, activeIcon, label, isActive }) => (
@@ -37,89 +40,114 @@ const NavLink = ({ href, icon, activeIcon, label, isActive }) => (
     {isActive(href) ? activeIcon : icon}
     <p className="text-lg">{label}</p>
   </Link>
-);
+)
 
 
 export default function SideBar({ children }) {
 
-  const {getInfo,info} = useProfileStore()
-  const pathname = usePathname();
-  const [anchorEl, setAnchorEl] = useState(null);
-  const open = Boolean(anchorEl);
-  const { t } = useTranslation();
+  const { getInfo, info } = useProfileStore()
+  const pathname = usePathname()
+  const [anchorEl, setAnchorEl] = useState(null)
+  const open = Boolean(anchorEl)
+  const { t } = useTranslation()
 
   const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
+    setAnchorEl(event.currentTarget)
+  }
 
   const handleClose = () => {
-    setAnchorEl(null);
-  };
+    setAnchorEl(null)
+  }
+  // const isActive = (path) => pathname === path ? 'font-bold' : 'font-normal'
+
+  // ! Checking for login
+
+  const [token, setToken] = useState(null)
+
+  const router = useRouter()
+
+
+
+
+
+
+
+  const isActive = (path) => pathname === path ? 'font-bold' : 'font-normal'
+  const isAuthPage = pathname === '/login' || pathname === '/registration'
+
+
+
+
+  useEffect(() => {
+
+    const accessToken = localStorage.getItem('access_token')
+    setToken(accessToken)
+    if (!accessToken && pathname !== '/login' && pathname !== '/registration') {
+      router.push('/login')
+    }
+
+  }, [pathname, router])
 
   useEffect(() => {
     getInfo()
-    
-    
-  }, []);
-  console.log('dddd',info);
-  
-
-  const isActive = (path) => pathname === path ? 'font-bold' : 'font-normal';
-
+  }, [])
   return (
+
     <div>
-      <section className="w-[320px] h-[100%] fixed  border-r-2 border-gray-300">
-        <div className="sideBar h-full pb-[100px]">
-          <div className="m-auto pt-[20px] ml-[20px] flex pb-[10px] mt-[20px]">
-            {homeIcon}
-          </div>
-          <div className="flex flex-col justify-between h-full">
-            <div className="flex flex-col gap-2 mt-4">
-              <NavLink href="/" icon={homeIcon} activeIcon={homeIconActive} label={t('layout.home')} isActive={isActive} />
-              <NavLink href="/search" icon={searchIcon} activeIcon={searchIconActive} label={t('layout.search')} isActive={isActive} />
-              <NavLink href="/explore" icon={compas} activeIcon={compasActive} label={t('layout.explore')} isActive={isActive} />
-              <NavLink href="/reels" icon={video} activeIcon={videoActive} label={t('layout.reels')} isActive={isActive} />
-              <NavLink href="/chats" icon={message} activeIcon={messageActive} label={t('layout.message')} isActive={isActive} />
-              <NavLink href="/notification" icon={like} activeIcon={likeActive} label={t('layout.notification')} isActive={isActive} />
+      {!isAuthPage && (
+        <section className="w-[320px] h-[100%] fixed  border-r-2 border-gray-300">
+          <div className="sideBar h-full pb-[100px]">
+            <div className="m-auto pt-[20px] ml-[20px] flex pb-[10px] mt-[20px]">
+              {homeIcon}
+            </div>
+            <div className="flex flex-col justify-between h-full">
+              <div className="flex flex-col gap-2 mt-4">
+                <NavLink href="/" icon={homeIcon} activeIcon={homeIconActive} label={t('layout.home')} isActive={isActive} />
+                <NavLink href="/search" icon={searchIcon} activeIcon={searchIconActive} label={t('layout.search')} isActive={isActive} />
+                <NavLink href="/explore" icon={compas} activeIcon={compasActive} label={t('layout.explore')} isActive={isActive} />
+                <NavLink href="/reels" icon={video} activeIcon={videoActive} label={t('layout.reels')} isActive={isActive} />
+                <NavLink href="/chats" icon={message} activeIcon={messageActive} label={t('layout.message')} isActive={isActive} />
+                <NavLink href="/notification" icon={like} activeIcon={likeActive} label={t('layout.notification')} isActive={isActive} />
 
-              <div className="flex items-center gap-4 w-[90%] m-auto rounded-md h-[52px] px-4 hover:bg-gray-100 cursor-pointer">
-                {action}
-                <p className="text-lg">{t('layout.create')}</p>
+                <div className="flex items-center gap-4 w-[90%] m-auto rounded-md h-[52px] px-4 hover:bg-gray-100 cursor-pointer">
+                  {action}
+                  <p className="text-lg">{t('layout.create')}</p>
+                </div>
+
+                <div className='flex items-center gap-2 ml-[7%]'>
+                  <img src={`${API}/images/${info?.image}`} className='w-10 h-10 rounded-[50%]' alt="" />
+                  <NavLink href="/profile" icon={<Image className={`${pathname === '/profile' ? 'border-2 border-black rounded-full' : ''} h-10 w-10`} src={Profile} alt="Profile" />} label={t('layout.profile')} isActive={isActive} />
+                </div>
               </div>
 
-              <div className='flex items-center gap-2 ml-[7%]'>
-                <img src={`${API}/images/${info?.image}`} className='w-10 h-10 rounded-[50%]'  alt="" />
-                <NavLink href="/profile" icon={<Image className={`${pathname === '/profile' ? 'border-2 border-black rounded-full' : ''} h-10 w-10`} src={Profile} alt="Profile" />} label={t('layout.profile')} isActive={isActive} />
+              <div className="flex items-center gap-4 w-[90%] m-auto rounded-md h-[52px] px-4 hover:bg-gray-100">
+                {threads}
+                <p className="text-lg">{t('layout.threads')}qdw</p>
+              </div>
+
+              <div className="flex items-center gap-4 w-[90%] m-auto rounded-md h-[52px] px-4 hover:bg-gray-100">
+                <button onClick={handleClick} className="flex gap-5">
+                  {setting}
+                  <p className="text-lg">{t('layout.more')}</p>
+                </button>
+                <Menu
+                  anchorEl={anchorEl}
+                  open={open}
+                  onClose={handleClose}
+                  anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+                  transformOrigin={{ vertical: 'top', horizontal: 'center' }}
+                >
+
+                </Menu>
               </div>
             </div>
-
-            <div className="flex items-center gap-4 w-[90%] m-auto rounded-md h-[52px] px-4 hover:bg-gray-100">
-              {threads}
-              <p className="text-lg">{t('layout.threads')}qdw</p>
-            </div>
-
-            <div className="flex items-center gap-4 w-[90%] m-auto rounded-md h-[52px] px-4 hover:bg-gray-100">
-              <button onClick={handleClick} className="flex gap-5">
-                {setting}
-                <p className="text-lg">{t('layout.more')}</p>
-              </button>
-              <Menu
-                anchorEl={anchorEl}
-                open={open}
-                onClose={handleClose}
-                anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-                transformOrigin={{ vertical: 'top', horizontal: 'center' }}
-              >
-               
-              </Menu>
-            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       <div className="ml-[320px]">
         {children}
       </div>
     </div>
-  );
+  )
 }
