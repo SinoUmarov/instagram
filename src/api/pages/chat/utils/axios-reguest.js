@@ -49,7 +49,7 @@ const token =
 //   }
 // }
 
-// const tokenForJwt = localStorage.getItem('access_token')
+const tokenForJwt = localStorage.getItem('access_token')
 export const userId = jwtDecode(tokenForJwt)
 
 export const axiosRequest = axios.create({
