@@ -28,7 +28,8 @@ export default function Comments({ open, setOpen, postId }) {
 
   console.log("postByID: ", postByID);
   return (
-    <Fragment>
+    <Fragment> 
+      
       <Dialog
         open={open}
         onClose={handleClose}
