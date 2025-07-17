@@ -168,7 +168,7 @@ export default function LoginComp() {
 	return (
 		<section className='min-h-screen flex flex-col md:flex-row md:justify-around items-center justify-center p-6 gap-10'>
 			{/* Левая часть с изображением */}
-			<aside className='hidden md:block'>
+			<aside className='hidden sm:hidden  md:block'>
 				<Image src={phones} alt='phones' className='w-[400px]' />
 				<div className='mt-4 text-center'>
 					<p className='text-sm text-gray-600 mb-2'>Установите приложение</p>
