@@ -15,6 +15,7 @@ import {
   differenceInDays,
   differenceInMinutes,
 } from "date-fns";
+import MyProfil from "./my-profil/my-profil";
 
 
 export default function Home() {
@@ -28,6 +29,7 @@ export default function Home() {
     getPosts();
   }, []);
 
+  
   useEffect(() => {
     if (
       swiperRef.current &&
@@ -41,6 +43,7 @@ export default function Home() {
     }
   }, []);
 
+  // function baroi vaqti post kardanro nishon medihad
   function formatShortTime(date) {
     const now = Date.now();
     const published = new Date(date);
@@ -159,7 +162,7 @@ export default function Home() {
                           </p>
                         </div>
                       </div>
-
+                      {/* <MyProfil/> */}
                       <p className="tracking-wider text-[14px] text-[#737373] font-medium">
                         {formatShortTime(post.datePublished)}
                       </p>
@@ -198,7 +201,6 @@ export default function Home() {
                     userName={post.userName}
                     content={post.content}
                     commentCount={post.commentCount}
-                    comments={post.comments}
                     datePublished={post.datePublished}
                     postId={post.postId}
                   />
