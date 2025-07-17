@@ -17,18 +17,25 @@ export default function PostActions({
   userName,
   content,
   commentCount,
-  comment,
   datePublished,
   postId,
 }) {
   const [isLiked, setIsLiked] = useState(liked);
   const [isSaved, setIsSaved] = useState(saved);
   const [likes, setLikes] = useState(likeCount);
-  const { likePost, addPostFavorite } = usePostActions();
+  const { likePost, addPostFavorite, getPostByID } = usePostActions();
+  const [isCommit, setIsCommit] = useState(false);
+  const [open, setOpen] = useState(false);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+    setIsCommit(!isCommit);
+    getPostByID(postId)
+  };
 
   const toggleSave = () => {
     setIsSaved(!isSaved);
-    addPostFavorite(postId)
+    addPostFavorite(postId);
   };
 
   const toggleLike = () => {
@@ -55,8 +62,14 @@ export default function PostActions({
               <FavoriteBorderIcon className="cursor-pointer text-black" />
             )}
           </IconButton>
-          <ChatBubbleOutlineIcon className="m-2 cursor-pointer" />
-          <SendIcon className="m-2 cursor-pointer" />
+
+          <IconButton onClick={() => handleClickOpen(postId)}>
+            <ChatBubbleOutlineIcon className="m-2 cursor-pointer text-black " />
+          </IconButton>
+
+          <IconButton>
+            <SendIcon className="m-2 cursor-pointer text-black " />
+          </IconButton>
         </div>
 
         <IconButton
@@ -94,6 +107,8 @@ export default function PostActions({
           {timeAgo}
         </p>
       </div>
+
+      {isCommit && <Comments open={open} setOpen={setOpen} postId={postId}/>}
     </div>
   );
 }
