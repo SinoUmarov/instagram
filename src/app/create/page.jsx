@@ -1,9 +1,18 @@
-import React from 'react'
+'use client';
+import React, { useState } from 'react';
+import { Button, Container } from '@mui/material';
+import CreatePostModal from '../../components/createPost/createpost';
 
-export default function page() {
+export default function CreatePage() {
+  const [open, setOpen] = useState(false);
+
   return (
-	 <div>
-		
-	 </div>
-  )
+    <Container sx={{ mt: 5 }}>
+      <Button variant="contained" onClick={() => setOpen(true)}>
+      Create
+      </Button>
+
+      <CreatePostModal open={open} onClose={() => setOpen(false)} />
+    </Container>
+  );
 }

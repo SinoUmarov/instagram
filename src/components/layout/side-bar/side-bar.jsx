@@ -105,6 +105,8 @@ export default function SideBar({ children }) {
   
   return (
 
+
+
     <div>
       {!isAuthPage && (
         <section className="w-[320px] h-[100%] fixed  border-r-2 border-gray-300">
