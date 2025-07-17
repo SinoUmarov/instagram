@@ -1,79 +1,101 @@
 'use client';
-import React, { useRef, useEffect } from 'react';
-import usePostStore from '@/store/usePostStore';
+import React, { useEffect, useRef } from 'react';
+import {
+  Modal, Box, Typography, Button, IconButton,
+  TextField, CircularProgress
+} from '@mui/material';
+import PhotoCamera from '@mui/icons-material/PhotoCamera';
+import CloseIcon from '@mui/icons-material/Close';
+import usePostStore from '../../store/pages/createpost/createpost';
 
-export default function CreatePost() {
+const style = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  bgcolor: 'background.paper',
+  borderRadius: 3,
+  boxShadow: 24,
+  p: 3,
+};
+
+export default function CreatePostModal({ open, onClose }) {
   const {
-    image,
-    caption,
-    setImage,
-    setCaption,
-    uploadPost,
-    loading,
-    error,
-    success,
-    reset,
+    image, caption, setImage, setCaption,
+    uploadPost, loading, error, success, reset
   } = usePostStore();
 
   const inputRef = useRef(null);
 
   useEffect(() => {
     if (success) {
-      alert('Пост опубликован!');
-      inputRef.current.value = null;
+      reset();
+      onClose();
     }
   }, [success]);
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setImage(file);
-    }
-  };
-
-  const handleSubmit = async () => {
-    await uploadPost();
-  };
-
   return (
-    <div className="max-w-md mx-auto p-4 border rounded-lg shadow-md mt-10">
-      <h2 className="text-xl font-bold mb-4">📸 Создать пост</h2>
+    <Modal open={open} onClose={onClose}>
+      <Box sx={style}>
+        <Box display="flex" justifyContent="space-between" alignItems="center">
+          <Typography variant="h6">add create</Typography>
+          <IconButton onClick={onClose}>
+            <CloseIcon />
+          </IconButton>
+        </Box>
 
-      <input
-        ref={inputRef}
-        type="file"
-        accept="image/*"
-        onChange={handleImageChange}
-        className="mb-4"
-      />
-
-      {image && (
-        <div className="mb-4">
-          <img
-            src={URL.createObjectURL(image)}
-            alt="preview"
-            className="rounded w-full max-h-80 object-cover"
+        <Button
+          variant="outlined"
+          component="label"
+          startIcon={<PhotoCamera />}
+          fullWidth
+          sx={{ mt: 2 }}
+        >
+         update photo
+          <input
+            ref={inputRef}
+            type="file"
+            accept="image/*"
+            hidden
+            onChange={(e) => setImage(e.target.files[0])}
           />
-        </div>
-      )}
+        </Button>
 
-      <textarea
-        value={caption}
-        onChange={(e) => setCaption(e.target.value)}
-        placeholder="Добавьте описание..."
-        className="w-full border rounded p-2 mb-4"
-        rows={3}
-      />
+        {image && (
+          <Box mt={2}>
+            <img
+              src={URL.createObjectURL(image)}
+              alt="preview"
+              style={{ width: '100%', borderRadius: 8 }}
+            />
+          </Box>
+        )}
 
-      <button
-        onClick={handleSubmit}
-        disabled={loading}
-        className="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 rounded"
-      >
-        {loading ? 'Публикация...' : 'Опубликовать'}
-      </button>
+        <TextField
+          fullWidth
+          multiline
+          rows={3}
+          placeholder="add title..."
+          value={caption}
+          onChange={(e) => setCaption(e.target.value)}
+          sx={{ mt: 2 }}
+        />
 
-      {error && <p className="text-red-500 mt-2">{error}</p>}
-    </div>
+        <Button
+          fullWidth
+          variant="contained"
+          onClick={uploadPost}
+          disabled={loading}
+          sx={{ mt: 2 }}
+        >
+          {loading ? <CircularProgress size={20} /> : 'posts'}
+        </Button>
+
+        {error && (
+          <Typography color="error" mt={2}>{error}</Typography>
+        )}
+      </Box>
+    </Modal>
   );
 }

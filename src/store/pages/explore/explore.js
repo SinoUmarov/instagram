@@ -11,7 +11,7 @@ const token = localStorage.getItem('token')
 
     getExplore: async () => {
         try {
-            const { data } = await axiosRequest.get(`/Post/get-reels`)
+            const { data } = await axiosRequest.get(`/Post/get-posts`)
             set(()=> ({data: data.data}))
         } catch (error) {
             console.log(error)
