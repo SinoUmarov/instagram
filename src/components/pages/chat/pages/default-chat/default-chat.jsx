@@ -2,11 +2,12 @@
 // import { api, userId } from '@/api/pages/chat/utils/axios-reguest'
 import { api, userId } from '@/api/pages/chat/utils/axios-reguest'
 import useChat from '@/store/pages/chat/pages/default-chat/default-chat'
-import { Search, SquarePen } from 'lucide-react'
+import { Search, SquarePen, User } from 'lucide-react'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import 'swiper/css'
 import { Swiper, SwiperSlide } from 'swiper/react'
+import userProfileImage from '@/assets/icon/pages/chat/pages/default-chat/profil.png'
 
 export default function DefaultChatComponent() {
 	const {
@@ -23,6 +24,17 @@ export default function DefaultChatComponent() {
 	} = useChat()
 	const [search, setSearch] = useState('')
 
+	function formatTimeAgo(timestamp) {
+		const diff = Date.now() - new Date(timestamp)
+		const minutes = Math.floor(diff / 60000)
+		if (minutes < 1) return 'только что'
+		if (minutes < 60) return `${minutes} мин назад`
+		const hours = Math.floor(minutes / 60)
+		if (hours < 24) return `${hours} ч назад`
+		const days = Math.floor(hours / 24)
+		return `${days} д назад`
+	}
+
 	function handleCreateChat(id) {
 		createChat(id)
 		setSearch('')
@@ -34,9 +46,21 @@ export default function DefaultChatComponent() {
 	}
 
 	useEffect(() => {
+		let mounted = true
+
+		async function poll() {
+			if (!mounted) return
+			await getAllUsers()
+			setTimeout(poll, 3000)
+		}
+
 		getUserProfile(userId.sid)
-		getAllUsers()
-		getLastMessages(18)
+		getLastMessages()
+		poll()
+
+		return () => {
+			mounted = false
+		}
 	}, [])
 
 	return (
@@ -80,11 +104,17 @@ export default function DefaultChatComponent() {
 							return (
 								<SwiperSlide key={user.chatId}>
 									<div className='flex flex-col items-center gap-[5px]'>
-										<img
-											src={`${api}images/${companionImage}`}
-											alt={companionName}
-											className='w-[75px] h-[75px] object-cover rounded-full border border-gray-300 bg-gray-200'
-										/>
+										{companionImage ? (
+											<img
+												src={`${api}images/${companionImage}`}
+												alt={companionName}
+												className='w-[75px] h-[75px] object-cover rounded-full border border-gray-300 bg-gray-200'
+											/>
+										) : (
+											<div className='w-[75px] h-[75px] flex items-center justify-center rounded-full border border-gray-300 bg-gray-200'>
+												<User className='text-gray-400' size={40} />
+											</div>
+										)}
 										<p className='text-[11px] text-gray-600'>{companionName}</p>
 									</div>
 								</SwiperSlide>
@@ -96,7 +126,7 @@ export default function DefaultChatComponent() {
 					<b className='text-[17px] font-semibold'>Сообщения</b>
 					<p className='text-gray-500 text-[14px]'>Запросы</p>
 				</section>
-				<section className='overflow-y-scroll scrollbar-hide flex flex-col gap-[20px] pr-[4px]'>
+				<section className='overflow-y-scroll scrollbar-hide flex flex-col gap-[20px] pr-[4px] h-[45%] md:h-[100%]'>
 					{search ? (
 						<div>
 							{userByNameForSearch.map(el => (
@@ -105,14 +135,35 @@ export default function DefaultChatComponent() {
 									className='flex items-center gap-[10px] cursor-pointer hover:bg-gray-100 p-[6px] rounded-lg transition'
 									onClick={() => handleCreateChat(el.id)}
 								>
-									<img
-										src={`${api}images/${el.avatar}`}
-										alt={el.userName}
-										className='w-[60px] h-[60px] rounded-full object-cover border border-gray-300 bg-gray-200'
-									/>
+									{el.avatar ? (
+										<img
+											src={`${api}images/${el.avatar}`}
+											alt={el.userName}
+											className='w-[60px] h-[60px] rounded-full object-cover border border-gray-300 bg-gray-200'
+										/>
+									) : (
+										<div className='w-[60px] h-[60px] flex items-center justify-center rounded-full border border-gray-300 bg-gray-200'>
+											<User className='text-gray-400' size={30} />
+										</div>
+									)}
 									<div className='flex flex-col'>
 										<b className='text-[15px]'>{el.userName}</b>
-										<p className='text-[13px] text-gray-500'>Новое сообщение</p>
+										<div className='w-[100%] flex items-center justify-between'>
+											<p className='text-[13px] text-gray-500'>
+												{lastMessages?.[el.chatId]?.userId === userId.sid
+													? 'Вы: '
+													: 'Он: '}
+												{lastMessages?.[el.chatId]?.messageText ||
+													'Нет сообщений'}
+											</p>
+											<span className='text-[12px] text-gray-400'>
+												{lastMessages?.[el.chatId]?.sendMassageDate
+													? formatTimeAgo(
+															lastMessages[el.chatId].sendMassageDate
+													  )
+													: ''}
+											</span>
+										</div>
 									</div>
 								</div>
 							))}
@@ -132,20 +183,55 @@ export default function DefaultChatComponent() {
 									<div
 										className='flex items-center gap-[10px] cursor-pointer hover:bg-gray-100 p-[6px] rounded-lg transition'
 										onClick={() =>
-											localStorage.setItem('userName', companionName)
+											localStorage.setItem(
+												'userName',
+												el.sendUserId === userId.sid
+													? el.receiveUserName
+													: el.sendUserName
+											)
 										}
 									>
-										<img
-											src={`${api}images/${companionImage}`}
-											alt={companionName}
-											className='w-[60px] h-[60px] rounded-full object-cover border border-gray-300 bg-gray-200'
-										/>
-										<div className='flex flex-col'>
-											<b className='text-[15px]'>{companionName}</b>
-											<p className='text-[13px] text-gray-500'>
-												{lastMessages?.[el.chatId]?.messageText ||
-													'Новое сообщение'}
-											</p>
+										{el.receiveUserImage && el.sendUserImage ? (
+											<img
+												src={`${api}images/${
+													el.sendUserId === userId.sid
+														? el.receiveUserImage
+														: el.sendUserImage
+												}`}
+												alt={
+													el.sendUserId === userId.sid
+														? el.receiveUserName
+														: el.sendUserName
+												}
+												className='w-[60px] h-[60px] rounded-full object-cover border border-gray-300 bg-gray-200'
+											/>
+										) : (
+											<div className='w-[70px] h-[60px] flex items-center justify-center rounded-full border border-gray-300 bg-gray-200'>
+												<User className='text-gray-400' size={30} />
+											</div>
+										)}
+										<div className='flex flex-col w-[100%]'>
+											<b className='text-[15px]'>
+												{el.sendUserId === userId.sid
+													? el.receiveUserName
+													: el.sendUserName}
+											</b>
+											<div className='w-[100%] flex items-center justify-between'>
+												<p className='text-[13px] text-gray-500'>
+													{lastMessages?.[el.chatId]?.userId === userId.sid
+														? 'Вы: '
+														: 'Он: '}
+													{lastMessages?.[el.chatId]?.messageText ||
+														'Новое сообщение'}
+												</p>
+												<span className='text-[12px] text-gray-400'>
+													{lastMessages?.[el.chatId]?.sendMassageDate
+														? formatTimeAgo(
+																lastMessages[el.chatId].sendMassageDate
+														  )
+														: ''}
+												</span>
+											</div>
 										</div>
 									</div>
 								</Link>

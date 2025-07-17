@@ -12,8 +12,11 @@ import {
 	Smile,
 	Sticker,
 	Trash,
+	User,
 	Video,
+	X,
 } from 'lucide-react'
+import Link from 'next/link'
 import { useParams, useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 
@@ -36,7 +39,18 @@ export default function ChatById() {
 	const fileInputRef = useRef(null)
 	const messagesEndRef = useRef(null)
 	const { isRecording, startRecording, stopRecording } = useVoiceRecorder()
-	
+	const [photoModal, setPhotoModal] = useState(false)
+	const [photo, setPhoto] = useState(null)
+
+	function handleClosePhotoModal(){
+		setPhoto(null)
+		setPhotoModal(false)
+	}
+
+	function handleOpenPhotoModal(img){
+		setPhotoModal(true)
+		setPhoto(img)
+	}
 
 	const handleMicClick = () => {
 		if (!isRecording) {
@@ -66,6 +80,13 @@ export default function ChatById() {
 			messagesEndRef.current.scrollIntoView({ behavior: 'smooth' })
 		}
 	}, [chatById])
+	useEffect(() => {
+		const interval = setInterval(() => {
+			getChatById(params['chat-by-id'])
+		}, 3000)
+
+		return () => clearInterval(interval)
+	}, [])
 	function openFileDialog() {
 		fileInputRef.current.click()
 	}
@@ -223,17 +244,25 @@ export default function ChatById() {
 			</aside>
 			<section className='lg:w-[70%] w-[100%] relative'>
 				<nav className='p-4 bg-white border-b border-gray-200 flex justify-between items-center'>
-					<aside className='flex items-center gap-3'>
-						<img
-							src={api + 'images/' + userByName?.avatar}
-							alt='avatar'
-							className='w-[55px] h-[55px] rounded-full object-cover border border-gray-300 bg-gray-200'
-						/>
-						<div>
-							<p className='text-lg font-semibold'>{userByName?.userName}</p>
-							<p className='text-sm text-gray-500'>{userByName?.fullName}</p>
-						</div>
-					</aside>
+					<Link href={`/profil/${userByName?.id}`}>
+						<aside className='flex items-center gap-3'>
+							{userByName?.avatar ? (
+								<img
+									src={api + 'images/' + userByName?.avatar}
+									alt='avatar'
+									className='w-[55px] h-[55px] rounded-full object-cover border border-gray-300 bg-gray-200'
+								/>
+							) : (
+								<div className='w-[60px] h-[60px] flex items-center justify-center rounded-full border border-gray-300 bg-gray-200'>
+									<User className='text-gray-400' size={30} />
+								</div>
+							)}
+							<div>
+								<p className='text-lg font-semibold'>{userByName?.userName}</p>
+								<p className='text-sm text-gray-500'>{userByName?.fullName}</p>
+							</div>
+						</aside>
+					</Link>
 					<aside className='flex items-center gap-[20px]'>
 						<Phone className='w-[25px] h-[25px]' />
 						<Video className='w-[30px] h-[30px]' />
@@ -253,13 +282,18 @@ export default function ChatById() {
 									isMe ? 'justify-end' : 'justify-start'
 								} items-end gap-3`}
 							>
-								{!isMe && (
-									<img
-										src={api + 'images/' + msg.userImage}
-										alt='avatar'
-										className='w-8 h-8 rounded-full object-cover border border-gray-300'
-									/>
-								)}
+								{!isMe &&
+									(msg.userImage ? (
+										<img
+											src={api + 'images/' + msg.userImage}
+											alt='avatar'
+											className='w-8 h-8 rounded-full object-cover border border-gray-300'
+										/>
+									) : (
+										<div className='w-8 h-8 flex items-center justify-center rounded-full border border-gray-300 bg-gray-200'>
+											<User className='text-gray-400' size={16} />
+										</div>
+									))}
 
 								<div className='flex flex-col items-end gap-1 max-w-[70%]'>
 									<div className='flex items-end gap-1'>
@@ -304,6 +338,7 @@ export default function ChatById() {
 											src={api + 'images/' + msg.file}
 											alt='attachment'
 											className='w-[220px] h-auto rounded-2xl shadow-md object-cover border border-gray-200'
+											onClick={() => handleOpenPhotoModal(msg.file)}
 										/>
 									)}
 
@@ -328,27 +363,27 @@ export default function ChatById() {
 						<form
 							onSubmit={handleSendMessage}
 							className='flex w-full items-center justify-between'
-						>
+							>
 							<input
 								type='file'
 								accept='image/*'
 								ref={fileInputRef}
 								style={{ display: 'none' }}
 								onChange={handleFileChange}
-							/>
+								/>
 
 							<aside className='flex items-center w-[85%] gap-1 relative'>
 								<Smile
 									className='cursor-pointer'
 									onClick={() => setShowEmojiPicker(prev => !prev)}
-								/>
+									/>
 								{showEmojiPicker && (
 									<div className='absolute bottom-[50px] z-50'>
 										<EmojiPicker
 											onEmojiClick={emojiData =>
 												setMessage(prev => prev + emojiData.emoji)
 											}
-										/>
+											/>
 									</div>
 								)}
 								<input
@@ -359,7 +394,7 @@ export default function ChatById() {
 									className='w-full p-2 rounded-lg outline-0'
 									name='message'
 									autoComplete='off'
-								/>
+									/>
 							</aside>
 
 							<aside className='flex gap-3 w-[15%]'>
@@ -368,10 +403,10 @@ export default function ChatById() {
 										isRecording ? 'text-red-500 animate-pulse' : ''
 									}`}
 									onClick={handleMicClick}
-								/>
+									/>
 
 								<Image className='cursor-pointer' onClick={openFileDialog} />
-									<Sticker />
+								<Sticker />
 								<div
 									className='cursor-pointer'
 									onClick={async () => {
@@ -384,7 +419,7 @@ export default function ChatById() {
 											console.error('Ошибка при отправке сердечка:', err)
 										}
 									}}
-								>
+									>
 									<Heart />
 								</div>
 							</aside>
@@ -392,6 +427,12 @@ export default function ChatById() {
 					</section>
 				</footer>
 			</section>
+			{photoModal && (
+				<div className='absolute w-[100%] h-[100vh] top-0 left-0	z-10  flex items-center justify-center bg-[rgba(0,0,0,0.5)]'>
+					<div className='absolute top-[25px] right-[30px] cursor-pointer' onClick={() => handleClosePhotoModal()}><X className='text-[white]'/></div>
+						<img src={api + 'images/' + photo} alt="photo" className='h-[60%] w-auto' />
+				</div>
+			)}
 		</main>
 	)
 }
