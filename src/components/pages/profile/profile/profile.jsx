@@ -1,20 +1,24 @@
-'use client'
+"use client";
 import { useProfileStore } from "@/store/pages/profile/profile/store-profile";
 import React, { useEffect } from "react";
 import Stories from "../story/story";
 import { jwtDecode } from "jwt-decode";
+import BasicTabs from "../tabs/tabs";
 
 const Profiles = () => {
-  const { getInfo, info } = useProfileStore();
-  let decode = jwtDecode(localStorage.getItem('access_token'))
+  const { getInfo, info,getStories } = useProfileStore();
+  let decode = jwtDecode(localStorage.getItem("access_token"));
 
   useEffect(() => {
     getInfo(decode.sid);
+    getStories(decode.sid)
   }, []);
+  
+  
 
   return (
     <div className="w-full bg-white px-4">
-      <div className="w-full max-w-[900px] mx-auto flex  sm:flex-row items-start sm:items-center gap-6 sm:gap-12 py-4">
+      <div className="w-full max-w-[900px] mx-auto flex  sm:flex-row items-start sm:items-center gap-5 sm:gap-12 py-4">
         <div className="w-45 h-30 sm:w-42 sm:h-34  rounded-[50%] overflow-hidden border border-gray-300">
           {info?.image ? (
             <img
@@ -29,9 +33,11 @@ const Profiles = () => {
           )}
         </div>
 
-        <div className="flex flex-col gap-2 sm:gap-3 w-full">
-          <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
-            <h2 className="text-xl font-semibold">{info?.userName || "Username"}</h2>
+        <div className="flex flex-col gap-2 sm:gap-5 w-full">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-5">
+            <h2 className="text-xl font-semibold">
+              {info?.userName || "Username"}
+            </h2>
             <div className="flex gap-2">
               <button className="bg-gray-100 px-4 py-1 rounded-md text-sm">
                 Edit profile
@@ -55,12 +61,17 @@ const Profiles = () => {
             </span>
           </div>
 
-          <div className="font-semibold text-sm">{info?.firstName || "Full Name"}</div>
+          <div className="font-semibold text-sm">
+            {info?.firstName || "Full Name"}
+          </div>
         </div>
       </div>
 
       <div className="w-full max-w-[900px] mx-auto">
         <Stories />
+      </div>
+      <div className="w-full max-w-[900px] mx-auto">
+        <BasicTabs />
       </div>
     </div>
   );
