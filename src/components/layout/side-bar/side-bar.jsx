@@ -28,6 +28,7 @@ import {
 import { useProfileStore } from "@/store/pages/profile/profile/store-profile";
 import { API } from "@/utils/config";
 import { jwtDecode } from "jwt-decode";
+import CreatePostModal from '@/components/createPost/createpost'
 
 const NavLink = ({ href, icon, activeIcon, label, isActive }) => (
   <Link
@@ -122,6 +123,7 @@ export default function SideBar({ children }) {
               <div className="flex items-center gap-4 w-[90%] m-auto rounded-md h-[52px] px-4 hover:bg-gray-100 cursor-pointer">
                 {action}
                 <p className="text-lg">{t("layout.create")}</p>
+                 <CreatePostModal open={open} onClose={() => setOpen(false)} />
               </div>
 
               <div className="flex items-center gap-2 ml-[7%]">
