@@ -11,31 +11,26 @@ import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder'
 import VolumeOffIcon from '@mui/icons-material/VolumeOff'
 import VolumeUpIcon from '@mui/icons-material/VolumeUp'
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz'
-import { Avatar, Box, Button, IconButton, Typography } from '@mui/material'
-import PropTypes from 'prop-types'
-// import Button from '@mui/material/Button'
-// import Avatar from '@mui/material/Avatar'
-import List from '@mui/material/List'
-import ListItem from '@mui/material/ListItem'
-import ListItemAvatar from '@mui/material/ListItemAvatar'
-import ListItemButton from '@mui/material/ListItemButton'
-import ListItemText from '@mui/material/ListItemText'
-import DialogTitle from '@mui/material/DialogTitle'
-import Dialog from '@mui/material/Dialog'
-import PersonIcon from '@mui/icons-material/Person'
-import AddIcon from '@mui/icons-material/Add'
-// import Typography from '@mui/material/Typography'
-import { blue } from '@mui/material/colors'
+import CloseIcon from '@mui/icons-material/Close' // Добавлен импорт CloseIcon
+import {
+	Avatar,
+	Box,
+	Button,
+	IconButton,
+	TextField,
+	Typography,
+} from '@mui/material'
 import BookmarkIcon from '@mui/icons-material/Bookmark'
+
 export default function ReelsComp() {
-	// const { onClose, selectedValue, open } = props
-   const [open, setOpen] = useState(false)
-	 const handleClickOpen = () => {
-		 setOpen(true)
-	 }
-function handleClose(){
-   setOpen(false)
-}
+	const [open, setOpen] = useState(false)
+	const handleClickOpen = () => {
+		setOpen(true)
+	}
+	function handleClose() {
+		setOpen(false)
+	}
+
 	const {
 		data,
 		getReels,
@@ -43,21 +38,31 @@ function handleClose(){
 		addFollowingRelationship,
 		deleteFollowingRelationship,
 		addFavouriePost,
+		addComment,
 	} = useReelsPage()
-	console.log('data', data);
-	
+
 	const [currentVideoIndex, setCurrentVideoIndex] = useState(0)
 	const [isMuted, setIsMuted] = useState(true)
-
-
 	const [pausedStates, setPausedStates] = useState({})
 	const videoRefs = useRef([])
 	const containerRef = useRef(null)
+	const [text, setText] = useState('')
+
+	const handleSend = () => {
+		const postId = data[currentVideoIndex]?.postId
+		if (!text.trim() || !postId) {
+			console.warn('Нет текста или неверный postId:', postId)
+			return
+		}
+		addComment({ postId, commentText: text })
+		setText('')
+	}
+
 	useEffect(() => {
 		getReels()
 	}, [getReels])
 
-	// функция пауза ва звуко да вакти скрол
+	// Функция паузы и звука при скролле
 	useEffect(() => {
 		videoRefs.current.forEach((video, index) => {
 			if (!video) return
@@ -75,7 +80,7 @@ function handleClose(){
 		})
 	}, [currentVideoIndex, isMuted, pausedStates])
 
-	// функцияи  скроли рилзо
+	// Функция скролла рилсов
 	useEffect(() => {
 		const container = containerRef.current
 		if (!container) return
@@ -83,8 +88,8 @@ function handleClose(){
 		const handleScroll = () => {
 			const containerHeight = container.clientHeight
 			const scrollTop = container.scrollTop
+			// Вычисляем новый индекс, округляя до ближайшего видео
 			const newIndex = Math.round(scrollTop / (containerHeight * 0.9))
-
 			if (newIndex !== currentVideoIndex && newIndex < data?.length) {
 				setCurrentVideoIndex(newIndex)
 			}
@@ -97,7 +102,8 @@ function handleClose(){
 	const toggleMute = () => {
 		setIsMuted(prev => !prev)
 	}
-	// кайки   видеора мечкем инами функсия стопш мекна
+
+	// Функция для паузы/воспроизведения видео по клику
 	const togglePause = index => {
 		setPausedStates(prev => ({
 			...prev,
@@ -107,7 +113,6 @@ function handleClose(){
 
 	return (
 		<>
-
 			<Box
 				ref={containerRef}
 				sx={{
@@ -124,7 +129,7 @@ function handleClose(){
 			>
 				{data?.map((el, index) => (
 					<Box
-          key={el.postId}
+						key={el.postId}
 						sx={{
 							position: 'relative',
 							width: '100%',
@@ -152,7 +157,6 @@ function handleClose(){
 								cursor: 'pointer',
 							}}
 						/>
-
 						<IconButton
 							onClick={toggleMute}
 							sx={{
@@ -207,7 +211,7 @@ function handleClose(){
 								<Button
 									onClick={
 										el.isSubscriber
-                    ? () => deleteFollowingRelationship(el.userId)
+											? () => deleteFollowingRelationship(el.userId)
 											: () => addFollowingRelationship(el.userId)
 									}
 									variant='outlined'
@@ -231,21 +235,18 @@ function handleClose(){
 									{el.isSubscriber ? 'Вы подписаны' : 'Подписаться'}
 								</Button>
 							</Box>
-
 							<Typography
 								variant='body1'
 								sx={{ mb: 1, fontSize: '15px', lineHeight: 1.3 }}
 							>
 								{el.title}
 							</Typography>
-
 							<Typography
 								variant='body2'
 								sx={{ opacity: 1, lineHeight: 1.3, fontSize: '14px', mb: 1.5 }}
 							>
 								{el.content}
 							</Typography>
-
 							<Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
 								<Typography
 									variant='caption'
@@ -295,7 +296,6 @@ function handleClose(){
 									{el.postLikeCount}
 								</Typography>
 							</Box>
-
 							<Box
 								sx={{
 									display: 'flex',
@@ -305,7 +305,10 @@ function handleClose(){
 								}}
 							>
 								<IconButton sx={{ color: '#fff', p: 0.5 }}>
-									<ChatBubbleOutlineIcon onClick={ handleClickOpen} sx={{ fontSize: 26 }} />
+									<ChatBubbleOutlineIcon
+										onClick={handleClickOpen}
+										sx={{ fontSize: 26 }}
+									/>
 								</IconButton>
 								<Typography
 									variant='caption'
@@ -314,19 +317,17 @@ function handleClose(){
 									{el.commentCount}
 								</Typography>
 							</Box>
-
 							<IconButton sx={{ color: '#fff', p: 0.5 }}>
 								<SendIcon sx={{ fontSize: 26 }} />
 							</IconButton>
-
 							<IconButton sx={{ color: '#fff', p: 0.5 }}>
 								{el.postFavorite ? (
 									<BookmarkIcon
-                  onClick={() => addFavouriePost(el.postId)}
+										onClick={() => addFavouriePost(el.postId)}
 										sx={{ fontSize: 26 }}
 									/>
 								) : (
-                  <BookmarkBorderIcon
+									<BookmarkBorderIcon
 										onClick={() => addFavouriePost(el.postId)}
 										sx={{ fontSize: 26 }}
 									/>
@@ -354,14 +355,115 @@ function handleClose(){
 				))}
 			</Box>
 
-			<Dialog open={open} onClose={handleClose}>
-				<DialogTitle>Комментировать</DialogTitle>
-			{data.comments?.map((el)=>(
-				
-			<h1>{el.comment}</h1>
-			))}
-				
-			</Dialog>
+			{/* {модалкаи коментария} */}
+			<Box
+				sx={{
+					position: 'fixed',
+					top: '10vh',
+
+					right: '25px',
+					height: '40vh',
+					width: { xs: '7%', sm: '320px' },
+					backgroundColor: 'background.paper',
+					boxShadow: 3,
+					zIndex: 1300,
+					display: open ? 'flex' : 'none',
+					flexDirection: 'column',
+					borderRadius: 2,
+				}}
+			>
+				<Box
+					sx={{
+						display: 'flex',
+						alignItems: 'center',
+						justifyContent: 'space-between',
+						p: 2,
+						borderBottom: '1px solid #ddd',
+					}}
+				>
+					<IconButton onClick={handleClose} sx={{ ml: -1 }}>
+						<CloseIcon />
+					</IconButton>
+					<Typography
+						variant='h6'
+						component='div'
+						sx={{ flexGrow: 1, textAlign: 'center', mr: 4 }}
+					>
+						Комментарии
+					</Typography>
+				</Box>
+
+				{/* Список комментариев */}
+				<Box sx={{ flexGrow: 1, overflowY: 'auto', px: 2, py: 1 }}>
+					{data?.[currentVideoIndex]?.comments?.length > 0 ? (
+						data[currentVideoIndex].comments.map((comment, i) => (
+							<Box
+								key={i}
+								sx={{ display: 'flex', alignItems: 'flex-start', mb: 2 }}
+							>
+								{console.log('coments', data?.[currentVideoIndex]?.comments)}
+								{/* Аватар */}
+								<Avatar
+									src={
+										comment.userImage
+											? `${API}/Images/${comment.userImage}`
+											: '/no-avatar.png'
+									}
+									alt={comment.userName}
+									sx={{ width: 40, height: 40, mr: 2 }}
+								/>
+								{/* Контент */}
+								<Box sx={{ flexGrow: 1 }}>
+									<Box sx={{ display: 'flex', alignItems: 'center' }}>
+										<Typography sx={{ fontWeight: 'bold', mr: 1 }}>
+											{comment.userName}
+										</Typography>
+										<Typography variant='caption' color='text.secondary'>
+											{new Date(comment.dateCommented).toLocaleDateString(
+												'ru-RU',
+												{
+													day: 'numeric',
+													month: 'short',
+												}
+											)}
+										</Typography>
+									</Box>
+									<Typography sx={{ mt: 0.5 }}>{comment.comment}</Typography>
+								</Box>
+								{/* Лайк */}
+								<IconButton size='small' sx={{ ml: 1 }}>
+									<FavoriteBorderIcon fontSize='small' />
+								</IconButton>
+							</Box>
+						))
+					) : (
+						<Typography sx={{ px: 2, py: 1 }}>Комментариев пока нет</Typography>
+					)}
+				</Box>
+
+				{/* Ввод нового комментария */}
+				<Box
+					sx={{
+						borderTop: '1px solid #ddd',
+						px: 2,
+						py: 1.5,
+						display: 'flex',
+						alignItems: 'center',
+					}}
+				>
+					<TextField
+						placeholder='Добавьте комментарий…'
+						variant='standard'
+						fullWidth
+						value={text}
+						onChange={e => setText(e.target.value)}
+						// placeholder='Добавить комментарий...'
+					/>
+					<IconButton onClick={handleSend}>
+						<SendIcon />
+					</IconButton>
+				</Box>
+			</Box>
 		</>
 	)
 }

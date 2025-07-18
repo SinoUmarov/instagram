@@ -7,6 +7,7 @@ export const useProfileStore = create((set,get) => ({
   posts: null,
   saved: null,
   story: null,
+  folowers:null,
 
   getInfo: async (id) => {
     try {
@@ -47,6 +48,7 @@ export const useProfileStore = create((set,get) => ({
       const { data } = await axiosRequest.get(
         `${API}/Story/get-user-stories/${id}`
       );
+      
       set({ story: data.data });
     } catch (error) {
       console.log(error);
@@ -54,9 +56,23 @@ export const useProfileStore = create((set,get) => ({
   },
 
   likeStory:async(id)=>{
-    console.log(id);
-    
     await axiosRequest.post(`${API}/Story/LikeStory?storyId=${id}`)
-    get().getStories()
+  },
+
+  deleteStories: async(id)=>{
+    await axiosRequest.delete(`${API}/Story/DeleteStory?id=${id}`)
+  },
+  editAvatar: async(img)=>{
+    await axiosRequest.put(`${API}/UserProfile/update-user-image-profile`, img)
+  },
+
+  editProfil:async(obj)=>{
+    await axiosRequest.put(`${API}/UserProfile/update-user-profile`,obj)
+  },
+  getFolowers:async(id)=>{
+     let {data} =await axiosRequest.get(`${API}/FollowingRelationShip/get-subscribers?UserId=${id}`)
+     set({folowers:data.data})
+     
   }
+
 }));

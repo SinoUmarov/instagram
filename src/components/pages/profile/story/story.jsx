@@ -10,10 +10,12 @@ import { jwtDecode } from "jwt-decode";
 const StoriesLib = dynamic(() => import("react-insta-stories"), { ssr: false });
 
 export default function StoryViewer() {
-  const { getStories, story, likeStory } = useProfileStore();
+  const { getStories, story, likeStory,deleteStories } = useProfileStore();
   const [show, setShow] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [currentUser, setCurrentUser] = useState(null);
+  console.log(story);
+  
 
   useEffect(() => {
     const token = localStorage.getItem("access_token");
@@ -30,6 +32,7 @@ export default function StoryViewer() {
   }, [story]);
 
   const toggleLike = (id) => {
+    
     setCurrentUser((prev) => {
       const updatedStories = prev.stories.map((s) => {
         if (s.id === id) {
@@ -57,6 +60,7 @@ export default function StoryViewer() {
     } else {
       setCurrentIndex(0);
     }
+    deleteStories(id)
   };
 
   const formattedStories = useMemo(() => {
@@ -138,7 +142,7 @@ export default function StoryViewer() {
               className="bg-red-600 text-white px-3 py-1 rounded"
               onClick={() => setShow(false)}
             >
-              Закрыть
+              Close
             </button>
             <button
               onClick={() => toggleLike(currentStory.id)}
