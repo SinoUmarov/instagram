@@ -33,25 +33,26 @@ export default function Explore() {
                 e.images.slice(0, 1).map((fileName) => {
                   const isVideo = fileName.endsWith(".mp4") || fileName.endsWith(".webm");
                   const src = `${API}/images/${fileName}`;
-                  
                   return (
                     <>
                       {isVideo ? (
                         <video
+                          alt="RR"
                           key={e.postId}
                           autoPlay
                           muted
                           loop
                           src={src}
                           className="w-full h-full object-cover"
+                        
                         />
                       ) : (
                         <img 
-                          
-                          key={e.postId}
-                          src={src}
-                          alt="media"
-                          className="w-full h-full object-cover"
+                        
+                        key={e.postId}
+                        src={src}
+                        alt="media"
+                        className="w-full h-full object-cover"
                         />
                       )}
                       <div className="absolute inset-0 bg-black/70 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none flex items-center justify-center">
