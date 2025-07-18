@@ -29,7 +29,8 @@ import { useProfileStore } from "@/store/pages/profile/profile/store-profile"
 import { API } from "@/utils/config"
 import { jwtDecode } from "jwt-decode"
 import { useDrawerStore } from '@/store/search/searchStore'
-
+import CreatePostModal from '@/components/createPost/createpost'
+import AddBoxOutlinedIcon from '@mui/icons-material/AddBoxOutlined'
 const NavLink = ({ href, icon, activeIcon, label, isActive }) => (
   <Link
     href={href}
@@ -53,6 +54,7 @@ export default function SideBar({ children }) {
   const { t } = useTranslation()
   const [token, setToken] = useState(null)
   const router = useRouter()
+const [open1, setOpen] = useState(false)
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget)
@@ -184,10 +186,15 @@ export default function SideBar({ children }) {
                   isActive={isActive}
                 />
 
-                <div className="flex items-center gap-4 w-[90%] m-auto rounded-md h-[52px] px-4 hover:bg-gray-100 cursor-pointer">
-                  {action}
-                  <p className="text-lg">{t("layout.create")}</p>
-                </div>
+               <div
+									onClick={() => setOpen(true)}
+									className='flex items-center gap-4 w-[90%] m-auto rounded-md h-[52px] px-4 hover:bg-gray-100 cursor-pointer'
+								>
+									<AddBoxOutlinedIcon fontSize='medium' />
+									<p className='text-lg'>{t('layout.create')}</p>
+								</div>
+								<CreatePostModal open={open1} onClose={() => setOpen(false)} />
+
 
                 <div className="flex items-center gap-2 ml-[10%]">
                   <img
