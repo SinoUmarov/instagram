@@ -196,12 +196,12 @@ const [open1, setOpen] = useState(false)
 								<CreatePostModal open={open1} onClose={() => setOpen(false)} />
 
 
-                <div className="flex items-center gap-2 ml-[7%]">
+                <div className="flex items-center gap-2 ml-[10%]">
                   <img
                     src={
                       info?.image ? `${API}/images/${info.image}` : Profile.src
                     }
-                    className="w-10 h-10 rounded-full"
+                    className="w-5 h-5 rounded-full"
                     alt="Profile"
                   />
 
