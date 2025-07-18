@@ -15,7 +15,6 @@ import {
   differenceInDays,
   differenceInMinutes,
 } from "date-fns";
-import MyProfil from "./my-profil/my-profil";
 
 
 export default function Home() {
@@ -203,6 +202,7 @@ export default function Home() {
                     commentCount={post.commentCount}
                     datePublished={post.datePublished}
                     postId={post.postId}
+                    comments={post.comments}
                   />
                 </div>
               </section>

@@ -52,18 +52,21 @@ export default function BasicTabs() {
           display: "flex",
           justifyContent: "center",
           width: {
-            xs: "100%", 
-            sm: "75%", 
-            md: "50%", 
+            xs: "100%",
+            sm: "75%",
+            md: "80%",
           },
         }}
       >
+        
         <Tabs
           value={value}
           onChange={handleChange}
           aria-label="basic tabs example"
+          centered
         >
           <Tab
+            sx={{ mx: 4 }} // отступы между табами
             label={
               <div className="flex items-center gap-2 text-blue-600">
                 <svg
@@ -87,35 +90,36 @@ export default function BasicTabs() {
           />
 
           <Tab
+            sx={{ mx: 4 }} 
             label={
               <div className="flex items-center gap-2 text-blue-600">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"
-                  stroke-width="1.5"
+                  strokeWidth="1.5"
                   stroke="currentColor"
-                  class="size-6"
+                  className="w-5 h-5"
                 >
                   <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
                     d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0 1 11.186 0Z"
                   />
                 </svg>
-
                 <span className="text-sm font-medium">Saved</span>
               </div>
             }
-            {...a11yProps(0)}
+            {...a11yProps(1)}
           />
         </Tabs>
       </Box>
+
       <CustomTabPanel value={value} index={0}>
         <Post />
       </CustomTabPanel>
       <CustomTabPanel value={value} index={1}>
-        <Saved/>
+        <Saved />
       </CustomTabPanel>
     </Box>
   );
