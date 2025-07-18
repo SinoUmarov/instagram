@@ -167,8 +167,8 @@ const MiniSideBar = ({ children }) => {
                 <LightTooltip title={t("layout.profile")} placement="right" arrow>
                   <Link href="/profile" passHref>
                     <div className="flex items-center super-svg gap-4 w-[90%] rounded-[8px] h-[52px] px-0 justify-center">
-                      <Image
-                        className={`rounded-[50%] ${router.pathname === "/profile"
+                      <img
+                        className={`rounded-[50%] h-[25] w-[25] ml-[10%] ${router.pathname === "/profile"
                           ? "border-2 border-black"
                           : ""
                           }`}
@@ -178,8 +178,7 @@ const MiniSideBar = ({ children }) => {
                             : Profile
                         }
                         alt="Profile"
-                        width={50}
-                        height={50}
+                      
                       />
                     </div>
                   </Link>
