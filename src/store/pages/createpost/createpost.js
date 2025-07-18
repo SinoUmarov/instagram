@@ -1,57 +1,41 @@
-'use client';
 import { create } from 'zustand';
 import axios from 'axios';
 
-const API_URL = 'http://37.27.29.18:8003/post/add-post';
+const API_URL = 'http://37.27.29.18:8003/Post/add-post'; 
 
-const usePostStore = create((set, get) => ({
+const useCreatePostStore = create((set, get) => ({
   image: null,
   caption: '',
   loading: false,
-  error: '',
+  error: null,
   success: false,
 
   setImage: (file) => set({ image: file }),
   setCaption: (text) => set({ caption: text }),
 
-  reset: () =>
-    set({
-      image: null,
-      caption: '',
-      loading: false,
-      error: '',
-      success: false,
-    }),
+  reset: () => set({ image: null, caption: '', loading: false, error: null, success: false }),
 
   uploadPost: async () => {
     const { image, caption } = get();
-
-    if (!image) {
-      set({ error: 'Please,update photo.' });
-      return;
-    }
-
-    set({ loading: true, error: '', success: false });
+    if (!image) return set({ error: 'Image is required' });
 
     try {
+      set({ loading: true });
       const formData = new FormData();
-      formData.append('name', caption || 'Без подписи');
-      formData.append('avatar', image); 
+      formData.append('image', image);
+      formData.append('caption', caption);
 
       await axios.post(API_URL, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
+        headers: { 'Content-Type': 'multipart/form-data' },
       });
 
       set({ success: true });
     } catch (err) {
-      console.error(err);
-      set({ error: 'error is loading......' });
+      set({ error: err.message });
     } finally {
       set({ loading: false });
     }
-  },
+  }
 }));
 
-export default usePostStore;
+export default useCreatePostStore;

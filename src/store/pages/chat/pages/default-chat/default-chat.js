@@ -146,18 +146,50 @@ export const useChat = create((set, get) => ({
 			console.error(error)
 		}
 	},
-	getLastMessages: async (id) => {
-		try {
-			const { data } = await axios.get(`http://37.27.29.18:8003/Chat/get-chat-by-id?chatId=${id}`)
-			const map = {}
-			data.data.forEach(msg => {
-				map[msg.chatId] = msg
+	getLastMessages: async () => {
+	try {
+		const chatsRes = await axios.get(
+			'http://37.27.29.18:8003/Chat/get-chats',
+			{
+				headers: {
+					Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+				},
+			}
+		)
+
+		const chats = chatsRes.data.data
+		const map = {}
+
+		await Promise.all(
+			chats.map(async (chat) => {
+				const res = await axios.get(
+					`http://37.27.29.18:8003/Chat/get-chat-by-id?chatId=${chat.chatId}`,
+					{
+						headers: {
+							Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+						},
+					}
+				)
+
+				let messages = res.data.data
+
+				if (messages && messages.length > 0) {
+					// Сортировка по дате (предположим, что поле - createdAt)
+					messages = messages.sort(
+						(a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+					)
+
+					const lastMessage = messages[0] // самое новое
+					map[chat.chatId] = lastMessage
+				}
 			})
-			set({ lastMessages: map })
-		} catch (error) {
-			console.error('Ошибка при получении последних сообщений:', error)
-		}
-	},
+		)
+
+		set({ lastMessages: map })
+	} catch (error) {
+		console.error('Ошибка при получении последних сообщений:', error)
+	}
+   },
 	getMyFollowers: async id => {
 		try {
 			const {data} = await axios.get('http://37.27.29.18:8003/FollowingRelationShip/get-subscribers?UserId=' + id, {
