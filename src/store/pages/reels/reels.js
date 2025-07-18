@@ -21,7 +21,7 @@ export const useReelsPage = create((set, get) => ({
 		try {
 			await axiosRequest.post(`/Post/like-post?postId=${postId}`)
 
-			//   локално тов метеша
+			//   локално тов метемша
 			set(state => ({
 				data: state.data.map(post => {
 					if (post.postId === postId) {
