@@ -6,6 +6,7 @@ import Profile from "@/assets/icon/layout/instagramDefaultProfile.jpg"
 import { Button, Menu, MenuItem } from "@mui/material"
 import { usePathname, useRouter } from "next/navigation"
 import Image from "next/image"
+import inst from '@/assets/img/pages/profile/profile/inst.png'
 import {
   homeIcon,
   homeIconActive,
@@ -29,7 +30,8 @@ import { useProfileStore } from "@/store/pages/profile/profile/store-profile"
 import { API } from "@/utils/config"
 import { jwtDecode } from "jwt-decode"
 import { useDrawerStore } from '@/store/search/searchStore'
-
+import CreatePostModal from '@/components/createPost/createpost'
+import AddBoxOutlinedIcon from '@mui/icons-material/AddBoxOutlined'
 const NavLink = ({ href, icon, activeIcon, label, isActive }) => (
   <Link
     href={href}
@@ -53,6 +55,7 @@ export default function SideBar({ children }) {
   const { t } = useTranslation()
   const [token, setToken] = useState(null)
   const router = useRouter()
+const [open1, setOpen] = useState(false)
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget)
@@ -102,18 +105,17 @@ export default function SideBar({ children }) {
     }
   }, [pathname, router])
 
-  
+
   return (
-
-
 
     <div>
       {!isAuthPage && (
         <section className="w-[320px] h-[100%] fixed  border-r-2 border-gray-300">
           <div className="sideBar h-full pb-[100px]">
-            {/* <div className="m-auto pt-[20px] ml-[20px] flex pb-[10px] mt-[20px]">
-              {homeIcon}
-            </div> */}
+            <div className="m-auto pt-[20px] ml-[20px] flex pb-[10px] mt-[20px]">
+              <Image src={inst} alt='inst' className='' />
+
+            </div>
             <div className="flex flex-col justify-between h-full">
               <div className="flex flex-col gap-2 mt-4">
                 <NavLink
@@ -184,17 +186,22 @@ export default function SideBar({ children }) {
                   isActive={isActive}
                 />
 
-                <div className="flex items-center gap-4 w-[90%] m-auto rounded-md h-[52px] px-4 hover:bg-gray-100 cursor-pointer">
-                  {action}
-                  <p className="text-lg">{t("layout.create")}</p>
-                </div>
+               <div
+									onClick={() => setOpen(true)}
+									className='flex items-center gap-4 w-[90%] m-auto rounded-md h-[52px] px-4 hover:bg-gray-100 cursor-pointer'
+								>
+									<AddBoxOutlinedIcon fontSize='medium' />
+									<p className='text-lg'>{t('layout.create')}</p>
+								</div>
+								<CreatePostModal open={open1} onClose={() => setOpen(false)} />
 
-                <div className="flex items-center gap-2 ml-[7%]">
+
+                <div className="flex items-center gap-2 ml-[10%]">
                   <img
                     src={
                       info?.image ? `${API}/images/${info.image}` : Profile.src
                     }
-                    className="w-10 h-10 rounded-full"
+                    className="w-5 h-5 rounded-full"
                     alt="Profile"
                   />
 
@@ -239,7 +246,7 @@ export default function SideBar({ children }) {
         </section>
       )}
 
-      <div style={{ marginLeft: (pathname != '/login' && pathname !== '/registration') ? '370px' : '0px' }}>
+      <div style={{ marginLeft: (pathname != '/login' && pathname !== '/registration') ? '370px' : '0px' }} className=''>
         {children}
       </div>
     </div>

@@ -1,30 +1,44 @@
 "use client";
 import { useProfileStore } from "@/store/pages/profile/profile/store-profile";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Stories from "../story/story";
 import { jwtDecode } from "jwt-decode";
 import BasicTabs from "../tabs/tabs";
+import Link from "next/link";
+import FollowersMenu from "../folowers/folowers";
 
 const Profiles = () => {
-  const { getInfo, info,getStories } = useProfileStore();
+  const { getInfo, info,getStories,getFolowers } = useProfileStore();
+  
+  const [open, setOpen] = useState(false);
+  
   let decode = jwtDecode(localStorage.getItem("access_token"));
-
+  console.log(decode.sid);
   useEffect(() => {
     getInfo(decode.sid);
     getStories(decode.sid)
   }, []);
+
+  const showFolowers =()=>{
+      let decode = jwtDecode(localStorage.getItem("access_token"));
+    getFolowers(decode.sid)
+
+    setOpen(true)
+  }
+  
   
   
 
   return (
+    <>
     <div className="w-full bg-white px-4">
       <div className="w-full max-w-[900px] mx-auto flex  sm:flex-row items-start sm:items-center gap-5 sm:gap-12 py-4">
         <div className="w-45 h-30 sm:w-42 sm:h-34  rounded-[50%] overflow-hidden border border-gray-300">
           {info?.image ? (
             <img
-              src={`http://37.27.29.18:8003/images/${info.image}`}
-              alt="User avatar"
-              className="w-full h-full object-cover"
+            src={`http://37.27.29.18:8003/images/${info.image}`}
+            alt="User avatar"
+            className="w-full h-full object-cover"
             />
           ) : (
             <div className="w-full h-full bg-gray-200 flex items-center justify-center text-gray-500 text-2xl">
@@ -40,7 +54,9 @@ const Profiles = () => {
             </h2>
             <div className="flex gap-2">
               <button className="bg-gray-100 px-4 py-1 rounded-md text-sm">
+                <Link href='/profile/edit-profile'>
                 Edit profile
+                </Link>
               </button>
               <button className="bg-gray-100 px-4 py-1 rounded-md text-sm">
                 View archive
@@ -53,7 +69,8 @@ const Profiles = () => {
             <span>
               <strong>{info?.postCount || 0}</strong> posts
             </span>
-            <span>
+            <span onClick={showFolowers}>
+              <FollowersMenu open={open} onClose={() => setOpen(false)} />
               <strong>{info?.subscribersCount || 0}</strong> followers
             </span>
             <span>
@@ -74,6 +91,9 @@ const Profiles = () => {
         <BasicTabs />
       </div>
     </div>
+  
+    
+          </>
   );
 };
 
