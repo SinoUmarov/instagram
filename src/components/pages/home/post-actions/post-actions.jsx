@@ -11,104 +11,117 @@ import { usePostActions } from "@/store/pages/home/post-actions/post-actions";
 import Comments from "../comments/comments";
 
 export default function PostActions({
-  liked,
-  saved,
-  likeCount,
+  // likeCount,
   userName,
   content,
   commentCount,
-  datePublished,
+  // datePublished,
   postId,
+  comments,
 }) {
-  const [isLiked, setIsLiked] = useState(liked);
-  const [isSaved, setIsSaved] = useState(saved);
-  const [likes, setLikes] = useState(likeCount);
-  const { likePost, addPostFavorite, getPostByID } = usePostActions();
+  const {
+    addPostFavorite,
+    getPostByID,
+    isPostSaved,
+    addLikePost,
+    isPostLiked,
+    likeCounts,
+    getLikeCount,
+  } = usePostActions();
   const [isCommit, setIsCommit] = useState(false);
   const [open, setOpen] = useState(false);
+  const saved = isPostSaved(postId);
+  const isLiked = isPostLiked(postId);
+  const likeCount = likeCounts[postId] || 0;
 
   const handleClickOpen = () => {
     setOpen(true);
     setIsCommit(!isCommit);
-    getPostByID(postId)
+    getPostByID(postId);
   };
 
   const toggleSave = () => {
-    setIsSaved(!isSaved);
     addPostFavorite(postId);
   };
 
   const toggleLike = () => {
-    setIsLiked(!isLiked);
-    setLikes((prev) => (isLiked ? prev - 1 : prev + 1));
-    likePost(postId);
+    addLikePost(postId);
   };
 
   // function baroi vaqti post kardanro nishon medihad
-  const rawTime = formatDistanceToNow(new Date(datePublished), {
-    addSuffix: true,
-  });
-  const timeAgo = rawTime.replace("about ", "");
+  // const rawTime = formatDistanceToNow(new Date(datePublished), {
+  //   addSuffix: true,
+  // });
+  // const timeAgo = rawTime.replace("about ", "");
 
   return (
-    <div className="flex flex-col gap-2">
-      {/* Иконаҳо */}
-      <div className="flex justify-between items-center">
-        <div className="flex gap-1">
-          <IconButton color="error" onClick={() => toggleLike(postId)}>
-            {isLiked ? (
-              <FavoriteIcon />
-            ) : (
-              <FavoriteBorderIcon className="cursor-pointer text-black" />
-            )}
-          </IconButton>
-
-          <IconButton onClick={() => handleClickOpen(postId)}>
-            <ChatBubbleOutlineIcon className="m-2 cursor-pointer text-black " />
-          </IconButton>
-
-          <IconButton>
-            <SendIcon className="m-2 cursor-pointer text-black " />
-          </IconButton>
-        </div>
-
-        <IconButton
-          className="cursor-pointer"
-          style={{ color: "black" }}
-          onClick={() => toggleSave(postId)}
-        >
-          {isSaved ? <BookmarkIcon /> : <TurnedInNotIcon />}
-        </IconButton>
-      </div>
-
-      {/* Likes */}
-      {likes > 0 && (
-        <p className="px-2 font-bold text-[14px] text-[#1E293B]">
-          {likes} {likes === 1 ? "like" : "likes"}
-        </p>
-      )}
-
-      {/* Контент ва Комментарийҳо */}
-      <div className="px-2 flex flex-col gap-1">
-        {content && (
-          <p className="text-[#1E293B] text-[14px] leading-[18px]">
-            <span className="font-semibold">{userName}</span> {content}
-          </p>
+   <div className="flex flex-col gap-2 py-2">
+  {/* Иконаҳо */}
+  <div className="flex justify-between items-center">
+    <div className="flex gap-1">
+      <IconButton color="error" onClick={() => toggleLike(postId)} size="small">
+        {isLiked ? (
+          <FavoriteIcon fontSize="small" />
+        ) : (
+          <FavoriteBorderIcon className="cursor-pointer text-black" fontSize="small" />
         )}
+      </IconButton>
 
-        {commentCount > 0 && (
-          <p className="text-[14px] text-[#737373] leading-[18px] cursor-pointer">
-            View all {commentCount} comments
-          </p>
-        )}
+      <IconButton onClick={() => handleClickOpen(postId)} size="small">
+        <ChatBubbleOutlineIcon className="cursor-pointer text-black" fontSize="small" />
+      </IconButton>
 
-        {/* Вақти пост */}
-        <p className="uppercase tracking-wider text-[11px] text-[#737373] font-medium">
-          {timeAgo}
-        </p>
-      </div>
-
-      {isCommit && <Comments open={open} setOpen={setOpen} postId={postId}/>}
+      <IconButton size="small">
+        <SendIcon className="cursor-pointer text-black" fontSize="small" />
+      </IconButton>
     </div>
+
+    <IconButton
+      className="cursor-pointer"
+      style={{ color: "black" }}
+      onClick={() => toggleSave(postId)}
+      size="small"
+    >
+      {saved ? <BookmarkIcon fontSize="small" /> : <TurnedInNotIcon fontSize="small" />}
+    </IconButton>
+  </div>
+
+  {/* Likes */}
+  {likeCount > 0 && (
+    <p className="font-bold text-sm text-[#1E293B]">
+      {likeCount} {likeCount === 1 ? "like" : "likes"}
+    </p>
+  )}
+
+  {/* Контент ва Комментарийҳо */}
+  <div className="flex flex-col gap-1">
+    {content && (
+      <p className="text-[#1E293B] text-sm leading-tight">
+        <span className="font-semibold">{userName}</span> {content}
+      </p>
+    )}
+
+    {commentCount > 0 && (
+      <p className="text-sm text-[#737373] leading-tight cursor-pointer">
+        View all {commentCount} comments
+      </p>
+    )}
+
+    {/* Вақти пост */}
+    <p className="uppercase tracking-wide text-[11px] text-[#737373] font-medium">
+      {/* {timeAgo} */}
+    </p>
+  </div>
+
+  {isCommit && (
+    <Comments
+      open={open}
+      setOpen={setOpen}
+      comments={comments}
+      postId={postId}
+    />
+  )}
+</div>
+
   );
 }
