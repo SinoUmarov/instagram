@@ -6,6 +6,7 @@ import Profile from "@/assets/icon/layout/instagramDefaultProfile.jpg"
 import { Button, Menu, MenuItem } from "@mui/material"
 import { usePathname, useRouter } from "next/navigation"
 import Image from "next/image"
+import inst from '@/assets/img/pages/profile/profile/inst.png'
 import {
   homeIcon,
   homeIconActive,
@@ -104,18 +105,17 @@ const [open1, setOpen] = useState(false)
     }
   }, [pathname, router])
 
-  
+
   return (
-
-
 
     <div>
       {!isAuthPage && (
         <section className="w-[320px] h-[100%] fixed  border-r-2 border-gray-300">
           <div className="sideBar h-full pb-[100px]">
-            {/* <div className="m-auto pt-[20px] ml-[20px] flex pb-[10px] mt-[20px]">
-              {homeIcon}
-            </div> */}
+            <div className="m-auto pt-[20px] ml-[20px] flex pb-[10px] mt-[20px]">
+              <Image src={inst} alt='inst' className='' />
+
+            </div>
             <div className="flex flex-col justify-between h-full">
               <div className="flex flex-col gap-2 mt-4">
                 <NavLink
@@ -246,7 +246,7 @@ const [open1, setOpen] = useState(false)
         </section>
       )}
 
-      <div style={{ marginLeft: (pathname != '/login' && pathname !== '/registration') ? '370px' : '0px' }}>
+      <div style={{ marginLeft: (pathname != '/login' && pathname !== '/registration') ? '370px' : '0px' }} className=''>
         {children}
       </div>
     </div>
