@@ -1,7 +1,7 @@
 'use client'
 import { api, userId } from '@/api/pages/chat/utils/axios-reguest'
 import DefaultChatComponent from '@/components/pages/chat/pages/default-chat/default-chat'
-import useChat from '@/store/pages/chat/pages/default-chat/default-chat'
+import { useChat } from '@/store/pages/chat/pages/default-chat/default-chat'
 import { MessageCircleHeart } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
