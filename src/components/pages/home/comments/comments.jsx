@@ -140,8 +140,7 @@ export default function Comments({ open, setOpen, comments, postId }) {
                     <div className="bg-white rounded-full p-[3px]">
                       <Image
                         src={
-                          postByID.userImage
-                            ? `http://37.27.29.18:8003/images/${postByID.userImage}`
+                          postByID?.userImage ? `http://37.27.29.18:8003/images/${postByID.userImage}`
                             : instagramDefaultProfile
                         }
                         alt="story"
@@ -281,8 +280,8 @@ export default function Comments({ open, setOpen, comments, postId }) {
               </div>
 
               {/* post-actions */}
-              <div className="fixed bottom-8 my-4 w-[355px] border-t border-b border-[#f0f0f0]">
-                <div className="flex flex-col gap-2">
+              <div className="fixed bottom-[38px] py-2 w-[355px] border-t border-b border-[#f0f0f0] bg-white">
+                <div className="flex flex-col gap-2 pb-2">
                   {/* Иконаҳо */}
                   <div className="flex justify-between items-center">
                     <div className="flex gap-1">

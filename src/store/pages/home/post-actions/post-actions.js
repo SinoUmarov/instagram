@@ -78,11 +78,9 @@ export const usePostActions = create((set, get) => ({
   postComment: async (comment, postId) => {
     try {
       const { data } = await axiosRequest.post(`/Post/add-comment`, {
-        comment,
+        comment: comment,
         postId,
       });
-      console.log("comments: ", data);
-      get().getPostByID();
     } catch (error) {
       console.error(error);
     }
