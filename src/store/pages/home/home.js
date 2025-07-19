@@ -8,7 +8,7 @@ export const useUser = create((set) => ({
 
   getUsers: async () => {
     try {
-      const { data } = await axiosRequest.get(`/User/get-users`);
+      const { data } = await axiosRequest.get(`/User/get-users/?PageSize=5`);
       set({ users: data.data });
     } catch (error) {
       console.error(error);
@@ -26,7 +26,7 @@ export const useUser = create((set) => ({
 
   getPosts: async () => {
     try {
-      const { data } = await axiosRequest.get(`/Post/get-posts`);
+      const { data } = await axiosRequest.get(`/Post/get-posts?PageSize=100`);
       set({ posts: data?.data });
     } catch (error) {
       console.error(error);

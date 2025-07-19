@@ -9,15 +9,31 @@ import { usePostActions } from "@/store/pages/home/post-actions/post-actions";
 export default function WriteComment({ postId }) {
   const [comment, setComment] = useState("");
   const [showEmoji, setShowEmoji] = useState(false);
-  const { postComment } = usePostActions();
+  const { postComment, getPostByID } = usePostActions();
 
-  const handleSubmit = () => {
-    if (comment.trim()) {
-      postComment(comment, postId);
-      console.log("Коммент равон шуд:", comment);
-      setComment("");
-    }
-  };
+
+//   const handleSubmit = async () => {
+//     if (comment.trim()) {
+//       await postComment(comment, postId);
+//       console.log("Коммент равон шуд:", comment);
+//       await getPostByID(postId)
+//       setComment("");
+//     }
+//   };
+
+const handleSubmit = async () => {
+  if (!comment.trim()) return;
+
+  try {
+    await postComment(comment, postId);
+    setComment(""); // Input пок мешавад
+
+    await getPostByID(postId); // ✅ Post бо комментарҳои нав нав мешавад
+  } catch (err) {
+    console.log("Ошибка:", err);
+  }
+};
+
 
   const onEmojiClick = (emojiData) => {
     setComment((prev) => prev + emojiData.emoji);

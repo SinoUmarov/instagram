@@ -1,6 +1,8 @@
 // import { userId } from '@/api/pages/chat/utils/axios-reguest'
 // import token from '@/api/pages/chat/utils/axios-reguest'
+import axiosRequest from '@/lib/axiosRequest'
 import axios from 'axios'
+import { useState } from 'react'
 import { create } from 'zustand'
 
 export const useChat = create((set, get) => ({
@@ -13,8 +15,8 @@ export const useChat = create((set, get) => ({
 	myFollowers: [],
 	getUserProfile: async id => {
 		try {
-			const { data } = await axios.get(
-				`http://37.27.29.18:8003/UserProfile/get-user-profile-by-id?id=${id}`,
+			const { data } = await axiosRequest.get(
+				`/UserProfile/get-user-profile-by-id?id=${id}`,
 				{
 					headers: {
 						Authorization: `Bearer ${localStorage.getItem('access_token')}`,
@@ -29,8 +31,8 @@ export const useChat = create((set, get) => ({
 	},
 	getAllUsers: async () => {
 		try {
-			const { data } = await axios.get(
-				'http://37.27.29.18:8003/Chat/get-chats',
+			const { data } = await axiosRequest.get(
+				'/Chat/get-chats',
 				{
 					headers: {
 						Authorization: `Bearer ${localStorage.getItem('access_token')}`,
@@ -44,8 +46,8 @@ export const useChat = create((set, get) => ({
 	},
 	getChatById: async user => {
 		try {
-			const { data } = await axios.get(
-				'http://37.27.29.18:8003/Chat/get-chat-by-id?chatId=' + user,
+			const { data } = await axiosRequest.get(
+				'/Chat/get-chat-by-id?chatId=' + user,
 				{
 					headers: {
 						Authorization: `Bearer ${localStorage.getItem('access_token')}`,
@@ -59,8 +61,8 @@ export const useChat = create((set, get) => ({
 	},
 	getUserByName: async userName => {
 		try {
-			const { data } = await axios.get(
-				'http://37.27.29.18:8003/User/get-users?UserName=' + userName,
+			const { data } = await axiosRequest.get(
+				'/User/get-users?UserName=' + userName,
 				{
 					headers: {
 						Authorization: `Bearer ${localStorage.getItem('access_token')}`,
@@ -74,7 +76,7 @@ export const useChat = create((set, get) => ({
 	},
 	sendMessege: async formData => {
 		try {
-			await axios.put('http://37.27.29.18:8003/Chat/send-message', formData, {
+			await axiosRequest.put('/Chat/send-message', formData, {
 				headers: {
 					Authorization: `Bearer ${localStorage.getItem('access_token')}`,
 					'Content-Type': 'multipart/form-data',
@@ -87,8 +89,8 @@ export const useChat = create((set, get) => ({
 	},
 	delChatById: async id => {
 		try {
-			await axios.delete(
-				'http://37.27.29.18:8003/Chat/delete-chat?chatId=' + id,
+			await axiosRequest.delete(
+				'/Chat/delete-chat?chatId=' + id,
 				{
 					headers: {
 						Authorization: `Bearer ${localStorage.getItem('access_token')}`,
@@ -102,8 +104,8 @@ export const useChat = create((set, get) => ({
 	},
 	delMessageById: async (chatId, id) => {
 		try {
-			await axios.delete(
-				'http://37.27.29.18:8003/Chat/delete-message?massageId=' + chatId,
+			await axiosRequest.delete(
+				'/Chat/delete-message?massageId=' + chatId,
 				{
 					headers: {
 						Authorization: `Bearer ${localStorage.getItem('access_token')}`,
@@ -117,8 +119,8 @@ export const useChat = create((set, get) => ({
 	},
 	getUserByNameForSearch: async name => {
 		try {
-			const { data } = await axios.get(
-				'http://37.27.29.18:8003/User/get-users?UserName=' + name,
+			const { data } = await axiosRequest.get(
+				'/User/get-users?UserName=' + name,
 				{
 					headers: {
 						Authorization: `Bearer ${localStorage.getItem('access_token')}`,
@@ -132,8 +134,8 @@ export const useChat = create((set, get) => ({
 	},
 	createChat: async id => {
 		try {
-			await axios.post(
-				'http://37.27.29.18:8003/Chat/create-chat?receiverUserId=' + id,
+			await axiosRequest.post(
+				'/Chat/create-chat?receiverUserId=' + id,
 				{},
 				{
 					headers: {
@@ -148,8 +150,8 @@ export const useChat = create((set, get) => ({
 	},
 	getLastMessages: async () => {
 	try {
-		const chatsRes = await axios.get(
-			'http://37.27.29.18:8003/Chat/get-chats',
+		const chatsRes = await axiosRequest.get(
+			'/Chat/get-chats',
 			{
 				headers: {
 					Authorization: `Bearer ${localStorage.getItem('access_token')}`,
@@ -192,7 +194,7 @@ export const useChat = create((set, get) => ({
    },
 	getMyFollowers: async id => {
 		try {
-			const {data} = await axios.get('http://37.27.29.18:8003/FollowingRelationShip/get-subscribers?UserId=' + id, {
+			const {data} = await axiosRequest.get('/FollowingRelationShip/get-subscribers?UserId=' + id, {
 				headers: {
 					"Authorization": `Bearer ${localStorage.getItem('access_token')}`
 				}
@@ -203,5 +205,3 @@ export const useChat = create((set, get) => ({
 		}
 	}
 }))
-
-export default useChat

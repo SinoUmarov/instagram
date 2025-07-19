@@ -11,7 +11,6 @@ import { usePostActions } from "@/store/pages/home/post-actions/post-actions";
 import Comments from "../comments/comments";
 
 export default function PostActions({
-  // likeCount,
   userName,
   content,
   commentCount,
