@@ -4,37 +4,30 @@ import { useEffect, useMemo, useState } from "react";
 import dynamic from "next/dynamic";
 import { Trash2 } from "lucide-react";
 import { API } from "@/utils/config";
-import { useProfileStore } from "@/store/pages/profile/profile/store-profile";
-import { jwtDecode } from "jwt-decode";
+import { useProfileByIdStore } from "@/store/pages/profile/profile-by-id/store-by-id";
 
 const StoriesLib = dynamic(() => import("react-insta-stories"), { ssr: false });
 
-export default function StoryViewer() {
-  const { getStories, story, likeStory,deleteStories } = useProfileStore();
+export default function StoryById({ id }) {
+  const { storyById, getStoriesById, likeStory, deleteStories } = useProfileByIdStore();
   const [show, setShow] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [currentUser, setCurrentUser] = useState(null);
-  
 
   useEffect(() => {
-    const token = localStorage.getItem("access_token");
-    if (token) {
-      const decoded = jwtDecode(token);
-      getStories(decoded.sid);
-    }
-  }, []);
+    getStoriesById(id);
+  }, [id, getStoriesById]);
 
   useEffect(() => {
-    if (story?.userId) {
-      setCurrentUser({ ...story });
+    if (storyById?.userId) {
+      setCurrentUser({ ...storyById });
     }
-  }, [story]);
+  }, [storyById]);
 
-  const toggleLike = (id) => {
-    
+  const toggleLike = (storyId) => {
     setCurrentUser((prev) => {
       const updatedStories = prev.stories.map((s) => {
-        if (s.id === id) {
+        if (s.id === storyId) {
           const newLiked = !s.liked;
           return {
             ...s,
@@ -44,22 +37,23 @@ export default function StoryViewer() {
         }
         return s;
       });
-
       return { ...prev, stories: updatedStories };
     });
 
-    likeStory(id);
+    likeStory(storyId);
   };
 
-  const deleteStory = (id) => {
-    const updated = currentUser.stories.filter((s) => s.id !== id);
+  const deleteStory = (storyId) => {
+    const updated = currentUser.stories.filter((s) => s.id !== storyId);
     setCurrentUser((prev) => ({ ...prev, stories: updated }));
+
     if (updated.length === 0) {
       setShow(false);
     } else {
       setCurrentIndex(0);
     }
-    deleteStories(id)
+
+    deleteStories(storyId);
   };
 
   const formattedStories = useMemo(() => {

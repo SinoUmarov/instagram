@@ -12,59 +12,57 @@ import { API } from "@/utils/config";
 import { useProfileStore } from "@/store/pages/profile/profile/store-profile";
 import { jwtDecode } from "jwt-decode";
 
-export default function FollowersMenu({ open, onClose }) {
-  const { folowers, folowing, postFolowing, deleteFolowing } = useProfileStore();
-  const [localFollowers, setLocalFollowers] = useState([]);
+export default function FollowingMenu({ open, onClose }) {
+  const { folowing, folowers, postFolowing, deleteFolowing } = useProfileStore();
+  const [localFollowing, setLocalFollowing] = useState([]);
 
   const [decode, setDecode] = useState(null);
 
 useEffect(() => {
-  if (typeof window !== "undefined") {
+  const token = localStorage.getItem("access_token");
+  if (token) {
     try {
-      const token = localStorage.getItem("access_token");
-      if (token) {
-        const decoded = jwtDecode(token);
-        setDecode(decoded);
-      }
-    } catch (e) {
-      console.error("Ошибка при декодировании токена:", e);
+      const decoded = jwtDecode(token);
+      setDecode(decoded);
+    } catch (err) {
+      console.error("Ошибка декодирования токена:", err);
     }
   }
 }, []);
 
-  useEffect(() => {
-    if (open && folowers) {
-      const followingIds = new Set(folowing?.map((f) => f.userShortInfo?.userId));
-      const updated = folowers.map((follower) => ({
-        ...follower,
-        isFollowing: followingIds.has(follower.userShortInfo?.userId),
-      }));
-      setLocalFollowers(updated);
-    }
-  }, [open, folowers, folowing]);
+useEffect(() => {
+  if (open && folowing) {
+    const updated = folowing.map((user) => ({
+      ...user,
+      isFollowing: true,
+    }));
+    setLocalFollowing(updated);
+  }
+}, [open, folowing, folowers]);
+
 
   const toggleFollow = async (userId, isCurrentlyFollowing) => {
-  // Синхронно меняем UI до запроса
-  setLocalFollowers((prev) =>
-    prev.map((user) =>
-      user.userShortInfo.userId === userId
-        ? { ...user, isFollowing: !isCurrentlyFollowing }
-        : user
-    )
-  );
+        if (!decode) return;
 
-  try {
-    if (isCurrentlyFollowing) {
-      await deleteFolowing(userId,decode.sid);
-    } else {
-      await postFolowing(userId,decode.sid);
+    setLocalFollowing((prev) =>
+      prev.map((user) =>
+        user.userShortInfo.userId === userId
+          ? { ...user, isFollowing: !isCurrentlyFollowing }
+          : user
+      )
+    );
+
+    try {
+      if (isCurrentlyFollowing) {
+        await deleteFolowing(userId, decode?.sid);
+      } else {
+        await postFolowing(userId, decode?.sid);
+      }
+    } catch (error) {
+      console.log(error);
+      
     }
-  } catch (error) {
-    console.error("Ошибка при смене подписки:", error);
-
-    
-  }
-};
+  };
 
   return (
     <Modal open={open} onClose={onClose}>
@@ -78,7 +76,7 @@ useEffect(() => {
         <div className="bg-white rounded-xl w-[90%] max-w-sm max-h-[80vh] overflow-hidden flex flex-col">
           <div className="relative px-4 py-3 border-b">
             <Typography className="text-center font-semibold text-base">
-              Подписчики
+              Подписки
             </Typography>
             <IconButton onClick={onClose} className="absolute right-2 top-2">
               <X />
@@ -86,7 +84,7 @@ useEffect(() => {
           </div>
 
           <div className="overflow-y-auto px-4 py-2 space-y-3">
-            {localFollowers.map((el) => {
+            {localFollowing.map((el) => {
               const user = el.userShortInfo;
               const isFollowing = el.isFollowing;
 
