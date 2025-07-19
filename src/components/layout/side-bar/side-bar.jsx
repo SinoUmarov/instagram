@@ -123,13 +123,7 @@ export default function SideBar({ children }) {
             </div>
             <div className="flex flex-col justify-between h-full">
               <div className="flex flex-col gap-2 mt-4">
-                <NavLink
-                  href="/"
-                  icon={homeIcon}
-                  activeIcon={homeIconActive}
-                  label={t("layout.home")}
-                  isActive={isActive}
-                />
+             
               
 						<div className='flex flex-col justify-between h-full'>
 							<div className='flex flex-col gap-2 mt-4'>
