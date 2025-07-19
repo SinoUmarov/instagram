@@ -1,13 +1,13 @@
 'use client'
 // import { api, userId } from '@/api/pages/chat/utils/axios-reguest'
 import { api, userId } from '@/api/pages/chat/utils/axios-reguest'
-import useChat from '@/store/pages/chat/pages/default-chat/default-chat'
 import { Search, SquarePen, User } from 'lucide-react'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import 'swiper/css'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import userProfileImage from '@/assets/icon/pages/chat/pages/default-chat/profil.png'
+import { useChat } from '@/store/pages/chat/pages/default-chat/default-chat'
 
 export default function DefaultChatComponent() {
 	const {
@@ -46,22 +46,17 @@ export default function DefaultChatComponent() {
 	}
 
 	useEffect(() => {
-		let mounted = true
-
-		async function poll() {
-			if (!mounted) return
-			await getAllUsers()
-			setTimeout(poll, 3000)
-		}
-
 		getUserProfile(userId.sid)
 		getLastMessages()
-		poll()
-
-		return () => {
-			mounted = false
-		}
 	}, [])
+
+	useEffect(() => {
+		const interval = setInterval(() => {
+			getAllUsers()
+		}, 3000)
+
+		return () => clearInterval(interval)
+	},[])
 
 	return (
 		<>
