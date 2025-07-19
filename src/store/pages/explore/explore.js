@@ -37,7 +37,7 @@ export const useExplorePage = create((set, get) => ({
         try {
             await axiosRequest.post(`/Post/like-post?postId=${postId}`)
 
-            //   локално тов метемша
+        
             set(state => ({
                 data: state.data.map(post => {
                     if (post.postId === postId) {
@@ -91,6 +91,20 @@ export const useExplorePage = create((set, get) => ({
     setInitialComments: (comments) => {
         set(() => ({ dataComments: comments || [] }));
     },
+
+
+
+     addFavorite: async (id) => {
+
+        try {
+            await axiosRequest.post(`/Post/add-post-favorite`, id);
+        } catch (error) {
+            console.log(error);
+        }
+        
+    },
+
+   
 
 
     addFollowingRelationship: async id => {
