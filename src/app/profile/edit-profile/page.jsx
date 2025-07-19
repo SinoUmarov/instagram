@@ -14,6 +14,7 @@ import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import { useProfileStore } from "@/store/pages/profile/profile/store-profile";
 import { API } from "@/utils/config";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function EditProfile() {
   const { info, editAvatar, editProfil } = useProfileStore();
@@ -76,7 +77,9 @@ const [originalImage, setOriginalImage] = useState("");
     <Box className="min-h-screen flex justify-center items-center  p-6">
       <Box className="w-full max-w-3xl  rounded-lg shadow-md p-8 bg-white">
         <Box className="flex items-center text-base font-medium text-gray-700 mb-6">
+          <Link href='/profile'>
           <span className="text-blue-600 cursor-pointer">Profile</span>
+          </Link>
           <ArrowForwardIosIcon sx={{ fontSize: 16, mx: 1 }} />
           <span className="font-semibold text-black text-lg">Edit profile</span>
         </Box>
