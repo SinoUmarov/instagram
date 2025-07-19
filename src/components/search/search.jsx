@@ -20,20 +20,23 @@ import Image from 'next/image'
 import { API } from '@/utils/config'
 import ava from '@/assets/img/pages/profile/profile/ava.jpeg'
 import ClearIcon from '@mui/icons-material/Clear'
+import Skeleton from '@mui/material/Skeleton'
+import Stack from '@mui/material/Stack'
 
 export default function TemporaryDrawer() {
-  const { isOpen, toggleDrawer, searchUser, data, postSearchHistory, getSearchHistory, history, deleteSearchHistory, clearSearchHistory } = useDrawerStore()
+  const { isOpen, toggleDrawer, searchUser, data, postSearchHistory, getSearchHistory, history, deleteSearchHistory, clearSearchHistory, loading } = useDrawerStore()
 
   const [search, setSearch] = useState('')
 
+
   function handleSearch(e) {
-
     searchUser(e.target.value)
-
   }
 
   useEffect(() => {
-    getSearchHistory()
+    if (isOpen) {
+      getSearchHistory()
+    }
   }, [search])
 
   const DrawerList = (
@@ -68,32 +71,55 @@ export default function TemporaryDrawer() {
         <div className='flex flex-col gap-5'>
 
           {
-            (search === '' && history.length === 0) ? <p className='text-[#737373] m-auto mt-[200px]'>Нет недавних запросов.</p> :
-              search !== '' ?
-                data?.map((user) => (
-                  <div key={user.id} className='flex items-center gap-5' onClick={() => postSearchHistory(user.id)}>
-                    <Image src={user.avatar !== '' ? `${API}/images/${user.avatar}` : ava} alt='avatar' width={70} height={80} className='rounded-[50%] w-[60px] h-[60px]' />
-                    <div>
-                      <h2>{user.userName}</h2>
-                      <h3 className='text-[#9E9E9E]'>{user.fullName} . Подписчики {user.subscribersCount}</h3>
-                    </div>
-
-                  </div>
-                )) :
-                history?.map((el) => (
-
-
-                  <div key={el.id} className='flex items-center justify-between' >
-                    <div className='flex items-center  gap-6'>
-                      <Image src={el.users.avatar !== '' ? `${API}/images/${el.users.avatar}` : ava} alt='avatar' width={70} height={80} className='rounded-[50%] w-[60px] h-[60px]' />
+            loading ? 
+            <div className="flex items-center gap-5">
+              <Skeleton
+                variant="circular"
+                width={60}
+                height={60}
+                sx={{ bgcolor: 'grey.300' }}
+              />
+              <div className="flex flex-col gap-2">
+                <Skeleton
+                  variant="text"
+                  width={120}
+                  height={24}
+                  sx={{ bgcolor: 'grey.300' }}
+                />
+                <Skeleton
+                  variant="text"
+                  width={200}
+                  height={20}
+                  sx={{ bgcolor: 'grey.300' }}
+                />
+              </div>
+            </div>
+            
+             :
+              ((search === '' && history.length === 0) ? <p className='text-[#737373] m-auto mt-[200px]'>Нет недавних запросов.</p> :
+                search !== '' ?
+                  data?.map((user) => (
+                    <div key={user.id} className='flex items-center gap-5' onClick={() => postSearchHistory(user.id)}>
+                      <Image src={user.avatar !== '' ? `${API}/images/${user.avatar}` : ava} alt='avatar' width={70} height={80} className='rounded-[50%] w-[60px] h-[60px]' />
                       <div>
-                        <h2>{el.users.userName}</h2>
-                        <h3 className='text-[#9E9E9E]'>{el.users.fullName} . Подписчики {el.users.subscribersCount}</h3>
+                        <h2>{user.userName}</h2>
+                        <h3 className='text-[#9E9E9E]'>{user.fullName} . Подписчики {user.subscribersCount}</h3>
                       </div>
+
                     </div>
-                    <ClearIcon onClick={() => deleteSearchHistory(el.id)} />
-                  </div>
-                ))
+                  )) :
+                  history?.map((el) => (
+                    <div key={el.id} className='flex items-center justify-between' >
+                      <div className='flex items-center  gap-6'>
+                        <Image src={el.users.avatar !== '' ? `${API}/images/${el.users.avatar}` : ava} alt='avatar' width={70} height={80} className='rounded-[50%] w-[60px] h-[60px]' />
+                        <div>
+                          <h2>{el.users.userName}</h2>
+                          <h3 className='text-[#9E9E9E]'>{el.users.fullName} . Подписчики {el.users.subscribersCount}</h3>
+                        </div>
+                      </div>
+                      <ClearIcon onClick={() => deleteSearchHistory(el.id)} />
+                    </div>
+                  )))
 
           }
         </div>

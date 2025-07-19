@@ -2,7 +2,7 @@
 'use client'
 
 import logo from '@/assets/img/pages/auth/registration/inst_logo_auth.png'
-import phones from '@/assets/img/pages/auth/registration/phones.png'
+import phones from '@/assets/img/pages/auth/registration/instt.jpg'
 import google_play from '@/assets/img/pages/auth/registration/google_play.png'
 import microsoft from '@/assets/img/pages/auth/registration/microsoft.png'
 
