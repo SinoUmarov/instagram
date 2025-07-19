@@ -7,14 +7,7 @@ import { Button, Menu, MenuItem } from "@mui/material"
 import { usePathname, useRouter } from "next/navigation"
 import Image from "next/image"
 import inst from '@/assets/img/pages/profile/profile/inst.png'
-'use client'
-import { useEffect, useState } from 'react'
-import Link from 'next/link'
-import { useTranslation } from 'react-i18next'
-import Profile from '@/assets/icon/layout/instagramDefaultProfile.jpg'
-import { Button, Menu, MenuItem, useTheme } from '@mui/material'
-import { usePathname, useRouter } from 'next/navigation'
-import Image from 'next/image'
+
 import {
 	homeIcon,
 	homeIconActive,
@@ -45,6 +38,7 @@ import BarChartIcon from '@mui/icons-material/BarChart'
 import TurnedInNotIcon from '@mui/icons-material/TurnedInNot'
 import BedtimeOutlinedIcon from '@mui/icons-material/BedtimeOutlined'
 import AnnouncementOutlinedIcon from '@mui/icons-material/AnnouncementOutlined'
+
 const NavLink = ({ href, icon, activeIcon, label, isActive }) => (
 	<Link
 		href={href}
@@ -68,7 +62,7 @@ export default function SideBar({ children }) {
 	const [token, setToken] = useState(null)
 	const router = useRouter()
 	const [open1, setOpen] = useState(false)
-	const muiTheme = useTheme()
+	// const muiTheme = useTheme()
 	const [theme, setTheme] = useState('light')
 
 	const toggleTheme = () => {
@@ -118,10 +112,10 @@ export default function SideBar({ children }) {
 
 
   return (
-
-    <div>
+	<div>
       {!isAuthPage && (
         <section className="w-[320px] h-[100%] fixed  border-r-2 border-gray-300">
+			
           <div className="sideBar h-full pb-[100px]">
             <div className="m-auto pt-[20px] ml-[20px] flex pb-[10px] mt-[20px]">
               <Image src={inst} alt='inst' className='' />
@@ -312,16 +306,15 @@ export default function SideBar({ children }) {
 							</div>
 						</div>
 					</div>
+					</div>
+					</div>
 				</section>
 			)}
 
-      <div style={{ marginLeft: (pathname != '/login' && pathname !== '/registration') ? '370px' : '0px' }} className=''>
+      {/* <div style={{ marginLeft: (pathname != '/login' && pathname !== '/registration') ? '370px' : '0px' }} className=''>
         {children}
-      </div>
-    </div>
-
-
-  )
+      </div> */}
+    
 			<div
 				style={{
 					marginLeft:
@@ -332,6 +325,7 @@ export default function SideBar({ children }) {
 			>
 				{children}
 			</div>
+		
 		</div>
-	)
-}
+  )}
+		
