@@ -33,6 +33,7 @@ import { API } from '@/utils/config'
 import { useDrawerStore } from '@/store/search/searchStore'
 import CreatePostModal from '@/components/createPost/createpost'
 import AddBoxOutlinedIcon from '@mui/icons-material/AddBoxOutlined'
+import Profiles from '@/components/pages/profile/profile/profile'
 const LightTooltip = styled(({ className, ...props }) => (
 	<Tooltip {...props} classes={{ popper: className }} />
 ))(() => ({
@@ -92,9 +93,9 @@ const MiniSideBar = ({ children }) => {
 			{!isAuthPage && (
 				<section className='flex justify-center w-[50px] border-r-[2px] border-[#eee] h-[100vh]'>
 					<div className='sideBar h-full pb-[100px]'>
-						{/* <div className="m-auto flex justify-center pb-[10px] mt-[20px]">
+						<div className="m-auto flex justify-center pb-[10px] mt-[20px]">
               {instagramMiniLogo}
-            </div> */}
+            </div>
 						<div className='flex flex-col justify-between h-full'>
 							<div className='flex flex-col gap-[0.5rem] mt-4'>
 								{/* Home Icon */}
@@ -170,8 +171,8 @@ const MiniSideBar = ({ children }) => {
 										onClick={() => setOpen(true)}
 										className='flex items-center gap-4 w-[90%] m-auto rounded-md h-[52px] px-4 hover:bg-gray-100 cursor-pointer'
 									>
-										<AddBoxOutlinedIcon fontSize='medium' />
-										<p className='text-lg'>{t('layout.create')}</p>
+										<AddBoxOutlinedIcon  sx={{ color: 'black' }} fontSize='medium' />
+										{/* <p className='text-lg'>{t('layout.create')}</p> */}
 									</div>
 									<CreatePostModal
 										open={open1}

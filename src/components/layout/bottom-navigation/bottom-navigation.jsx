@@ -104,7 +104,7 @@ export default function BottomNavigation({ children }) {
             {/* Create Button */}
            		<div
 										onClick={() => setOpen(true)}
-										className='flex items-center gap-4 w-[90%] m-auto rounded-md h-[52px] px-4 hover:bg-gray-100 cursor-pointer'
+										className='flex items-center  rounded-md h-[52px]  hover:bg-gray-100 cursor-pointer'
 									>
 										{add}
 										{/* <p className='text-lg'>{t('layout.create')}</p> */}
