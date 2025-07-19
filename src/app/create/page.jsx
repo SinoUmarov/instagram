@@ -9,7 +9,7 @@ export default function CreatePage() {
   return (
     <Container sx={{ mt: 5 }}>
       <Button variant="contained" onClick={() => setOpen(true)}>
-      Create
+ create
       </Button>
 
       <CreatePostModal open={open} onClose={() => setOpen(false)} />

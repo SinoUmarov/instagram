@@ -11,6 +11,7 @@ import {
   video,
   videoActive,
 } from "@/assets/icon/layout/svg"
+import { useTranslation } from 'react-i18next'
 import { useProfileStore } from "@/store/pages/profile/profile/store-profile"
 import { API } from "@/utils/config"
 import { jwtDecode } from "jwt-decode"
@@ -18,7 +19,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
-
+import CreatePostModal from '@/components/createPost/createpost'
 export default function BottomNavigation({ children }) {
   const pathname = usePathname()
 
@@ -37,7 +38,7 @@ export default function BottomNavigation({ children }) {
     "/profile": { active: Profile, inactive: Profile }, // No icon state, just border logic
   }
   const { getInfo, info } = useProfileStore()
-
+	const [open1, setOpen] = useState(false)
   useEffect(() => {
     const token = localStorage.getItem("access_token")
     if (token) {
@@ -50,7 +51,7 @@ export default function BottomNavigation({ children }) {
     }
   }, [])
 
-
+	const { t } = useTranslation()
   const [token, setToken] = useState(null)
   const router = useRouter()
 
@@ -101,7 +102,17 @@ export default function BottomNavigation({ children }) {
             </Link>
 
             {/* Create Button */}
-            <div className={iconClass}>{add}</div>
+           		<div
+										onClick={() => setOpen(true)}
+										className='flex items-center gap-4 w-[90%] m-auto rounded-md h-[52px] px-4 hover:bg-gray-100 cursor-pointer'
+									>
+										{add}
+										{/* <p className='text-lg'>{t('layout.create')}</p> */}
+									</div>
+									<CreatePostModal
+										open={open1}
+										onClose={() => setOpen(false)}
+									/>
 
             {/* Chats */}
             <Link href="/chats">
