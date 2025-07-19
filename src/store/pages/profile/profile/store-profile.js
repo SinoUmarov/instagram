@@ -4,10 +4,12 @@ import { create } from "zustand";
 
 export const useProfileStore = create((set,get) => ({
   info: null,
+  
   posts: null,
   saved: null,
   story: null,
   folowers:null,
+  folowing:null,
 
   getInfo: async (id) => {
     try {
@@ -73,6 +75,24 @@ export const useProfileStore = create((set,get) => ({
      let {data} =await axiosRequest.get(`${API}/FollowingRelationShip/get-subscribers?UserId=${id}`)
      set({folowers:data.data})
      
-  }
+  },
+  getFolowing: async(id)=>{
+    let {data} = await axiosRequest.get(`${API}/FollowingRelationShip/get-subscriptions?UserId=${id}`)
+     set({folowing:data.data})    
+  },
+  postFolowing:async(id,sid)=>{
+    await axiosRequest.post(`${API}/FollowingRelationShip/add-following-relation-ship?followingUserId=${id}`)
+    get().getFolowing(sid)
+    get().getFolowers(sid)
+    get().getInfo(sid)
+  },
+  deleteFolowing:async(id,sid)=>{
+    await axiosRequest.delete(`${API}/FollowingRelationShip/delete-following-relation-ship?followingUserId=${id}`)
+    get().getFolowing(sid)
+    get().getFolowers(sid)
+    get().getInfo(sid)
+  },
+
+  
 
 }));
