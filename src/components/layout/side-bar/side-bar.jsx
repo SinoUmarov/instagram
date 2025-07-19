@@ -130,20 +130,7 @@ export default function SideBar({ children }) {
                   label={t("layout.home")}
                   isActive={isActive}
                 />
-                {/* <NavLink
-		if (!accessToken && pathname !== '/login' && pathname !== '/registration') {
-			router.push('/login')
-		}
-	}, [pathname, router])
-
-	return (
-		<div>
-			{!isAuthPage && (
-				<section className='w-[320px] h-[100%] fixed  border-r-2 border-gray-300'>
-					<div className='sideBar h-full pb-[100px]'>
-						{/* <div className="m-auto pt-[20px] ml-[20px] flex pb-[10px] mt-[20px]">
-              {homeIcon}
-            </div> */}
+              
 						<div className='flex flex-col justify-between h-full'>
 							<div className='flex flex-col gap-2 mt-4'>
 								<NavLink
@@ -153,13 +140,7 @@ export default function SideBar({ children }) {
 									label={t('layout.home')}
 									isActive={isActive}
 								/>
-								{/* <NavLink
-                  href="/search"
-                  icon={searchIcon}
-                  activeIcon={searchIconActive}
-                  label={t("layout.search")}
-                  isActive={isActive}
-                /> */}
+								
 								<Button
 									onClick={openDrawer}
 									startIcon={searchIconActive}
