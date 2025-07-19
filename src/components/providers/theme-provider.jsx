@@ -8,6 +8,7 @@
     return (
       <AppRouterCacheProvider options={{ key: 'css' }}>
         <ThemeProvider theme={theme}>
+          
           {children}
         </ThemeProvider>
       </AppRouterCacheProvider>
