@@ -2,7 +2,7 @@ import axiosRequest from '@/lib/axiosRequest'
 import { create } from 'zustand'
 
 export const useDrawerStore = create((set, get) => ({
-	data: [],
+	datas: [],
 	history: [],
 	isOpen: false,
 	loading: false,
@@ -17,7 +17,7 @@ export const useDrawerStore = create((set, get) => ({
 				`/User/get-users?UserName=${user !== '' ? user : ''}`
 			)
 
-			set(() => ({ data: data.data, loading: false }))
+			set(() => ({ datas: data.data, loading: false }))
 		} catch (error) {
 			console.log(error)
 			set({ loading: false })

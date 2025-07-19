@@ -24,7 +24,7 @@ import Skeleton from '@mui/material/Skeleton'
 import Stack from '@mui/material/Stack'
 
 export default function TemporaryDrawer() {
-  const { isOpen, toggleDrawer, searchUser, data, postSearchHistory, getSearchHistory, history, deleteSearchHistory, clearSearchHistory, loading } = useDrawerStore()
+  const { isOpen, toggleDrawer, searchUser, datas, postSearchHistory, getSearchHistory, history, deleteSearchHistory, clearSearchHistory, loading } = useDrawerStore()
 
   const [search, setSearch] = useState('')
 
@@ -98,7 +98,7 @@ export default function TemporaryDrawer() {
              :
               ((search === '' && history.length === 0) ? <p className='text-[#737373] m-auto mt-[200px]'>Нет недавних запросов.</p> :
                 search !== '' ?
-                  data?.map((user) => (
+                  datas?.map((user) => (
                     <div key={user.id} className='flex items-center gap-5' onClick={() => postSearchHistory(user.id)}>
                       <Image src={user.avatar !== '' ? `${API}/images/${user.avatar}` : ava} alt='avatar' width={70} height={80} className='rounded-[50%] w-[60px] h-[60px]' />
                       <div>
