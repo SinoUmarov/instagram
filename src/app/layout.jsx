@@ -9,8 +9,12 @@ import { usePathname } from "next/navigation"
 import TranslatorProvider from "@/components/providers/translator-provider"
 import ThemeWrapper from "@/components/providers/theme-provider"
 import TemporaryDrawer from '@/components/search/search'
+import { useDrawerStore } from '@/store/search/searchStore'
 
 export default function RootLayout({ children }) {
+
+  const { isOpen } = useDrawerStore()
+
   // 1️⃣ default: 0  – SSR‑safe
   const [windowWidth, setWindowWidth] = useState(0)
   const pathname = usePathname()
@@ -33,12 +37,12 @@ export default function RootLayout({ children }) {
     if (windowWidth <= 767) return "bottom"
     if (
       windowWidth <= 1279 ||
-      pathname === "/search" ||
+      isOpen == true ||
       pathname.includes("chat")
     )
       return "minibar"
     return "bar"
-  }, [windowWidth, pathname])
+  }, [windowWidth, pathname , isOpen])
 
   const wrapWithBar = (content) => {
     switch (barType) {
