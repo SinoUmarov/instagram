@@ -18,7 +18,8 @@ export const useUser = create((set) => ({
   getStories: async () => {
     try {
       const { data } = await axiosRequest.get(`/Story/get-stories`);
-      set({ stories: data });
+      set({ stories: data});
+      console.log('stories: ', data)
     } catch (error) {
       console.error(error);
     }
@@ -26,7 +27,7 @@ export const useUser = create((set) => ({
 
   getPosts: async () => {
     try {
-      const { data } = await axiosRequest.get(`/Post/get-posts?PageSize=100`);
+      const { data } = await axiosRequest.get(`/Post/get-posts?PageSize=50`);
       set({ posts: data?.data });
     } catch (error) {
       console.error(error);
