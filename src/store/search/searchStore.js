@@ -2,22 +2,25 @@ import axiosRequest from '@/lib/axiosRequest'
 import { create } from 'zustand'
 
 export const useDrawerStore = create((set, get) => ({
-	data: [],
+	datas: [],
 	history: [],
 	isOpen: false,
+	loading: false,
 	openDrawer: () => set({ isOpen: true }),
 	closeDrawer: () => set({ isOpen: false }),
 	toggleDrawer: () => set(state => ({ isOpen: !state.isOpen })),
 
 	searchUser: async user => {
+		set({ loading: true })
 		try {
 			let { data } = await axiosRequest(
 				`/User/get-users?UserName=${user !== '' ? user : ''}`
 			)
-			// console.log('USERS: ', data.data)
-			set(() => ({ data: data.data }))
+
+			set(() => ({ datas: data.data, loading: false }))
 		} catch (error) {
 			console.log(error)
+			set({ loading: false })
 		}
 	},
 
@@ -32,12 +35,14 @@ export const useDrawerStore = create((set, get) => ({
 	},
 
 	getSearchHistory: async () => {
+		set({ loding: true })
 		try {
 			let { data } = await axiosRequest.get('/User/get-user-search-histories')
-			console.log('history:', data.data)
-			set(() => ({ history: data.data }))
+			// console.log('history:', data.data)
+			set(() => ({ history: data.data, loading: false }))
 		} catch (error) {
 			console.log(error)
+			set({ loading: false })
 		}
 	},
 

@@ -4,8 +4,8 @@ import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
 import { useState } from "react";
-import Post from "../post/post";
 import Saved from "../saved/saved";
+import PostById from "../post-by-id/post";
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -36,7 +36,7 @@ function a11yProps(index) {
   };
 }
 
-export default function BasicTabs() {
+export default function BasicTabsById({id}) {
   const [value, setValue] = useState(0);
 
   const handleChange = (event, newValue) => {
@@ -116,7 +116,7 @@ export default function BasicTabs() {
       </Box>
 
       <CustomTabPanel value={value} index={0}>
-        <Post />
+        <PostById id={id}/>
       </CustomTabPanel>
       <CustomTabPanel value={value} index={1}>
         <Saved />

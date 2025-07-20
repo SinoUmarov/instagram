@@ -19,6 +19,8 @@ import {
   Send,
   BookmarkBorder,
   EmojiEmotions,
+  VolumeUp,
+  VolumeOff,
 } from "@mui/icons-material";
 import { API } from "@/utils/config";
 import { useExplorePage } from "@/store/pages/explore/explore";
@@ -40,25 +42,43 @@ const style = {
 
 export default function InstagramModal({ open, setOpen, selectedPost }) {
   const handleClose = () => setOpen(false);
-  const { AddComment, dataComments, setInitialComments, likePost, addFollowingRelationship, dataReels, getReels } = useExplorePage();
+  const {
+    AddComment,
+    dataComments,
+    setInitialComments,
+    likePost,
+    addFollowingRelationship,
+    dataReels,
+    getReels,
+    addFavorite,
+  } = useExplorePage();
 
   const [textComment, setTextComment] = React.useState("");
   const [isLiked, setIsLiked] = React.useState(selectedPost?.postLike || false);
+  const [isMuted, setIsMuted] = React.useState(false);
+
   React.useEffect(() => {
     if (selectedPost) {
       setInitialComments(selectedPost.comments);
       setIsLiked(selectedPost.postLike || false);
-      
     }
   }, [selectedPost]);
 
-  React.useEffect(()=> {
-    getReels()
-  }, [])
+  React.useEffect(() => {
+    getReels();
+  }, []);
 
+  React.useEffect(() => {
+    const video = document.getElementById("post-video");
+    if (video && video instanceof HTMLVideoElement) {
+      video.muted = false;
+      setIsMuted(false);
+      video.play().catch((e) => {
+        console.log("Autoplay error:", e);
+      });
+    }
+  }, [selectedPost]);
 
-
-  console.log(dataReels)
   function sendComment() {
     const text = {
       comment: textComment,
@@ -91,15 +111,65 @@ export default function InstagramModal({ open, setOpen, selectedPost }) {
             const isVideo =
               fileName.endsWith(".mp4") || fileName.endsWith(".webm");
             const src = `${API}/images/${fileName}`;
-            return isVideo ? (
-              <video
-                key={selectedPost.postId}
-                src={src}
-                controls
-                autoPlay
-                style={{ width: "100%", height: "100%", objectFit: "cover" }}
-              />
-            ) : (
+
+            if (isVideo) {
+              return (
+                <Box
+                  key={selectedPost.postId}
+                  sx={{ position: "relative", width: "100%", height: "100%" }}
+                >
+                  <video
+                    id="post-video"
+                    src={src}
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                    }}
+                    onClick={(e) => {
+                      const video = e.currentTarget;
+                      if (video.paused) {
+                        video.play();
+                      } else {
+                        video.pause();
+                      }
+                    }}
+                    autoPlay
+                    playsInline
+                    muted={isMuted}
+                  />
+                  <IconButton
+                    size="small" 
+                    onClick={() => {
+                      const video = document.getElementById("post-video");
+                      if (video && video instanceof HTMLVideoElement) {
+                        video.muted = !video.muted;
+                        setIsMuted(video.muted);
+                      }
+                    }}
+                    sx={{
+                      position: "absolute",
+                      bottom: 16,
+                      right: 16,
+                      backgroundColor: "rgba(0,0,0,0.5)",
+                      color: "white",
+                      zIndex: 2,
+                      "&:hover": {
+                        backgroundColor: "rgba(0,0,0,0.7)",
+                      },
+                    }}
+                  >
+                    {isMuted ? (
+                      <VolumeOff fontSize="small" />
+                    ) : (
+                      <VolumeUp fontSize="small" />
+                    )}
+                  </IconButton>
+                </Box>
+              );
+            }
+
+            return (
               <img
                 key={selectedPost.postId}
                 src={src || "/placeholder.svg"}
@@ -149,7 +219,16 @@ export default function InstagramModal({ open, setOpen, selectedPost }) {
                   size="small"
                   variant="text"
                   color="primary"
-                  sx={el.isSubscriber === true ? { bgcolor: '#efefef', color: '#333', boxShadow: 'none', '&:hover': { bgcolor: '#e0e0e0' } } : {}}
+                  sx={
+                    el.isSubscriber === true
+                      ? {
+                          bgcolor: "#efefef",
+                          color: "#333",
+                          boxShadow: "none",
+                          "&:hover": { bgcolor: "#e0e0e0" },
+                        }
+                      : {}
+                  }
                   disabled={el.isSubscriber === true}
                 >
                   {el.isSubscriber === true ? "Подписки" : "Подписаться"}
@@ -213,8 +292,16 @@ export default function InstagramModal({ open, setOpen, selectedPost }) {
                 sx={{ display: "flex", justifyContent: "space-between", mb: 1 }}
               >
                 <Box sx={{ display: "flex", gap: 1 }}>
-                  <IconButton size="small" onClick={handleLike} color={isLiked ? "error" : "default"}>
-                    {isLiked ? <Favorite sx={{ color: "red" }} /> : <FavoriteBorder />}
+                  <IconButton
+                    size="small"
+                    onClick={handleLike}
+                    color={isLiked ? "error" : "default"}
+                  >
+                    {isLiked ? (
+                      <Favorite sx={{ color: "red" }} />
+                    ) : (
+                      <FavoriteBorder />
+                    )}
                   </IconButton>
                   <IconButton size="small">
                     <ChatBubbleOutline />
@@ -223,7 +310,7 @@ export default function InstagramModal({ open, setOpen, selectedPost }) {
                     <Send />
                   </IconButton>
                 </Box>
-                <IconButton size="small">
+                <IconButton onClick={()=> addFavorite(userId)} size="small">
                   <BookmarkBorder />
                 </IconButton>
               </Box>
@@ -237,8 +324,13 @@ export default function InstagramModal({ open, setOpen, selectedPost }) {
                 </Typography>
               ) : (
                 <Typography variant="body2" fontWeight="bold">
-
-                  {selectedPost?.postLikeCount + (isLiked !== selectedPost?.postLike ? (isLiked ? 1 : -1) : 0)} отметок "Нравится"
+                  {selectedPost?.postLikeCount +
+                    (isLiked !== selectedPost?.postLike
+                      ? isLiked
+                        ? 1
+                        : -1
+                      : 0)}{" "}
+                  отметок "Нравится"
                 </Typography>
               )}
               <Typography variant="caption" color="text.secondary">
