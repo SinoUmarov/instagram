@@ -91,7 +91,28 @@ export const useProfileStore = create((set,get) => ({
     get().getFolowing(sid)
     get().getFolowers(sid)
     get().getInfo(sid)
+    
   },
+
+  likePost:async(id)=>{
+    await axiosRequest.post(`${API}/Post/like-post?postId=${id}`)
+    get().getMyPost()
+  },
+
+  addComment:async(obj)=>{
+    await axiosRequest.post(`${API}/Post/add-comment`,obj)
+    get().getMyPost()
+  },
+  deleteComment:async(id)=>{
+    await axiosRequest.delete(`${API}/Post/delete-comment?commentId=${id}`)
+    get().getMyPost()
+  },
+  deletePost:async(id,sid)=>{
+    await axiosRequest.delete(`${API}/Post/delete-post?id=${id}`)
+    
+    get().getMyPost()
+    get().getInfo(sid)
+  }
 
   
 

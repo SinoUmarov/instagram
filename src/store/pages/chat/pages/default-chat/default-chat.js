@@ -176,12 +176,11 @@ export const useChat = create((set, get) => ({
 				let messages = res.data.data
 
 				if (messages && messages.length > 0) {
-					// Сортировка по дате (предположим, что поле - createdAt)
 					messages = messages.sort(
 						(a, b) => new Date(b.createdAt) - new Date(a.createdAt)
 					)
 
-					const lastMessage = messages[0] // самое новое
+					const lastMessage = messages[0] 
 					map[chat.chatId] = lastMessage
 				}
 			})

@@ -109,7 +109,7 @@ const MiniSideBar = ({ children }) => {
 
 								<button
 									onClick={openDrawer}
-									className='w-full flex items-center justify-start px-2 py-3 rounded-lg text-black '
+									className="w-full flex items-center justify-start px-2 py-3 rounded-lg text-black "
 								>
 									{searchIconActive}
 									{/* {t('layout.search')} */}
@@ -189,11 +189,10 @@ const MiniSideBar = ({ children }) => {
 									<Link href='/profile' passHref>
 										<div className='flex items-center super-svg gap-4 w-[90%] rounded-[8px] h-[52px] px-0 justify-center'>
 											<img
-												className={`rounded-[50%] h-[25] w-[25] ml-[10%] ${
-													router.pathname === '/profile'
-														? 'border-2 border-black'
-														: ''
-												}`}
+												className={`rounded-[50%] h-[25] w-[25] ml-[10%] ${router.pathname === '/profile'
+													? 'border-2 border-black'
+													: ''
+													}`}
 												src={
 													info?.image ? `${API}/images/${info.image}` : Profile
 												}
@@ -259,12 +258,12 @@ export default MiniSideBar
 	/* <div className="flex flex-col items-center super-svg gap-4 w-[90%] rounded-[8px] h-[52px] px-0 justify-center">
 <LightTooltip title={t('layout.threads')} placement="right" arrow>
   <button onClick={handleClick} className="flex gap-5">
-    {threads}
+	 {threads}
   </button>
 </LightTooltip>
 <LightTooltip title={t('layout.more')} placement="right" arrow>
   <button onClick={handleClick} className="flex gap-5">
-    {settings}
+	 {settings}
   </button>
 </LightTooltip>
 
