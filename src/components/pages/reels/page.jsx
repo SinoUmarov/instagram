@@ -19,6 +19,7 @@ import BookmarkIcon from "@mui/icons-material/Bookmark"
 
 // Импорты Material-UI Components
 import { Avatar, Box, Button, IconButton, TextField, Typography } from "@mui/material"
+import Link from 'next/link'
 
 export default function ReelsPage() {
   const [open, setOpen] = useState(false)
@@ -179,6 +180,7 @@ export default function ReelsPage() {
               }}
             >
               <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 2 }}>
+               <Link href={`/profile/${el.userId}`}>
                 <Avatar
                   src={el.userImage ? `${API}/images/${el.userImage}` : "/default-avatar.png"}
                   sx={{
@@ -187,9 +189,13 @@ export default function ReelsPage() {
                     border: "1px solid rgba(255,255,255,0.2)",
                   }}
                 />
+               </Link>
+              <Link href={`/profile/${el.userId}` }>
                 <Typography variant="body2" fontWeight={600} sx={{ fontSize: "14px" }}>
                   {el.userName}
                 </Typography>
+              
+              </Link>
                 <Typography sx={{ fontSize: "14px", mx: 0.5 }}>•</Typography>
                 <Button
                   onClick={
