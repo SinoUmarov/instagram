@@ -105,11 +105,10 @@ export default function SideBar({ children }) {
 		const accessToken = localStorage.getItem('access_token')
 		setToken(accessToken)
 
-    if (!accessToken && pathname !== '/login' && pathname !== "/registration") {
-      router.push('/login')
+    if (!accessToken && pathname !== "/login" && pathname !== "/registration") {
+      router.push("/login");
     }
-  }, [pathname, router])
-
+  }, [pathname, router]);
 
   return (
 	<div>
@@ -118,8 +117,7 @@ export default function SideBar({ children }) {
 			
           <div className="sideBar h-full pb-[100px]">
             <div className="m-auto pt-[20px] ml-[20px] flex pb-[10px] mt-[20px]">
-              <Image src={inst} alt='inst' className='' />
-
+              <Image src={inst} alt="inst" className="" />
             </div>
             <div className="flex flex-col justify-between h-full">
               <div className="flex flex-col gap-2 mt-4">

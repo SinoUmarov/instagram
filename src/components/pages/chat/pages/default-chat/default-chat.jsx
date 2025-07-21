@@ -216,8 +216,9 @@ export default function DefaultChatComponent() {
 													{lastMessages?.[el.chatId]?.userId === userId.sid
 														? 'Вы: '
 														: 'Он: '}
-													{lastMessages?.[el.chatId]?.messageText ||
-														'Новое сообщение'}
+													{lastMessages?.[el.chatId]?.messageText.length > 25 ? ( lastMessages?.[el.chatId]?.messageText.slice(0, 25) + '...' ||
+														'Новое сообщение') : (lastMessages?.[el.chatId]?.messageText ||
+														'Новое сообщение')}
 												</p>
 												<span className='text-[12px] text-gray-400'>
 													{lastMessages?.[el.chatId]?.sendMassageDate

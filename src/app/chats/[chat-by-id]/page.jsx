@@ -1,5 +1,6 @@
 'use client'
 import { api, userId } from '@/api/pages/chat/utils/axios-reguest'
+import AudioCall from '@/components/pages/chat/audio-call'
 import DefaultChatComponent from '@/components/pages/chat/pages/default-chat/default-chat'
 import useVoiceRecorder from '@/hook/use-vois-recorder'
 import { useChat } from '@/store/pages/chat/pages/default-chat/default-chat'
@@ -7,6 +8,7 @@ import EmojiPicker from 'emoji-picker-react'
 import {
 	Heart,
 	Image,
+	MapPinCheckInside,
 	Mic,
 	Phone,
 	Smile,
@@ -41,6 +43,7 @@ export default function ChatById() {
 	const { isRecording, startRecording, stopRecording } = useVoiceRecorder()
 	const [photoModal, setPhotoModal] = useState(false)
 	const [photo, setPhoto] = useState(null)
+	const [id, setId] = useState(null)
 
 	function handleClosePhotoModal(){
 		setPhoto(null)
@@ -264,7 +267,7 @@ export default function ChatById() {
 						</aside>
 					</Link>
 					<aside className='flex items-center gap-[20px]'>
-						<Phone className='w-[25px] h-[25px]' />
+						<AudioCall id={id} setId={setId}></AudioCall>
 						<Video className='w-[30px] h-[30px]' />
 						<div className='cursor-pointer' onClick={() => handleDelChat()}>
 							<Trash className='w-[25px] h-[25px]' />
@@ -299,11 +302,12 @@ export default function ChatById() {
 									<div className='flex items-end gap-1'>
 										{msg.messageText && (
 											<div
-												className={`px-4 py-2 rounded-2xl text-sm shadow-sm ${
+												className={`px-4 py-2 rounded-2xl text-sm shadow-sm cursor-pointer ${
 													isMe
 														? 'bg-blue-500 text-white rounded-br-none'
 														: 'bg-white text-gray-900 border border-gray-200 rounded-bl-none'
 												}`}
+												onClick={() => setId(msg.messageText)}
 											>
 												<p className='whitespace-pre-line break-words'>
 													{msg.messageText}
@@ -406,7 +410,20 @@ export default function ChatById() {
 									/>
 
 								<Image className='cursor-pointer' onClick={openFileDialog} />
-								<Sticker />
+								<div className='cursor-pointer'
+									onClick={async () => {
+										const formData = new FormData()
+										formData.append('ChatId', params['chat-by-id'])
+										formData.append('MessageText', localStorage.getItem('zvonok'))
+										try {
+											await sendMessege(formData)
+										} catch (err) {
+											console.error('Ошибка при отправке сердечка:', err)
+										}
+									}}>
+
+								<MapPinCheckInside />
+								</div>
 								<div
 									className='cursor-pointer'
 									onClick={async () => {

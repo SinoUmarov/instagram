@@ -93,7 +93,7 @@ export default function Comments({ open, setOpen, comments, postId }) {
             borderRadius: "12px",
             overflow: "hidden",
             maxWidth: "90vw",
-            width: "50%",
+            width: "60%",
             height: "90vh",
           },
         }}
@@ -102,8 +102,9 @@ export default function Comments({ open, setOpen, comments, postId }) {
           sx={{
             padding: 0,
           }}
+          className="flex flex-col md:flex-row  h-[90vh] "
         >
-          <section className="flex flex-col md:flex-row  h-[90vh] bg-white">
+
             {/* LEFT: MEDIA */}
             <Box className="w-[50%] md:w-1/2 h-1/2 md:h-full bg-black flex items-center justify-center ">
               {postByID?.images && (postByID?.images?.map((media, index) =>
@@ -134,6 +135,7 @@ export default function Comments({ open, setOpen, comments, postId }) {
 
             {/* RIGHT: COMMENT + USER */}
             <Box className="w-[50%] md:w-1/2 h-1/2 md:h-full flex flex-col justify-start overflow-y-auto p-4 bg-white">
+            
               <div className="flex justify-between items-center  py-2">
                 <div className="flex items-center gap-3 pb-3">
                   <div className="rounded-full bg-gradient-to-br from-pink-500 to-yellow-400 p-[2px] cursor-pointer">
@@ -280,7 +282,7 @@ export default function Comments({ open, setOpen, comments, postId }) {
               </div>
 
               {/* post-actions */}
-              <div className="fixed bottom-[38px] py-2 w-[355px] border-t border-b border-[#f0f0f0] bg-white">
+              <div className="fixed bottom-[38px] py-2 border-t-b border-[#f0f0f0]  w-[28%] ">
                 <div className="flex flex-col gap-2 pb-2">
                   {/* Иконаҳо */}
                   <div className="flex justify-between items-center">
@@ -347,7 +349,6 @@ export default function Comments({ open, setOpen, comments, postId }) {
                     
               </div>
             </Box>
-          </section>
         </DialogContent>
       </Dialog>
     </Fragment>
