@@ -247,7 +247,7 @@ export default function ChatById() {
 			</aside>
 			<section className='lg:w-[70%] w-[100%] relative'>
 				<nav className='p-4 bg-white border-b border-gray-200 flex justify-between items-center'>
-					<Link href={`/profil/${userByName?.id}`}>
+					<Link href={`/profile/${userByName?.id}`}>
 						<aside className='flex items-center gap-3'>
 							{userByName?.avatar ? (
 								<img
