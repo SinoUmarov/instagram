@@ -6,6 +6,8 @@ import Box from "@mui/material/Box";
 import { useState } from "react";
 import Post from "../post/post";
 import Saved from "../saved/saved";
+import { video } from "@/assets/icon/layout/svg";
+import Reels from "../reels/reels";
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -58,7 +60,6 @@ export default function BasicTabs() {
           },
         }}
       >
-        
         <Tabs
           value={value}
           onChange={handleChange}
@@ -66,7 +67,7 @@ export default function BasicTabs() {
           centered
         >
           <Tab
-            sx={{ mx: 4 }} 
+            sx={{ mx: 4 }}
             label={
               <div className="flex items-center gap-2 text-blue-600">
                 <svg
@@ -75,7 +76,7 @@ export default function BasicTabs() {
                   viewBox="0 0 24 24"
                   strokeWidth="1.5"
                   stroke="currentColor"
-                  className="w-5 h-5"
+                  className="w-[25px] h-[25px]"
                 >
                   <path
                     strokeLinecap="round"
@@ -90,7 +91,18 @@ export default function BasicTabs() {
           />
 
           <Tab
-            sx={{ mx: 4 }} 
+            sx={{ mx: 4 }}
+            label={
+              <div className="flex items-center gap-2 text-blue-600">
+                {video} 
+                <span className="text-sm font-medium">Reels</span>
+              </div>
+            }
+            {...a11yProps(1)}
+          />
+
+          <Tab
+            sx={{ mx: 4 }}
             label={
               <div className="flex items-center gap-2 text-blue-600">
                 <svg
@@ -99,7 +111,7 @@ export default function BasicTabs() {
                   viewBox="0 0 24 24"
                   strokeWidth="1.5"
                   stroke="currentColor"
-                  className="w-5 h-5"
+                  className="w-[25px] h-[25px]"
                 >
                   <path
                     strokeLinecap="round"
@@ -110,7 +122,7 @@ export default function BasicTabs() {
                 <span className="text-sm font-medium">Saved</span>
               </div>
             }
-            {...a11yProps(1)}
+            {...a11yProps(2)}
           />
         </Tabs>
       </Box>
@@ -119,6 +131,9 @@ export default function BasicTabs() {
         <Post />
       </CustomTabPanel>
       <CustomTabPanel value={value} index={1}>
+        <Reels />
+      </CustomTabPanel>
+      <CustomTabPanel value={value} index={2}>
         <Saved />
       </CustomTabPanel>
     </Box>
