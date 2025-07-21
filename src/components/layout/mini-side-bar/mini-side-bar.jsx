@@ -49,7 +49,7 @@ const LightTooltip = styled(({ className, ...props }) => (
 }))
 
 const MiniSideBar = ({ children }) => {
-	const { toggleDrawer, openDrawer } = useDrawerStore()
+	const { toggleDrawer, openDrawer, isOpen } = useDrawerStore()
 	const { getInfo, info } = useProfileStore()
 	const router = useRouter()
 	const pathname = usePathname()
@@ -91,11 +91,11 @@ const MiniSideBar = ({ children }) => {
 	return (
 		<div className='flex'>
 			{!isAuthPage && (
-				<section className='flex justify-center w-[50px] border-r-[2px] border-[#eee] h-[100vh]'>
+				<section className='flex justify-center w-[50px] border-r-[2px] border-[#eee] h-[100vh]' style={{ marginRight: pathname === '/chats' || !isOpen ? '0px' : '320px' }}>
 					<div className='sideBar h-full pb-[100px]'>
 						<div className="m-auto flex justify-center pb-[10px] mt-[20px]">
-              {instagramMiniLogo}
-            </div>
+							{instagramMiniLogo}
+						</div>
 						<div className='flex flex-col justify-between h-full'>
 							<div className='flex flex-col gap-[0.5rem] mt-4'>
 								{/* Home Icon */}
@@ -109,7 +109,7 @@ const MiniSideBar = ({ children }) => {
 
 								<button
 									onClick={openDrawer}
-									className="w-full flex items-center justify-start px-2 py-3 rounded-lg text-black "
+									className="w-full flex items-center justify-start px-3 py-3 rounded-lg text-black "
 								>
 									{searchIconActive}
 									{/* {t('layout.search')} */}
@@ -171,7 +171,7 @@ const MiniSideBar = ({ children }) => {
 										onClick={() => setOpen(true)}
 										className='flex items-center gap-4 w-[90%] m-auto rounded-md h-[52px] px-4 hover:bg-gray-100 cursor-pointer'
 									>
-										<AddBoxOutlinedIcon  sx={{ color: 'black' }} fontSize='medium' />
+										<AddBoxOutlinedIcon sx={{ color: 'black' }} fontSize='medium' />
 										{/* <p className='text-lg'>{t('layout.create')}</p> */}
 									</div>
 									<CreatePostModal
