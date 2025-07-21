@@ -6,6 +6,8 @@ import Box from "@mui/material/Box";
 import { useState } from "react";
 import Saved from "../saved/saved";
 import PostById from "../post-by-id/post";
+import ReelsById from "../reels-by-id/reels-by-id";
+import { video } from "@/assets/icon/layout/svg";
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -66,7 +68,7 @@ export default function BasicTabsById({id}) {
           centered
         >
           <Tab
-            sx={{ mx: 4 }} 
+            sx={{ mx:2 }} 
             label={
               <div className="flex items-center gap-2 text-blue-600">
                 <svg
@@ -89,25 +91,12 @@ export default function BasicTabsById({id}) {
             {...a11yProps(0)}
           />
 
-          <Tab
-            sx={{ mx: 4 }} 
+           <Tab
+            sx={{ mx: 2 }}
             label={
               <div className="flex items-center gap-2 text-blue-600">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth="1.5"
-                  stroke="currentColor"
-                  className="w-5 h-5"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0 1 11.186 0Z"
-                  />
-                </svg>
-                <span className="text-sm font-medium">Saved</span>
+                {video} 
+                <span className="text-sm font-medium">Reels</span>
               </div>
             }
             {...a11yProps(1)}
@@ -119,7 +108,7 @@ export default function BasicTabsById({id}) {
         <PostById id={id}/>
       </CustomTabPanel>
       <CustomTabPanel value={value} index={1}>
-        <Saved />
+        <ReelsById id={id}/>
       </CustomTabPanel>
     </Box>
   );

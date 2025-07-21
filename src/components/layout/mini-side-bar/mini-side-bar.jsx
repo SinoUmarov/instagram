@@ -49,7 +49,7 @@ const LightTooltip = styled(({ className, ...props }) => (
 }))
 
 const MiniSideBar = ({ children }) => {
-	const { toggleDrawer, openDrawer } = useDrawerStore()
+	const { toggleDrawer, openDrawer, isOpen } = useDrawerStore()
 	const { getInfo, info } = useProfileStore()
 	const router = useRouter()
 	const pathname = usePathname()
@@ -91,11 +91,11 @@ const MiniSideBar = ({ children }) => {
 	return (
 		<div className='flex'>
 			{!isAuthPage && (
-				<section className='flex justify-center w-[50px] border-r-[2px] border-[#eee] h-[100vh]'>
+				<section className='flex justify-center w-[50px] border-r-[2px] border-[#eee] h-[100vh]' style={{ marginRight: pathname === '/chats' || !isOpen ? '0px' : '320px' }}>
 					<div className='sideBar h-full pb-[100px]'>
 						<div className="m-auto flex justify-center pb-[10px] mt-[20px]">
-              {instagramMiniLogo}
-            </div>
+							{instagramMiniLogo}
+						</div>
 						<div className='flex flex-col justify-between h-full'>
 							<div className='flex flex-col gap-[0.5rem] mt-4'>
 								{/* Home Icon */}
@@ -109,7 +109,7 @@ const MiniSideBar = ({ children }) => {
 
 								<button
 									onClick={openDrawer}
-									className='w-full flex items-center justify-start px-2 py-3 rounded-lg text-black '
+									className="w-full flex items-center justify-start px-3 py-3 rounded-lg text-black "
 								>
 									{searchIconActive}
 									{/* {t('layout.search')} */}
@@ -171,7 +171,7 @@ const MiniSideBar = ({ children }) => {
 										onClick={() => setOpen(true)}
 										className='flex items-center gap-4 w-[90%] m-auto rounded-md h-[52px] px-4 hover:bg-gray-100 cursor-pointer'
 									>
-										<AddBoxOutlinedIcon  sx={{ color: 'black' }} fontSize='medium' />
+										<AddBoxOutlinedIcon sx={{ color: 'black' }} fontSize='medium' />
 										{/* <p className='text-lg'>{t('layout.create')}</p> */}
 									</div>
 									<CreatePostModal
@@ -189,11 +189,10 @@ const MiniSideBar = ({ children }) => {
 									<Link href='/profile' passHref>
 										<div className='flex items-center super-svg gap-4 w-[90%] rounded-[8px] h-[52px] px-0 justify-center'>
 											<img
-												className={`rounded-[50%] h-[25] w-[25] ml-[10%] ${
-													router.pathname === '/profile'
-														? 'border-2 border-black'
-														: ''
-												}`}
+												className={`rounded-[50%] h-[25] w-[25] ml-[10%] ${router.pathname === '/profile'
+													? 'border-2 border-black'
+													: ''
+													}`}
 												src={
 													info?.image ? `${API}/images/${info.image}` : Profile
 												}
@@ -259,12 +258,12 @@ export default MiniSideBar
 	/* <div className="flex flex-col items-center super-svg gap-4 w-[90%] rounded-[8px] h-[52px] px-0 justify-center">
 <LightTooltip title={t('layout.threads')} placement="right" arrow>
   <button onClick={handleClick} className="flex gap-5">
-    {threads}
+	 {threads}
   </button>
 </LightTooltip>
 <LightTooltip title={t('layout.more')} placement="right" arrow>
   <button onClick={handleClick} className="flex gap-5">
-    {settings}
+	 {settings}
   </button>
 </LightTooltip>
 

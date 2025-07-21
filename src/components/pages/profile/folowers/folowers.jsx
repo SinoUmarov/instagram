@@ -11,6 +11,7 @@ import { X } from "lucide-react";
 import { API } from "@/utils/config";
 import { useProfileStore } from "@/store/pages/profile/profile/store-profile";
 import { jwtDecode } from "jwt-decode";
+import Link from "next/link";
 
 export default function FollowersMenu({ open, onClose }) {
   const { folowers, folowing, postFolowing, deleteFolowing } = useProfileStore();
@@ -44,8 +45,8 @@ useEffect(() => {
   }, [open, folowers, folowing]);
 
   const toggleFollow = async (userId, isCurrentlyFollowing) => {
-  // Синхронно меняем UI до запроса
-  setLocalFollowers((prev) =>
+
+    setLocalFollowers((prev) =>
     prev.map((user) =>
       user.userShortInfo.userId === userId
         ? { ...user, isFollowing: !isCurrentlyFollowing }
@@ -92,16 +93,18 @@ useEffect(() => {
 
               return (
                 <div key={user.userId} className="flex items-center justify-between">
+                  <Link href={`/profile/${user.userId}`}>
                   <div className="flex items-center gap-3">
                     <Avatar
                       src={`${API}/images/${user.userPhoto}`}
                       alt={user.userName}
                       sx={{ width: 44, height: 44 }}
-                    />
+                      />
                     <Typography className="text-sm font-medium">
                       {user.userName}
                     </Typography>
                   </div>
+                      </Link>
 
                   <Button
                     onClick={() => toggleFollow(user.userId, isFollowing)}

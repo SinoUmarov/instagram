@@ -22,16 +22,33 @@ import ava from '@/assets/img/pages/profile/profile/ava.jpeg'
 import ClearIcon from '@mui/icons-material/Clear'
 import Skeleton from '@mui/material/Skeleton'
 import Stack from '@mui/material/Stack'
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 
 export default function TemporaryDrawer() {
-  const { isOpen, toggleDrawer, searchUser, data, postSearchHistory, getSearchHistory, history, deleteSearchHistory, clearSearchHistory, loading } = useDrawerStore()
+  const { isOpen, toggleDrawer, searchUser, datas, postSearchHistory, getSearchHistory, history, deleteSearchHistory, clearSearchHistory, loading, closeDrawer } = useDrawerStore()
 
   const [search, setSearch] = useState('')
+  const route = useRouter()
 
 
   function handleSearch(e) {
     searchUser(e.target.value)
   }
+
+  function handleClick(id) {
+    route.push(`/profile/${id}`)
+    postSearchHistory(id)
+    closeDrawer()
+    setSearch('')
+  }
+
+  function byIdFunc(id) {
+    route.push(`/profile/${id}`)
+    closeDrawer()
+  }
+
+
 
   useEffect(() => {
     if (isOpen) {
@@ -71,35 +88,35 @@ export default function TemporaryDrawer() {
         <div className='flex flex-col gap-5'>
 
           {
-            loading ? 
-            <div className="flex items-center gap-5">
-              <Skeleton
-                variant="circular"
-                width={60}
-                height={60}
-                sx={{ bgcolor: 'grey.300' }}
-              />
-              <div className="flex flex-col gap-2">
+            loading
+              ?
+              <div className="flex items-center gap-5">
                 <Skeleton
-                  variant="text"
-                  width={120}
-                  height={24}
+                  variant="circular"
+                  width={60}
+                  height={60}
                   sx={{ bgcolor: 'grey.300' }}
                 />
-                <Skeleton
-                  variant="text"
-                  width={200}
-                  height={20}
-                  sx={{ bgcolor: 'grey.300' }}
-                />
+                <div className="flex flex-col gap-2">
+                  <Skeleton
+                    variant="text"
+                    width={120}
+                    height={24}
+                    sx={{ bgcolor: 'grey.300' }}
+                  />
+                  <Skeleton
+                    variant="text"
+                    width={200}
+                    height={20}
+                    sx={{ bgcolor: 'grey.300' }}
+                  />
+                </div>
               </div>
-            </div>
-            
-             :
+              :
               ((search === '' && history.length === 0) ? <p className='text-[#737373] m-auto mt-[200px]'>Нет недавних запросов.</p> :
                 search !== '' ?
-                  data?.map((user) => (
-                    <div key={user.id} className='flex items-center gap-5' onClick={() => postSearchHistory(user.id)}>
+                  datas?.map((user) => (
+                    <div key={user.id} className='flex items-center gap-5' onClick={() => handleClick(user.id)}>
                       <Image src={user.avatar !== '' ? `${API}/images/${user.avatar}` : ava} alt='avatar' width={70} height={80} className='rounded-[50%] w-[60px] h-[60px]' />
                       <div>
                         <h2>{user.userName}</h2>
@@ -107,9 +124,10 @@ export default function TemporaryDrawer() {
                       </div>
 
                     </div>
+
                   )) :
                   history?.map((el) => (
-                    <div key={el.id} className='flex items-center justify-between' >
+                    <div key={el.id} className='flex items-center justify-between' onClick={() => byIdFunc(el.id)} >
                       <div className='flex items-center  gap-6'>
                         <Image src={el.users.avatar !== '' ? `${API}/images/${el.users.avatar}` : ava} alt='avatar' width={70} height={80} className='rounded-[50%] w-[60px] h-[60px]' />
                         <div>
