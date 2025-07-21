@@ -49,7 +49,7 @@ export default function Recommendation() {
                   : instagramDefaultProfile
               }
               alt="image profil"
-              className="rounded-full w-[50px] h-[50px] object-cover"
+              className="rounded-full w-[40px] h-[40px] object-cover"
              
             />
           </Link>
@@ -64,6 +64,7 @@ export default function Recommendation() {
               {info?.firstName}
             </p>
           </div>
+          
         </div>
         <button
           onClick={handleClickOpen}
@@ -101,7 +102,7 @@ export default function Recommendation() {
                         alt="image profil"
                         className="imgStory rounded-full w-full object-cover"
                         width={40}
-                        height={38}
+                        height={40}
                       />
                     </Link>
 
@@ -111,7 +112,7 @@ export default function Recommendation() {
                           <b>{user?.userName}</b>
                         </p>
                       </Link>
-                      <p className="text-sm text-[#737373] leading-tight">
+                      <p className="text-[13px] text-[#737373] leading-tight">
                         {user?.fullName}
                       </p>
                     </div>
