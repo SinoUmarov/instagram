@@ -21,6 +21,7 @@ import {
   EmojiEmotions,
   VolumeUp,
   VolumeOff,
+  DateRange,
 } from "@mui/icons-material";
 import { API } from "@/utils/config";
 import { useExplorePage } from "@/store/pages/explore/explore";
@@ -375,5 +376,6 @@ export default function InstagramModal({ open, setOpen, selectedPost }) {
         </Box>
       </Box>
     </Modal>
+    
   );
 }
