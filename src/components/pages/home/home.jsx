@@ -57,13 +57,11 @@ export default function Home() {
   return (
     <>
       <section className="flex items-start gap-10">
-       
         <main className="w-full sm:w-[600px] px-2">
-           <section>
-          <Story/>
-        </section>
+          <section>
+            <Story />
+          </section>
 
-        
           <div className="flex flex-col gap-5 py-5">
             {posts.length === 0
               ? Array.from({ length: 3 }).map((_, idx) => (
@@ -157,7 +155,7 @@ export default function Home() {
           </div>
         </main>
 
-        <aside className="py-4 w-[30%] hidden md:block ">
+        <aside className="py-4 w-[31%] hidden md:block ">
           <Recommendation />
         </aside>
 
