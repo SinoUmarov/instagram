@@ -32,17 +32,15 @@ import { API } from '@/utils/config'
 import { jwtDecode } from 'jwt-decode'
 import { useDrawerStore } from '@/store/search/searchStore'
 import CreatePostModal from '@/components/createPost/createpost'
-import SettingsIcon from '@mui/icons-material/Settings'
+
 import AddBoxOutlinedIcon from '@mui/icons-material/AddBoxOutlined'
-import BarChartIcon from '@mui/icons-material/BarChart'
-import TurnedInNotIcon from '@mui/icons-material/TurnedInNot'
-import BedtimeOutlinedIcon from '@mui/icons-material/BedtimeOutlined'
-import AnnouncementOutlinedIcon from '@mui/icons-material/AnnouncementOutlined'
+
+import MenuComp from '@/components/menuConfig/menu'
 
 const NavLink = ({ href, icon, activeIcon, label, isActive }) => (
 	<Link
 		href={href}
-		className={`flex items-center gap-4 w-[90%] m-auto rounded-md h-[52px] px-4 hover:bg-gray-100 ${isActive(
+		className={`flex items-center gap-4 w-[90%] m-auto rounded-md h-[52px] px-4 hover:bg-gray-100 dark:hover:text-black ${isActive(
 			href
 		)}`}
 	>
@@ -62,16 +60,10 @@ export default function SideBar({ children }) {
 	const [token, setToken] = useState(null)
 	const router = useRouter()
 	const [open1, setOpen] = useState(false)
-	// const muiTheme = useTheme()
-	const [theme, setTheme] = useState('light')
-
-	const toggleTheme = () => {
-		setTheme(prev => (prev === 'dark' ? 'light' : 'dark'))
-	}
+	
 	const handleClick = event => {
 		setAnchorEl(event.currentTarget)
 	}
-
 	const handleClose = () => {
 		setAnchorEl(null)
 	}
@@ -90,13 +82,11 @@ export default function SideBar({ children }) {
 	}
 
 	// darkMode
-
 	useEffect(() => {
 		if (decode?.sid) {
 			getInfo(decode.sid)
 		}
 	}, [])
-
 	const isActive = path => (pathname === path ? 'font-bold' : 'font-normal')
 
 	let isAuthPage = pathname === '/login' || pathname === '/registration'
@@ -188,7 +178,7 @@ export default function SideBar({ children }) {
 
 								<div
 									onClick={() => setOpen(true)}
-									className='flex items-center gap-4 w-[90%] m-auto rounded-md h-[52px] px-4 hover:bg-gray-100 cursor-pointer'
+									className='flex items-center gap-4 w-[90%] m-auto rounded-md h-[52px] px-4 hover:bg-gray-100 cursor-pointer  dark:hover:text-black '
 								>
 									<AddBoxOutlinedIcon fontSize='medium' />
 									<p className='text-lg'>{t('layout.create')}</p>
@@ -223,59 +213,18 @@ export default function SideBar({ children }) {
 								</div>
 							</div>
 
-							<div className='flex items-center gap-4 w-[90%] m-auto rounded-md h-[52px] px-4 hover:bg-gray-100'>
+							<div className='flex items-center gap-4 w-[90%] m-auto rounded-md h-[52px] px-4 hover:bg-gray-100  dark:hover:text-black'>
 								{threads}
 								<p className='text-lg'>{t('layout.threads')}qdw</p>
 							</div>
 
-							<div className='flex items-center gap-4 w-[90%] m-auto rounded-md h-[52px] px-4 hover:bg-gray-100'>
+							<div className='flex items-center gap-4 w-[90%] m-auto rounded-md h-[52px] px-4 hover:bg-gray-100   dark:hover:text-black'>
 								<button onClick={handleClick} className='flex gap-5'>
 									{setting}
 									<p className='text-lg'>{t('layout.more')}</p>
 								</button>
-								<Menu
-									anchorEl={anchorEl}
-									open={open}
-									sx={{ width: '900px', borderRadius: '60px' }}
-									onClose={handleClose}
-									anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-									transformOrigin={{ vertical: 'top', horizontal: 'center' }}
-								>
-									<MenuItem
-										sx={{ display: 'flex', gap: '30px', width: '290px' }}
-									>
-										<SettingsIcon />
-										<span>Настройки</span>
-									</MenuItem>
-									<MenuItem
-										sx={{ display: 'flex', gap: '30px', width: '290px' }}
-									>
-										<BarChartIcon />
-										<span>Вашы действия</span>
-									</MenuItem>
-									
-									<MenuItem
-										onClick={toggleTheme}
-										sx={{
-											display: 'flex',
-											gap: '30px',
-											width: '290px',
-											cursor: 'pointer',
-										}}
-									>
-										<BedtimeOutlinedIcon />
-										<span>
-											{theme === 'dark' ? 'Светлая тема' : 'Тёмная тема'}
-										</span>
-									</MenuItem>
-									<MenuItem
-										sx={{ display: 'flex', gap: '30px', width: '290px' }}
-									>
-										<AnnouncementOutlinedIcon />
-										<span> Сообщит о проблеме</span>
-									</MenuItem>
-
-								</Menu>
+								<MenuComp anchorEl={anchorEl} open={open} onClose={handleClose} />
+							
 							</div>
 						</div>
 					</div>
