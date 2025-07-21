@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+
 import axiosRequest from '@/lib/axiosRequest'
 
 const API_URL = 'http://37.27.29.18:8003/Post/add-post';

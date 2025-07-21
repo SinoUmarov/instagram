@@ -56,7 +56,7 @@ export default function DefaultChatComponent() {
 		}, 3000)
 
 		return () => clearInterval(interval)
-	},[])
+	}, [])
 
 	return (
 		<>
@@ -87,7 +87,7 @@ export default function DefaultChatComponent() {
 								<p className='text-[11px] text-gray-600'>Ваша заметка</p>
 							</div>
 						</SwiperSlide>
-						{allUsers.map(user => {
+						{allUsers?.map(user => {
 							const isMeSender = user.sendUserId === userId.sid
 							const companionName = isMeSender
 								? user.receiveUserName
@@ -124,7 +124,7 @@ export default function DefaultChatComponent() {
 				<section className='overflow-y-scroll scrollbar-hide flex flex-col gap-[20px] pr-[4px] h-[45%] md:h-[100%]'>
 					{search ? (
 						<div>
-							{userByNameForSearch.map(el => (
+							{userByNameForSearch?.map(el => (
 								<div
 									key={el.id}
 									className='flex items-center gap-[10px] cursor-pointer hover:bg-gray-100 p-[6px] rounded-lg transition'
@@ -164,7 +164,7 @@ export default function DefaultChatComponent() {
 							))}
 						</div>
 					) : (
-						allUsers.map(el => {
+						allUsers?.map(el => {
 							const isMeSender = el.sendUserId === userId.sid
 							const companionName = isMeSender
 								? el.receiveUserName
@@ -212,13 +212,16 @@ export default function DefaultChatComponent() {
 													: el.sendUserName}
 											</b>
 											<div className='w-[100%] flex items-center justify-between'>
-												<p className='text-[13px] text-gray-500'>
-													{lastMessages?.[el.chatId]?.userId === userId.sid
-														? 'Вы: '
-														: 'Он: '}
-													{lastMessages?.[el.chatId]?.messageText ||
-														'Новое сообщение'}
-												</p>
+												{lastMessages?.[el.chatId]?.userId === userId.sid
+													? 'Вы: '
+													: 'Он: '}
+												{lastMessages?.[el.chatId]?.messageText
+													? lastMessages[el.chatId].messageText.length > 25
+														? lastMessages[el.chatId].messageText.slice(0, 25) +
+														  '...'
+														: lastMessages[el.chatId].messageText
+													: 'Новое сообщение'}
+
 												<span className='text-[12px] text-gray-400'>
 													{lastMessages?.[el.chatId]?.sendMassageDate
 														? formatTimeAgo(
