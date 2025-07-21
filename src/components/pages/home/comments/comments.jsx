@@ -282,7 +282,7 @@ export default function Comments({ open, setOpen, comments, postId }) {
               </div>
 
               {/* post-actions */}
-              <div className="fixed bottom-[38px] py-2 border-t-b border-[#f0f0f0] bg-amber-300 w-[28%] ">
+              <div className="fixed bottom-[38px] py-2 border-t-b border-[#f0f0f0]  w-[28%] ">
                 <div className="flex flex-col gap-2 pb-2">
                   {/* Иконаҳо */}
                   <div className="flex justify-between items-center">
