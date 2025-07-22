@@ -30,6 +30,7 @@ export default function TemporaryDrawer() {
 
   const [search, setSearch] = useState('')
   const route = useRouter()
+  const theme = localStorage.getItem('theme')
 
 
   function handleSearch(e) {
@@ -54,25 +55,25 @@ export default function TemporaryDrawer() {
     if (isOpen) {
       getSearchHistory()
     }
-  }, [search])
+  }, [search, isOpen])
 
   const DrawerList = (
     <Box
-      sx={{ width: 420 }}
+      sx={{ width: 420, backgroundColor: theme == 'dark' ? '#121212' : 'white', color: theme == 'dark' ? 'white' : 'black' }}
       role="presentation"
     >
       <div className='px-4'>
         <h1 className='text-[25px] mb-8 mt-5'>Поисковый запрос</h1>
 
         <div className='rounded-[5px] px-3 bg-[#EFEFEF] flex items-center'>
-          <SearchIcon />
+          <SearchIcon sx={{ color: 'black' }} />
           <input
             value={search}
             onChange={(e) => { setSearch(e.target.value), handleSearch(e) }}
             type="search"
             id="customSearchInput"
             placeholder="поиск"
-            className="w-[90%] text-[18px] border-none outline-none focus:border-none focus:outline-none px-4 py-2 bg-[#EFEFEF]"
+            className="w-[90%] text-[18px] border-none outline-none focus:border-none focus:outline-none px-4 py-2 bg-[#EFEFEF] text-black"
           />
         </div>
       </div>
@@ -85,7 +86,7 @@ export default function TemporaryDrawer() {
 
 
         </div>
-        <div className='flex flex-col gap-5'>
+        <div className='flex flex-col gap-5 ' style={{ backgroundColor: theme == 'dark' ? '#121212' : 'white' }}>
 
           {
             loading
@@ -113,7 +114,7 @@ export default function TemporaryDrawer() {
                 </div>
               </div>
               :
-              ((search === '' && history.length === 0) ? <p className='text-[#737373] m-auto mt-[200px]'>Нет недавних запросов.</p> :
+              ((search === '' && history.length === 0) ? <p className='text-[#737373] m-auto mt-[200px] mb-[242px]'>Нет недавних запросов.</p> :
                 search !== '' ?
                   datas?.map((user) => (
                     <div key={user.id} className='flex items-center gap-5' onClick={() => handleClick(user.id)}>
@@ -127,8 +128,9 @@ export default function TemporaryDrawer() {
 
                   )) :
                   history?.map((el) => (
-                    <div key={el.id} className='flex items-center justify-between' onClick={() => byIdFunc(el.id)} >
-                      <div className='flex items-center  gap-6'>
+                    <div key={el.id} className='flex items-center justify-between' style={{ marginBottom: theme == 'dark' ? '406px' : '0px' }}>
+                      {console.log('GGXXX ', el)}
+                      <div className='flex items-center  gap-6' onClick={() => byIdFunc(el.users.id)} >
                         <Image src={el.users.avatar !== '' ? `${API}/images/${el.users.avatar}` : ava} alt='avatar' width={70} height={80} className='rounded-[50%] w-[60px] h-[60px]' />
                         <div>
                           <h2>{el.users.userName}</h2>

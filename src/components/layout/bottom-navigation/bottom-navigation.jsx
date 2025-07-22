@@ -26,7 +26,7 @@ export default function BottomNavigation({ children }) {
 
   // Define reusable classes
   const iconClass =
-    "flex items-center gap-4 rounded-[8px] h-[52px] px-0 m-[0] justify-center"
+    "flex items-center gap-4 rounded-[8px] h-[52px] px-0 m-[0] justify-center dark:text-black"
   const profileClass = "w-[25px] h-[25px] rounded-[50%]"
 
   // Map of pathnames to icons
@@ -38,7 +38,7 @@ export default function BottomNavigation({ children }) {
     "/profile": { active: Profile, inactive: Profile }, // No icon state, just border logic
   }
   const { getInfo, info } = useProfileStore()
-	const [open1, setOpen] = useState(false)
+  const [open1, setOpen] = useState(false)
   useEffect(() => {
     const token = localStorage.getItem("access_token")
     if (token) {
@@ -51,9 +51,10 @@ export default function BottomNavigation({ children }) {
     }
   }, [])
 
-	const { t } = useTranslation()
+  const { t } = useTranslation()
   const [token, setToken] = useState(null)
   const router = useRouter()
+  const theme = localStorage.getItem('theme')
 
   let isAuthPage = pathname === '/login' || pathname === '/registration'
   useEffect(() => {
@@ -74,11 +75,11 @@ export default function BottomNavigation({ children }) {
 
       {children}
       {!isAuthPage && (
-        <section className="fixed w-[100%] z-[10] bottom-0">
+        <section className="fixed w-[100%] z-[10] bottom-0 " style={{color: theme == 'dark' ? 'white' : 'black'}}>
           <div className="flex gap-[0.5rem] mt-4 align-bottom bg-white justify-evenly">
             {/* Home */}
             <Link className="block" href="/">
-              <div className={iconClass}>
+              <div className={iconClass} >
                 {pathname === "/" ? icons["/"].active : icons["/"].inactive}
               </div>
             </Link>
@@ -93,8 +94,8 @@ export default function BottomNavigation({ children }) {
             </Link>
 
             {/* Reels */}
-            <Link href="/reels">
-              <div className={iconClass}>
+            <Link href="/reels" >
+              <div className={iconClass} >
                 {pathname === "/reels"
                   ? icons["/reels"].active
                   : icons["/reels"].inactive}
@@ -102,17 +103,18 @@ export default function BottomNavigation({ children }) {
             </Link>
 
             {/* Create Button */}
-           		<div
-										onClick={() => setOpen(true)}
-										className='flex items-center  rounded-md h-[52px]  hover:bg-gray-100 cursor-pointer'
-									>
-										{add}
-										{/* <p className='text-lg'>{t('layout.create')}</p> */}
-									</div>
-									<CreatePostModal
-										open={open1}
-										onClose={() => setOpen(false)}
-									/>
+            <div
+              onClick={() => setOpen(true)}
+              
+              className='flex items-center  rounded-md h-[52px]  hover:bg-gray-100 cursor-pointer'
+            >
+              {add}
+              {/* <p className='text-lg'>{t('layout.create')}</p> */}
+            </div>
+            <CreatePostModal
+              open={open1}
+              onClose={() => setOpen(false)}
+            />
 
             {/* Chats */}
             <Link href="/chats">
