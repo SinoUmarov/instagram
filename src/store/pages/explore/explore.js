@@ -4,12 +4,10 @@ import { API } from '@/utils/config';
 import { create } from 'zustand';
 import axiosRequest from '@/lib/axiosRequest';
 
-const token = localStorage.getItem('token')
 
 export const useExplorePage = create((set, get) => ({
     data: [],
     dataComments: [],
-    dataReels: [],
 
     getExplore: async () => {
         try {
@@ -19,17 +17,6 @@ export const useExplorePage = create((set, get) => ({
             console.log(error)
         }
     },
-
-
-    getReels: async () => {
-        try {
-            const { data } = await axiosRequest.get(`/Post/get-reels`)
-            set(() => ({ dataReels: data.data }))
-        } catch (error) {
-            console.log(error)
-        }
-    },
-
 
 
 
