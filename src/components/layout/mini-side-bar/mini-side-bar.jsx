@@ -77,6 +77,7 @@ const MiniSideBar = ({ children }) => {
 	}, [])
 
 	const [token, setToken] = useState(null)
+	const theme = localStorage.getItem('theme')
 
 	let isAuthPage = pathname === '/login' || pathname === '/registration'
 	useEffect(() => {
@@ -110,6 +111,7 @@ const MiniSideBar = ({ children }) => {
 								<button
 									onClick={openDrawer}
 									className="w-full flex items-center justify-start px-3 py-3 rounded-lg text-black "
+									style={{color:theme == 'dark' ? 'white' : 'black'}}
 								>
 									{searchIconActive}
 									{/* {t('layout.search')} */}

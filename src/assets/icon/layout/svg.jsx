@@ -340,7 +340,7 @@ export let likeActive = (
 
 export let add = (
 	<svg
-		className='x1lliihq x1n2onr6 x5n08af'
+		className='x1lliihq x1n2onr6 x5n08af dark:text-black'
 		fill='currentColor'
 		height='25'
 		role='img'
