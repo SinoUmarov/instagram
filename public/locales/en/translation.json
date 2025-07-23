@@ -9,6 +9,7 @@
 		"create": "Create",
 		"profile": "Profile",
 		"more": "More",
+			"language": "language",
 		"threads": "Treads",
 		"mores": {
 			"setting": "Setting",
@@ -16,6 +17,7 @@
 			"saved": "Saved",
 			"mode": "Change the mode",
 			"problem": "Problem reports",
+			"language":"language",
 			"switch": "Switch between accounts",
 			"exit": "Exit"
 		}

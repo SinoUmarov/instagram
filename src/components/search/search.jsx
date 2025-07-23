@@ -22,40 +22,58 @@ import ava from '@/assets/img/pages/profile/profile/ava.jpeg'
 import ClearIcon from '@mui/icons-material/Clear'
 import Skeleton from '@mui/material/Skeleton'
 import Stack from '@mui/material/Stack'
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 
 export default function TemporaryDrawer() {
-  const { isOpen, toggleDrawer, searchUser, datas, postSearchHistory, getSearchHistory, history, deleteSearchHistory, clearSearchHistory, loading } = useDrawerStore()
+  const { isOpen, toggleDrawer, searchUser, datas, postSearchHistory, getSearchHistory, history, deleteSearchHistory, clearSearchHistory, loading, closeDrawer } = useDrawerStore()
 
   const [search, setSearch] = useState('')
+  const route = useRouter()
+  const theme = localStorage.getItem('theme')
 
 
   function handleSearch(e) {
     searchUser(e.target.value)
   }
 
+  function handleClick(id) {
+    route.push(`/profile/${id}`)
+    postSearchHistory(id)
+    closeDrawer()
+    setSearch('')
+  }
+
+  function byIdFunc(id) {
+    route.push(`/profile/${id}`)
+    closeDrawer()
+  }
+
+
+
   useEffect(() => {
     if (isOpen) {
       getSearchHistory()
     }
-  }, [search])
+  }, [search, isOpen])
 
   const DrawerList = (
     <Box
-      sx={{ width: 420 }}
+      sx={{ width: 420, backgroundColor: theme == 'dark' ? '#121212' : 'white', color: theme == 'dark' ? 'white' : 'black' }}
       role="presentation"
     >
       <div className='px-4'>
         <h1 className='text-[25px] mb-8 mt-5'>Поисковый запрос</h1>
 
         <div className='rounded-[5px] px-3 bg-[#EFEFEF] flex items-center'>
-          <SearchIcon />
+          <SearchIcon sx={{ color: 'black' }} />
           <input
             value={search}
             onChange={(e) => { setSearch(e.target.value), handleSearch(e) }}
             type="search"
             id="customSearchInput"
             placeholder="поиск"
-            className="w-[90%] text-[18px] border-none outline-none focus:border-none focus:outline-none px-4 py-2 bg-[#EFEFEF]"
+            className="w-[90%] text-[18px] border-none outline-none focus:border-none focus:outline-none px-4 py-2 bg-[#EFEFEF] text-black"
           />
         </div>
       </div>
@@ -68,38 +86,38 @@ export default function TemporaryDrawer() {
 
 
         </div>
-        <div className='flex flex-col gap-5'>
+        <div className='flex flex-col gap-5 ' style={{ backgroundColor: theme == 'dark' ? '#121212' : 'white' }}>
 
           {
-            loading ? 
-            <div className="flex items-center gap-5">
-              <Skeleton
-                variant="circular"
-                width={60}
-                height={60}
-                sx={{ bgcolor: 'grey.300' }}
-              />
-              <div className="flex flex-col gap-2">
+            loading
+              ?
+              <div className="flex items-center gap-5">
                 <Skeleton
-                  variant="text"
-                  width={120}
-                  height={24}
+                  variant="circular"
+                  width={60}
+                  height={60}
                   sx={{ bgcolor: 'grey.300' }}
                 />
-                <Skeleton
-                  variant="text"
-                  width={200}
-                  height={20}
-                  sx={{ bgcolor: 'grey.300' }}
-                />
+                <div className="flex flex-col gap-2">
+                  <Skeleton
+                    variant="text"
+                    width={120}
+                    height={24}
+                    sx={{ bgcolor: 'grey.300' }}
+                  />
+                  <Skeleton
+                    variant="text"
+                    width={200}
+                    height={20}
+                    sx={{ bgcolor: 'grey.300' }}
+                  />
+                </div>
               </div>
-            </div>
-            
-             :
-              ((search === '' && history.length === 0) ? <p className='text-[#737373] m-auto mt-[200px]'>Нет недавних запросов.</p> :
+              :
+              ((search === '' && history.length === 0) ? <p className='text-[#737373] m-auto mt-[200px] mb-[242px]'>Нет недавних запросов.</p> :
                 search !== '' ?
                   datas?.map((user) => (
-                    <div key={user.id} className='flex items-center gap-5' onClick={() => postSearchHistory(user.id)}>
+                    <div key={user.id} className='flex items-center gap-5' onClick={() => handleClick(user.id)}>
                       <Image src={user.avatar !== '' ? `${API}/images/${user.avatar}` : ava} alt='avatar' width={70} height={80} className='rounded-[50%] w-[60px] h-[60px]' />
                       <div>
                         <h2>{user.userName}</h2>
@@ -107,10 +125,12 @@ export default function TemporaryDrawer() {
                       </div>
 
                     </div>
+
                   )) :
                   history?.map((el) => (
-                    <div key={el.id} className='flex items-center justify-between' >
-                      <div className='flex items-center  gap-6'>
+                    <div key={el.id} className='flex items-center justify-between' style={{ marginBottom: theme == 'dark' ? '406px' : '0px' }}>
+                      {console.log('GGXXX ', el)}
+                      <div className='flex items-center  gap-6' onClick={() => byIdFunc(el.users.id)} >
                         <Image src={el.users.avatar !== '' ? `${API}/images/${el.users.avatar}` : ava} alt='avatar' width={70} height={80} className='rounded-[50%] w-[60px] h-[60px]' />
                         <div>
                           <h2>{el.users.userName}</h2>

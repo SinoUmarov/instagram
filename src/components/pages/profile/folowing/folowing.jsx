@@ -11,6 +11,7 @@ import { X } from "lucide-react";
 import { API } from "@/utils/config";
 import { useProfileStore } from "@/store/pages/profile/profile/store-profile";
 import { jwtDecode } from "jwt-decode";
+import Link from "next/link";
 
 export default function FollowingMenu({ open, onClose }) {
   const { folowing, folowers, postFolowing, deleteFolowing } = useProfileStore();
@@ -90,16 +91,18 @@ useEffect(() => {
 
               return (
                 <div key={user.userId} className="flex items-center justify-between">
+                  <Link href={`/profile/${user.userId}`}>
                   <div className="flex items-center gap-3">
                     <Avatar
                       src={`${API}/images/${user.userPhoto}`}
                       alt={user.userName}
                       sx={{ width: 44, height: 44 }}
-                    />
+                      />
                     <Typography className="text-sm font-medium">
                       {user.userName}
                     </Typography>
                   </div>
+                      </Link>
 
                   <Button
                     onClick={() => toggleFollow(user.userId, isFollowing)}
