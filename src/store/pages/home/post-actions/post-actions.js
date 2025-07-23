@@ -9,9 +9,9 @@ export const usePostActions = create((set, get) => ({
 
   addLikePost: async (postId) => {
     try {
-      const { likedPosts, likeCounts } = get(); 
+      const { likedPosts, likeCounts } = get();
       const isLiked = likedPosts.includes(postId);
-      const currentCount = likeCounts?.[postId] || 0; 
+      const currentCount = likeCounts?.[postId] || 0;
 
       if (isLiked) {
         await axiosRequest.post(`/Post/like-post?postId=${postId}`);
@@ -38,7 +38,7 @@ export const usePostActions = create((set, get) => ({
 
   getLikeCount: (postId) => {
     const { likeCounts } = get();
-    // return likeCounts.includes(postId);
+    return likeCounts?.[postId] || 0;
   },
 
   addPostFavorite: async (postId) => {
@@ -67,8 +67,10 @@ export const usePostActions = create((set, get) => ({
       const { data } = await axiosRequest.get(
         `/Post/get-post-by-id?id=${postId}`
       );
-      set(() => ({
+      const likeCount = data?.data?.postLikeCount;
+      set((state) => ({
         postByID: data?.data,
+        likeCounts: { ...state.likeCounts, [postId]: likeCount },
       }));
     } catch (error) {
       console.error(error);
@@ -77,12 +79,29 @@ export const usePostActions = create((set, get) => ({
 
   postComment: async (comment, postId) => {
     try {
-      const { data } = await axiosRequest.post(`/Post/add-comment`, {
-        comment: comment,
+      await axiosRequest.post(`/Post/add-comment`, {
+        comment,
         postId,
       });
+      set((state) => ({
+        postByID: {
+          ...state.postByID,
+          comments: [
+            ...(state.postByID.comments || []),
+            {
+              comment: comment,
+            },
+          ],
+        },
+      }));
+      await get().getPostByID(postId);
     } catch (error) {
       console.error(error);
     }
+  },
+
+  deleteComment: async (commentId) => {
+    await axiosRequest.delete(`/Post/delete-comment?commentId=${commentId}`);
+    get().getPostByID();
   },
 }));
