@@ -11,63 +11,43 @@ export default function WriteComment({ postId }) {
   const [showEmoji, setShowEmoji] = useState(false);
   const { postComment, getPostByID } = usePostActions();
 
+  const handleSubmit = async () => {
+    if (!comment.trim()) return;
 
-//   const handleSubmit = async () => {
-//     if (comment.trim()) {
-//       await postComment(comment, postId);
-//       console.log("Коммент равон шуд:", comment);
-//       await getPostByID(postId)
-//       setComment("");
-//     }
-//   };
-
-const handleSubmit = async () => {
-  if (!comment.trim()) return;
-
-  try {
-    await postComment(comment, postId);
-    setComment(""); // Input пок мешавад
-
-    await getPostByID(postId); // ✅ Post бо комментарҳои нав нав мешавад
-  } catch (err) {
-    console.log("Ошибка:", err);
-  }
-};
-
-
-  const onEmojiClick = (emojiData) => {
-    setComment((prev) => prev + emojiData.emoji);
+    try {
+      await postComment(comment, postId);
+      setComment("");
+    } catch (err) {
+      console.log("Ошибка:", err);
+    }
   };
 
   return (
-   <div className="relative w-full flex items-center border-t border-gray-200 px-3 py-2 bg-white">
-  {showEmoji && (
-    <div className="absolute bottom-12 left-0 z-20">
-      <EmojiPicker onEmojiClick={onEmojiClick} height={350} />
+    <div className="relative w-full flex items-center border-t border-gray-200 px-3 mt-3 bg-white">
+      <IconButton
+        onClick={() => setShowEmoji((prev) => !prev)}
+        className="text-gray-600"
+        size="small"
+      >
+        <EmojiEmotionsIcon />
+      </IconButton>
+
+      <input
+        type="text"
+        className="flex-1 outline-none border-none px-3 text-sm bg-transparent placeholder:text-gray-400"
+        placeholder="Add a comment..."
+        value={comment}
+        onChange={(e) => setComment(e.target.value)}
+      />
+
+      <button
+        onClick={handleSubmit}
+        className={`text-sm font-semibold text-blue-500 hover:opacity-80 transition ${
+          comment.trim() ? "" : "opacity-40 pointer-events-none"
+        }`}
+      >
+        Post
+      </button>
     </div>
-  )}
-
-  <IconButton onClick={() => setShowEmoji((prev) => !prev)}>
-    <EmojiEmotionsIcon className="text-gray-600" />
-  </IconButton>
-
-  <input
-    type="text"
-    className="flex-1 outline-none border-none px-3 text-sm bg-transparent"
-    placeholder="Add a comment..."
-    value={comment}
-    onChange={(e) => setComment(e.target.value)}
-  />
-
-  <button
-    onClick={handleSubmit}
-    className={`text-sm font-semibold text-blue-500 hover:opacity-80 transition ${
-      comment.trim() ? "" : "opacity-40 pointer-events-none"
-    }`}
-  >
-    Post
-  </button>
-</div>
-
   );
 }

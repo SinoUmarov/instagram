@@ -1,5 +1,11 @@
 import axiosRequest from "@/lib/axiosRequest";
 import { create } from "zustand";
+import {
+  differenceInHours,
+  differenceInDays,
+  differenceInMinutes,
+} from "date-fns";
+
 
 export const useUser = create((set) => ({
   users: [],
@@ -21,5 +27,19 @@ export const useUser = create((set) => ({
     } catch (error) {
       console.error(error);
     }
+  },
+
+   // function baroi vaqti post kardanro nishon medihad
+  formatShortTime: (date) => {
+    const now = Date.now();
+    const published = new Date(date);
+    const diffMins = differenceInMinutes(now, published);
+    if (diffMins < 60) return `${diffMins}m`;
+
+    const diffHours = differenceInHours(now, published);
+    if (diffHours < 24) return `${diffHours}h`;
+
+    const diffDays = differenceInDays(now, published);
+    return `${diffDays}d`;
   },
 }));

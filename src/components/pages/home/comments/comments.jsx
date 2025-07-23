@@ -14,14 +14,17 @@ import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
 import Image from "next/image";
 import { Fragment, useEffect, useState } from "react";
-import {
-  differenceInHours,
-  differenceInDays,
-  differenceInMinutes,
-} from "date-fns";
 import WriteComment from "../write-comment/write-comment";
+import { useUser } from "@/store/pages/home/home";
+import VideoPost from "../video-post/video-post";
 
-export default function Comments({ open, setOpen, comments, postId }) {
+export default function Comments({
+  open,
+  setOpen,
+  postId,
+  datePublished,
+  // comments,
+}) {
   const {
     postByID,
     getPostByID,
@@ -31,11 +34,17 @@ export default function Comments({ open, setOpen, comments, postId }) {
     isPostLiked,
     likeCounts,
     getLikeCount,
+    deleteComment,
   } = usePostActions();
+  console.log('postByID: ', postByID)
+  const comments = postByID?.comments || [];
+  const { formatShortTime } = useUser();
+  const [modalComment, setModalComment] = useState(false);
   const [isLikedComment, setIsLikedComment] = useState({});
   const saved = isPostSaved(postId);
   const isLiked = isPostLiked(postId);
   const likeCount = likeCounts[postId] || 0;
+  const [idxComment, setIdxComment] = useState();
 
   // function baroi like-hoi comment
   const toggleLikeComment = (postCommentId) => {
@@ -54,8 +63,15 @@ export default function Comments({ open, setOpen, comments, postId }) {
     addPostFavorite(postId);
   };
 
-  console.log("comment: ", comments);
-  console.log("postByID: ", postByID);
+  function handleDeleteCommet(commentId) {
+    setModalComment(!modalComment);
+    setIdxComment(commentId);
+  }
+
+  function delComment() {
+    deleteComment(idxComment);
+    setModalComment(false);
+  }
 
   useEffect(() => {
     if (postId) {
@@ -66,20 +82,6 @@ export default function Comments({ open, setOpen, comments, postId }) {
   const handleClose = () => {
     setOpen(false);
   };
-
-  // function baroi vaqti post kardanro nishon medihad
-  function formatShortTime(date) {
-    const now = Date.now();
-    const published = new Date(date);
-    const diffMins = differenceInMinutes(now, published);
-    if (diffMins < 60) return `${diffMins}m`;
-
-    const diffHours = differenceInHours(now, published);
-    if (diffHours < 24) return `${diffHours}h`;
-
-    const diffDays = differenceInDays(now, published);
-    return `${diffDays}d`;
-  }
 
   return (
     <Fragment>
@@ -93,33 +95,21 @@ export default function Comments({ open, setOpen, comments, postId }) {
             borderRadius: "12px",
             overflow: "hidden",
             maxWidth: "90vw",
-            width: "60%",
+            width: "80%",
             height: "90vh",
           },
         }}
       >
         <DialogContent
-          sx={{
-            padding: 0,
-          }}
-          className="flex flex-col md:flex-row  h-[90vh] "
+          sx={{ padding: 0 }}
+          className="flex flex-col md:flex-row h-[90vh] max-w-full overflow-hidden"
         >
-
-            {/* LEFT: MEDIA */}
-            <Box className="w-[50%] md:w-1/2 h-1/2 md:h-full bg-black flex items-center justify-center ">
-              {postByID?.images && (postByID?.images?.map((media, index) =>
+          {/* LEFT: MEDIA */}
+          <Box className="w-full md:w-1/2 h-64 md:h-full bg-black flex items-center justify-center">
+            {postByID?.images &&
+              postByID?.images?.map((media, index) =>
                 media.endsWith(".mp4") ? (
-                  <video
-                    key={index}
-                    // controls
-                    autoPlay
-                    className="w-full h-full object-cover"
-                  >
-                    <source
-                      src={`http://37.27.29.18:8003/images/${media}`}
-                      type="video/mp4"
-                    />
-                  </video>
+                  <VideoPost src={`http://37.27.29.18:8003/images/${media}`} />
                 ) : (
                   <Image
                     key={index}
@@ -130,227 +120,189 @@ export default function Comments({ open, setOpen, comments, postId }) {
                     className="w-full h-full object-cover"
                   />
                 )
-              ))}
-            </Box>
+              )}
+          </Box>
 
-            {/* RIGHT: COMMENT + USER */}
-            <Box className="w-[50%] md:w-1/2 h-1/2 md:h-full flex flex-col justify-start overflow-y-auto p-4 bg-white">
-            
-              <div className="flex justify-between items-center  py-2">
-                <div className="flex items-center gap-3 pb-3">
-                  <div className="rounded-full bg-gradient-to-br from-pink-500 to-yellow-400 p-[2px] cursor-pointer">
-                    <div className="bg-white rounded-full p-[3px]">
-                      <Image
-                        src={
-                          postByID?.userImage ? `http://37.27.29.18:8003/images/${postByID.userImage}`
-                            : instagramDefaultProfile
-                        }
-                        alt="story"
-                        className="rounded-full object-cover h-[32px]"
-                        width={32}
-                        height={32}
-                      />
-                    </div>
-                  </div>
-
-                  <div className="flex flex-col">
-                    <p className="text-[14px] font-semibold text-[#1E293B] truncate">
-                      {postByID.userName}
-                    </p>
+          {/* RIGHT: COMMENTS */}
+          <Box className="w-full md:w-1/2 h-[calc(90vh-48px)] md:h-full flex flex-col bg-white p-4 overflow-y-auto relative">
+            {/* Верхний блок: пользователь + меню */}
+            <div className="flex justify-between items-center pb-3 border-b border-gray-200   bg-white">
+              <div className="flex items-center gap-3">
+                <div className="rounded-full bg-gradient-to-br from-pink-500 to-yellow-400 p-[2px] cursor-pointer">
+                  <div className="bg-white rounded-full p-[3px]">
+                    <Image
+                      src={
+                        postByID?.userImage
+                          ? `http://37.27.29.18:8003/images/${postByID.userImage}`
+                          : instagramDefaultProfile
+                      }
+                      alt="story"
+                      className="rounded-full object-cover h-8 w-8"
+                      width={32}
+                      height={32}
+                    />
                   </div>
                 </div>
-                <MoreHorizIcon className="mt-[-10px]" />
+                <p className="font-semibold text-sm text-[#1E293B] truncate max-w-xs">
+                  {postByID?.userName}
+                </p>
               </div>
+              <MoreHorizIcon className="cursor-pointer text-gray-600" />
+            </div>
 
-              <hr className="text-[#f0f0f0] py-2" />
+            {/* Контент поста */}
+            {postByID?.content && (
+              <div className="flex gap-3 items-center py-3">
+                <div className="rounded-full bg-gradient-to-br from-pink-500 to-yellow-400 p-[2px] cursor-pointer">
+                  <div className="bg-white rounded-full p-[3px]">
+                    <Image
+                      src={
+                        postByID?.userImage
+                          ? `http://37.27.29.18:8003/images/${postByID.userImage}`
+                          : instagramDefaultProfile
+                      }
+                      alt="story"
+                      className="rounded-full object-cover h-8 w-8"
+                      width={32}
+                      height={32}
+                    />
+                  </div>
+                </div>
+                <div className="flex flex-col">
+                  <p className="text-sm font-semibold text-[#1E293B]">
+                    {postByID.userName}
+                  </p>
+                  <p className="text-sm text-[#262626]">{postByID.content}</p>
+                </div>
+              </div>
+            )}
 
-              <div className="flex flex-col gap-3 overflow-y-auto ">
-                <div className="flex flex-col justify-between">
-                  {/* Ин ҷо комментҳоро метавон ҷой дод */}
-                  <div className="flex flex-col">
-                    {postByID.content && (
-                      <div className="flex gap-3 items-center">
-                        <div className="rounded-full bg-gradient-to-br from-pink-500 to-yellow-400 p-[2px] cursor-pointer">
-                          <div className="bg-white rounded-full p-[3px]">
-                            <Image
-                              src={
-                                postByID.userImage
-                                  ? `http://37.27.29.18:8003/images/${postByID.userImage}`
-                                  : instagramDefaultProfile
-                              }
-                              alt="story"
-                              className="rounded-full object-cover h-[32px]"
-                              width={32}
-                              height={32}
-                            />
-                          </div>
-                        </div>
-
-                        <div>
-                          <div className="flex flex-col gap-2">
-                            <div className="flex gap-2">
-                              <p className="text-[14px] font-semibold text-[#1E293B] truncate">
-                                {postByID.userName}
-                              </p>
-                              <p className="text-[14px] truncate font-medium">
-                                {postByID.content}
-                              </p>
-                            </div>
-                          </div>
+            {/* Комментарии */}
+            <div className="flex flex-col gap-4 mt-3">
+              {comments.length > 0 ? (
+                comments.map((comment, idx) => (
+                  <div
+                    key={idx}
+                    className="flex justify-between items-start gap-3"
+                  >
+                    {/* Avatar + текст */}
+                    <div className="flex items-start gap-3">
+                      <div className="rounded-full bg-gradient-to-br from-pink-500 to-yellow-400 p-[2px] cursor-pointer">
+                        <div className="bg-white rounded-full p-[2px]">
+                          <Image
+                            src={
+                              comment.userImage
+                                ? `http://37.27.29.18:8003/images/${comment.userImage}`
+                                : instagramDefaultProfile
+                            }
+                            alt="comment-user"
+                            className=" rounded-full object-cover h-8 w-8"
+                            width={32}
+                            height={32}
+                          />
                         </div>
                       </div>
-                    )}
-                  </div>
 
-                  {/* shart guzoshtam ki agar comment boshad nishon dihad agar naboshad 'No comments...' nishon dihad */}
-                  <div className="py-5 w-full">
-                    {comments.length > 0 ? (
-                      <div className="flex flex-col gap-5 w-full">
-                        {comments?.map((comment, index) => (
-                          <div
-                            key={index}
-                            className="flex justify-between items-start w-full"
+                      <div className="flex flex-col gap-1">
+                        <div className=" flex gap-2 items-center ">
+                          <p className="text-sm font-semibold text-[#262626]">
+                            {comment.userName}
+                          </p>
+                          <p className="text-sm text-[#262626]">
+                            {comment.comment}
+                          </p>
+                        </div>
+
+                        <div className="flex gap-2 items-center">
+                          <p className="text-xs text-gray-500 mt-1 cursor-pointer ">
+                            {formatShortTime(comment.dateCommented)}
+                          </p>
+                          <p className="text-xs text-gray-500 mt-1 cursor-pointer">
+                            Reply
+                          </p>
+                          <p
+                            onClick={() =>
+                              handleDeleteCommet(comment.postCommentId)
+                            }
+                            className="text-[14px] text-gray-500 cursor-pointer font-semibold"
                           >
-                            {/* LEFT SIDE: Avatar + Comment */}
-                            <div className="flex gap-3">
-                              {/* Avatar */}
-                              <div className="rounded-full bg-gradient-to-br from-pink-500 to-yellow-400 p-[2px] cursor-pointer">
-                                <div className="bg-white rounded-full p-[2px]">
-                                  <Image
-                                    src={
-                                      comment.userImage
-                                        ? `http://37.27.29.18:8003/images/${comment.userImage}`
-                                        : instagramDefaultProfile
-                                    }
-                                    alt="comment-user"
-                                    className="rounded-full object-cover h-[32px] w-[32px]"
-                                    width={32}
-                                    height={32}
-                                  />
-                                </div>
-                              </div>
-
-                              {/* Username + Comment Text + Time */}
-                              <div className="flex flex-col">
-                                <div className="flex flex-wrap items-center gap-2 text-sm leading-snug">
-                                  <p className="font-semibold text-[#262626]">
-                                    {comment.userName}
-                                  </p>
-                                  <p className="text-[#262626]">
-                                    {comment.comment}
-                                  </p>
-                                </div>
-                                <div className="flex gap-2 ">
-                                  <p className="text-xs text-gray-500 font-medium mt-1">
-                                    {formatShortTime(comment.dateCommented)}
-                                  </p>
-                                  <p className="text-xs text-gray-500 font-medium mt-1 cursor-pointer">
-                                    Reply
-                                  </p>
-                                </div>
-                              </div>
-                            </div>
-
-                            {/* RIGHT SIDE: Like Icon */}
-                            <div className="w-[40px] flex justify-end">
-                              <IconButton
-                                color="error"
-                                onClick={() =>
-                                  toggleLikeComment(comment.postCommentId)
-                                }
-                                size="small"
-                              >
-                                {isLikedComment[comment.postCommentId] ? (
-                                  <FavoriteIcon sx={{ fontSize: 18 }} />
-                                ) : (
-                                  <FavoriteBorderIcon
-                                    sx={{ fontSize: 18, color: "#262626" }}
-                                  />
-                                )}
-                              </IconButton>
-                            </div>
-                          </div>
-                        ))}
+                            ...
+                          </p>
+                        </div>
                       </div>
-                    ) : (
-                      <p className="text-sm text-gray-500 py-2">
-                        No comments...
-                      </p>
-                    )}
-                  </div>
-                </div>
-              </div>
-
-              {/* post-actions */}
-              <div className="fixed bottom-[38px] py-2 border-t-b border-[#f0f0f0]  w-[28%] ">
-                <div className="flex flex-col gap-2 pb-2">
-                  {/* Иконаҳо */}
-                  <div className="flex justify-between items-center">
-                    <div className="flex gap-1">
-                      <IconButton
-                        color="error"
-                        onClick={() => toggleLike(postId)}
-                      >
-                        {isLiked ? (
-                          <FavoriteIcon  className="m-2 cursor-pointer" />
-                        ) : (
-                          <FavoriteBorderIcon className="m-2 cursor-pointer text-black" />
-                        )}
-                      </IconButton>
-
-                      <IconButton>
-                        <ChatBubbleOutlineIcon className="m-2 cursor-pointer text-black " />
-                      </IconButton>
-
-                      <IconButton>
-                        <SendIcon className="m-2 cursor-pointer text-black " />
-                      </IconButton>
                     </div>
 
+                    {/* Лайк */}
                     <IconButton
-                      className="cursor-pointer"
-                      style={{ color: "black" }}
-                      onClick={() => toggleSave(postId)}
+                      color="error"
+                      onClick={() => toggleLikeComment(comment.postCommentId)}
+                      size="small"
+                      className="self-start"
                     >
-                      {saved ? <BookmarkIcon /> : <TurnedInNotIcon />}
+                      {isLikedComment[comment.postCommentId] ? (
+                        <FavoriteIcon sx={{ fontSize: 18 }} />
+                      ) : (
+                        <FavoriteBorderIcon
+                          sx={{ fontSize: 18, color: "#262626" }}
+                        />
+                      )}
                     </IconButton>
                   </div>
+                ))
+              ) : (
+                <p className="text-center text-gray-500 py-4">No comments...</p>
+              )}
+            </div>
 
-                  {/* Likes */}
-                  {likeCount > 0 && (
-                    <p className="px-2 font-bold text-[14px] text-[#1E293B]">
-                      {likeCount} {likeCount === 1 ? "like" : "likes"}
-                    </p>
-                  )}
-
-                  {/* Контент ва Комментарийҳо */}
-                  <div className="px-2 flex flex-col gap-1">
-                    {postByID.content && (
-                      <p className="text-[#1E293B] text-[14px] leading-[18px]">
-                        <span className="font-semibold">
-                          {postByID.userName}
-                        </span>{" "}
-                        {postByID.content}
-                      </p>
+            {/* Пост и кнопки снизу */}
+            <div className="sticky bottom-0 bg-white py-2 border-t border-gray-200 mt-auto">
+              {/* Иконки и лайки */}
+              <div className="flex justify-between items-center mb-2">
+                <div className="flex gap-2">
+                  <IconButton color="error" onClick={toggleLike}>
+                    {isLiked ? (
+                      <FavoriteIcon className="text-red-500" />
+                    ) : (
+                      <FavoriteBorderIcon className="text-black" />
                     )}
-
-                    {/* Вақти пост */}
-                    <p className="uppercase tracking-wider text-[11px] text-[#737373] font-medium">
-                      {/* {timeAgo} */}
-                    </p>
-                  </div>
-
-
-
-
+                  </IconButton>
+                  <IconButton>
+                    <ChatBubbleOutlineIcon className="text-black" />
+                  </IconButton>
+                  <IconButton>
+                    <SendIcon className="text-black" />
+                  </IconButton>
                 </div>
-
-                <WriteComment postId={postId} /> 
-                    
+                <IconButton
+                  onClick={() => toggleSave(postId)}
+                  className="text-black"
+                >
+                  {saved ? <BookmarkIcon /> : <TurnedInNotIcon />}
+                </IconButton>
               </div>
-            </Box>
+
+              {likeCount > 0 && (
+                <p className="text-sm font-bold text-[#1E293B] mb-2 px-1">
+                  {likeCount} {likeCount === 1 ? "like" : "likes"}
+                </p>
+              )}
+              <p className="text-[14px] text-gray-500 pl-1 cursor-pointer "> {formatShortTime(datePublished)} ago</p>
+
+              {/* Компонент ввода комментария */}
+              <WriteComment postId={postId} />
+            </div>
+          </Box>
         </DialogContent>
       </Dialog>
+      {modalComment && (
+        <div className="bg-[#4b4b4b] w-full h-full">
+          <div className="fixed top-[40%] z-4000 flex flex-col w-[400px] gap-1 bg-[#ccc] rounded-[30px] py-2  ">
+            <button onClick={delComment}>Delete</button>
+            <hr />
+            <button onClick={() => setModalComment(false)}>Cancel</button>
+          </div>
+        </div>
+      )}
     </Fragment>
   );
 }

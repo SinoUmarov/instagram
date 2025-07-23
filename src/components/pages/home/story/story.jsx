@@ -1,5 +1,8 @@
 "use client";
-
+import SendIcon from "@mui/icons-material/Send";
+import DeleteIcon from "@mui/icons-material/Delete";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import FavoriteIcon from "@mui/icons-material/Favorite";
 import StoriesViewer from "react-insta-stories";
 import { jwtDecode } from "jwt-decode";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -11,17 +14,24 @@ import Image from "next/image";
 import instagramDefaultProfile from "#/icon/layout/instagramDefaultProfile.jpg";
 import { useStory } from "@/store/pages/home/story/story";
 import { useProfileStore } from "@/store/pages/profile/profile/store-profile";
+import { IconButton } from "@mui/material";
 
 export default function Story() {
-  const { stories, getStories, getSubscribtions } = useStory();
+  const { stories, getStories, getSubscribtions, addStories, deleteStories } = useStory();
   const swiperRef = useRef(null);
   const prevRef = useRef(null);
   const nextRef = useRef(null);
-  const [openStory, setOpenStory] = useState(null); 
+  const [openStory, setOpenStory] = useState(null);
   const [watchedStories, setWatchedStories] = useState(new Set());
   const { info } = useProfileStore();
   const [hasMyStory, setHasMyStory] = useState(false);
   const [myStory, setMyStory] = useState(null);
+  const fileInputRef = useRef(null);
+  const [likeStorySync, setLikeStorySync] = useState(false);
+
+  const toggleLike = (id) => {
+    setLikeStorySync(!likeStorySync);
+  };
 
   useEffect(() => {
     if (
@@ -56,6 +66,29 @@ export default function Story() {
 
   const closeViewer = () => {
     setOpenStory(null);
+  };
+
+  const handleMyStoryUpload = async (e) => {
+    const files = e.target.files;
+    const token = localStorage.getItem("access_token");
+    const decode = token ? jwtDecode(token) : null;
+    if (!files || files.length === 0 || !decode) return;
+
+    const formData = new FormData();
+    formData.append("Image", files[0]);
+
+    addStories(formData);
+
+    const allStories = await getStories();
+    const updatedMyStory = allStories?.find(
+      (story) => story.userId === decode.sid
+    );
+    if (updatedMyStory) {
+      setHasMyStory(updatedMyStory);
+      setMyStory(updatedMyStory);
+    }
+
+    await getSubscribtions(decode.sid);
   };
 
   return (
@@ -103,11 +136,25 @@ export default function Story() {
                   width={50}
                   height={50}
                 />
-                {!hasMyStory && (
-                  <span className="absolute bottom-0 right-0 bg-blue-500 text-white rounded-full text-xs px-1">
-                    +
-                  </span>
-                )}
+                {
+                  <div>
+                    <span
+                      onClick={() => fileInputRef.current?.click()}
+                      className="absolute bottom-[-6px] z-50 right-[-3px] bg-white border border-gray-500 rounded-full text-2xl w-[30px] h-[30px] flex items-center justify-center"
+                    >
+                      +
+                    </span>
+                    <input
+                      id="my-story-input"
+                      type="file"
+                      ref={fileInputRef}
+                      accept="image/*,video/*"
+                      multiple
+                      className="hidden"
+                      onChange={handleMyStoryUpload}
+                    />
+                  </div>
+                }
               </div>
             </div>
             <p className="text-xs mt-1 truncate">My story</p>
@@ -167,7 +214,7 @@ export default function Story() {
 
       {/* Viewer (Overlay) */}
       {openStory && myStory && (
-        <div className="fixed inset-0 z-50 bg-black bg-opacity-80 flex justify-center items-center">
+        <div className="fixed inset-0 z-50 bg-black bg-opacity-80 flex  justify-center items-center">
           <div className="w-[90%] max-w-md">
             <StoriesViewer
               stories={openStory?.stories?.map((item) => ({
@@ -176,12 +223,48 @@ export default function Story() {
               defaultInterval={5000}
               onAllStoriesEnd={closeViewer}
             />
-            <button
-              onClick={closeViewer}
-              className="absolute top-4 right-4 text-white text-lg"
-            >
-              ✕
-            </button>
+
+            <div className="absolute top-12 right-2 flex flex-col gap-3 py-2 px-1 bg-amber-300 ">
+              <button onClick={closeViewer} className=" text-lg font-bold">
+                ✕
+              </button>
+              <IconButton
+                onClick={() => toggleLike(openStory?.id)}
+                size="small"
+                className="transition-transform hover:scale-110"
+              >
+                {likeStorySync ? (
+                  <FavoriteIcon className="text-red-500" fontSize="medium" />
+                ) : (
+                  <FavoriteBorderIcon
+                    className="text-gray-700"
+                    fontSize="medium"
+                  />
+                )}
+              </IconButton>
+              <IconButton
+                className="text-black"
+                onClick={() => deleteStories(item.id)}
+              >
+                <DeleteIcon />
+              </IconButton>
+              <IconButton size="small">
+                <SendIcon
+                  className="cursor-pointer text-black"
+                  fontSize="small"
+                />
+              </IconButton>
+            </div>
+
+            <div className=" px-4 pb-1 flex justify-center items-start md:ml-[-20px] ">
+              <div className="w-full max-w-xl bg-white px-3 py-2 border-t border-gray-200 flex items-center gap-2 rounded-t-xl">
+                <input
+                  type="text"
+                  placeholder="Send message..."
+                  className="flex-1 px-4 py-[6px] rounded-full border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+            </div>
           </div>
         </div>
       )}

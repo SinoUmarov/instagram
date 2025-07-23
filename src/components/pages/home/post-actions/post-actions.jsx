@@ -6,18 +6,17 @@ import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
 import BookmarkIcon from "@mui/icons-material/Bookmark";
 import { useState } from "react";
 import { IconButton } from "@mui/material";
-import { formatDistanceToNow } from "date-fns";
 import { usePostActions } from "@/store/pages/home/post-actions/post-actions";
 import Comments from "../comments/comments";
+import { useUser } from "@/store/pages/home/home";
 
 export default function PostActions({
   userName,
   content,
   commentCount,
-  // datePublished,
   postId,
   comments,
-  likeCount,
+  datePublished
 }) {
   const {
     addPostFavorite,
@@ -25,14 +24,18 @@ export default function PostActions({
     isPostSaved,
     addLikePost,
     isPostLiked,
+    getLikeCount
   } = usePostActions();
+  const {formatShortTime} = useUser()
   const [isCommit, setIsCommit] = useState(false);
   const [open, setOpen] = useState(false);
   const saved = isPostSaved(postId);
   const isLiked = isPostLiked(postId);
-
   const [showFullContent, setShowFullContent] = useState(false);
   const CHARACTER_LIMIT = 120;
+  const likeCounts = getLikeCount(postId);
+
+
 
   // code baroi content ast, agar content ziyod boshad tanho 120 symbol megirad
   const truncateText = (text) => {
@@ -53,12 +56,6 @@ export default function PostActions({
   const toggleLike = () => {
     addLikePost(postId);
   };
-
-  // function baroi vaqti post kardanro nishon medihad
-  // const rawTime = formatDistanceToNow(new Date(datePublished), {
-  //   addSuffix: true,
-  // });
-  // const timeAgo = rawTime.replace("about ", "");
 
   return (
     <div className="flex flex-col gap-2 py-2">
@@ -107,9 +104,9 @@ export default function PostActions({
       </div>
 
       {/* Likes */}
-      {likeCount > 0 && (
+      {likeCounts > 0 && (
         <p className="font-bold text-sm text-[#1E293B]">
-          {likeCount} {likeCount === 1 ? "like" : "likes"}
+          {likeCounts} {likeCounts === 1 ? "like" : "likes"}
         </p>
       )}
 
@@ -145,15 +142,11 @@ export default function PostActions({
         )}
 
         {commentCount > 0 && (
-          <p className="text-sm text-[#737373] leading-tight cursor-pointer">
+          <p onClick={() => handleClickOpen(postId)} className="text-sm text-[#737373] leading-tight cursor-pointer">
             View all {commentCount} comments
           </p>
         )}
-
-        {/* Вақти пост */}
-        <p className="uppercase tracking-wide text-[11px] text-[#737373] font-medium">
-          {/* {timeAgo} */}
-        </p>
+      
       </div>
 
       <div className="w-[100%] ">
@@ -163,6 +156,7 @@ export default function PostActions({
             setOpen={setOpen}
             comments={comments}
             postId={postId}
+            datePublished={datePublished}
           />
         )}
       </div>
