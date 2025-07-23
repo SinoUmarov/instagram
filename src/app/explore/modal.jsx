@@ -153,7 +153,7 @@ export default function InstagramModal({ open, setOpen, selectedPost, userId }) 
       <>
         <Modal open={open} onClose={handleClose} aria-labelledby="post-modal">
           <Box sx={mobileStyle}>
-            {/* Mobile Header - Только этот остается sticky */}
+      
             <Box
               sx={{
                 position: "sticky",
@@ -222,7 +222,7 @@ export default function InstagramModal({ open, setOpen, selectedPost, userId }) 
               </IconButton>
             </Box>
 
-            {/* Image/Video Content */}
+        
             <Box
               sx={{
                 width: "100%",
@@ -301,7 +301,6 @@ export default function InstagramModal({ open, setOpen, selectedPost, userId }) 
               })}
             </Box>
 
-            {/* Bottom Actions */}
             <Box sx={{ backgroundColor: theme.palette.background.paper }}>
               <Box sx={{ p: 2, pb: 1 }}>
                 <Box sx={{ display: "flex", justifyContent: "space-between", mb: 1 }}>
@@ -352,10 +351,10 @@ export default function InstagramModal({ open, setOpen, selectedPost, userId }) 
           </Box>
         </Modal>
 
-        {/* Comments Modal (nested within InstagramModal) */}
+        
         <Modal open={commentsModalOpen} onClose={() => setCommentsModalOpen(false)} aria-labelledby="comments-modal">
           <Box sx={mobileCommentsStyle}>
-            {/* Header */}
+            
             <Box
               sx={{
                 display: "flex",
@@ -381,7 +380,7 @@ export default function InstagramModal({ open, setOpen, selectedPost, userId }) 
               </Typography>
             </Box>
 
-            {/* Comments List */}
+           
             <Box
               sx={{
                 flex: 1,
@@ -436,7 +435,7 @@ export default function InstagramModal({ open, setOpen, selectedPost, userId }) 
                           </Button>
                         </Box>
 
-                        {/* Показать ответы если есть */}
+                        
                         <Button
                           size="small"
                           variant="text"
@@ -488,7 +487,7 @@ export default function InstagramModal({ open, setOpen, selectedPost, userId }) 
               )}
             </Box>
 
-            {/* Comment Input */}
+            
             <Box
               sx={{
                 borderTop: `1px solid ${theme.palette.divider}`,
@@ -544,7 +543,7 @@ export default function InstagramModal({ open, setOpen, selectedPost, userId }) 
     )
   }
 
-  // Desktop version остается без изменений
+
   return (
     <Modal open={open} onClose={handleClose} aria-labelledby="post-modal">
       <Box sx={desktopStyle}>
